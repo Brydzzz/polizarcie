@@ -1,36 +1,20 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Konfiguracja lokalnego serwera u siebie:
 
-## Getting Started
+- Trzeba sobie zainstalować **NodeJS** wraz z **npm**.
+  NodeJS to java-scriptowa platforma backendowa, npm to program zarządzający
+  pakietami w projekcie. Tu macie link do instrukcji instalacyjnych: [link](https://nodejs.org/en/download/package-manager).
+- Teraz wywołujemy kilka komend:
 
-First, run the development server:
-
-```bash
+```sh
+# klonujemy repozytorium
+git clone https://gitlab-stud.elka.pw.edu.pl/polizarcie/pap2024z-z19
+mv pap2024z-z19 polizarcie # opcjonalnie polecam zmienić nazwę katalogu
+cd polizarcie # wchodzimy do projektu
+# instalujemy wszystkie wymagane w projekcie pakiety (instalacja lokalna dla projektu)
+npm install
+# uruchamiamy serwer developerski
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Jeżeli wszystko poszło zgodnie z planem nasza strona powinna być dostępna pod
+adresem [http://localhost:3000](http://localhost:3000),
