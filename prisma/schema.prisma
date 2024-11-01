@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+// TODO remove this temp model
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+}
