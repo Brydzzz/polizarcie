@@ -42,8 +42,6 @@ Aplikacja pomagająca w wyborze miejsca gastronomicznego w pobliżu Politechniki
 
 # Technologie
 
-Czekamy na odpowiedź od prowadzącego.
-
 - Next.js
 - PostgreSQL
 - Prisma
