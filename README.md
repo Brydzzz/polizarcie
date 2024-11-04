@@ -1,3 +1,9 @@
+# Poliżarcie
+
+## Konspekt
+
+Konspekt znajduje się w pliku: [konspekt.md](./konspekt.md)
+
 ## Konfiguracja lokalnego serwera u siebie:
 
 - Trzeba sobie zainstalować **NodeJS** wraz z **npm**.
@@ -18,7 +24,7 @@ npm install
 - W pliku `.env` w katalogu głównym (pliku najprawdopodobniej nie będzie ponieważ nie powinien on być pushowany, więc go tworzymy) dodajemy poniższą linijkę. Pola user, password i database podmieniamy oczywiście na te na naszym serwerze (możemy wpisać nazwę nieistniejącej bazy, zostanie wtedy utworzona)
 
 ```sh
-DATABASE_URL="postgresql://<user>:<password>@localhost:5433/<database>?schema=public"
+DATABASE_URL="postgresql://<user>:<password>@localhost:5432/<database>?schema=public"
 ```
 
 - Integracja bazy z prismą. Prisma udostępnia nam kilka narzędzi służących do jej szybkiej integracji z właściwą bazą danych. Ogólny schemat bazy zapisujemy w pliku `prisma/schema.prisma` natomiast pliki inicjalizujący bazę jakimiś domyślnymi danymi (tz. seed) znajduje się w `prisma/seed.ts`. Żeby zaaplikować zmiany w tych plikach (albo włączyć je na start) korzystamy z następujących poleceń:
