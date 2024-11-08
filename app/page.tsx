@@ -10,7 +10,7 @@ export default async function Home() {
   console.log(users);
 
   return (
-    <div className={styles.container}>
+    <main className={styles.container}>
       <LandingHeader />
       <CenterSection width="600px" offsetX="-200px">
         <h1>Co to jest?</h1>
@@ -47,6 +47,6 @@ export default async function Home() {
           scelerisque mi tempus at. Duis ac porta nisl.
         </CenterSection>
       </section>
-    </div>
+    </main>
   );
 }

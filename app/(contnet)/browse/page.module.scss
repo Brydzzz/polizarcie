@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding-top: 100px;
+
+  & > h1 {
+    font-family: "Gluten";
+    color: var(--primary-light);
+    font-size: 36pt;
+    margin-bottom: 100px;
+    text-transform: uppercase;
+  }
+}

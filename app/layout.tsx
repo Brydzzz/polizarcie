@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -12,6 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script src="https://kit.fontawesome.com/5073129f1e.js" />
+      </head>
       <body>{children}</body>
     </html>
   );

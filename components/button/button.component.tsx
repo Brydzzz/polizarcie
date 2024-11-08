@@ -1,12 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
+import { MouseEventHandler, ReactNode } from "react";
 import styles from "./button.module.scss";
 import { ButtonColor, ButtonSize, ButtonStyle } from "./button.types";
 
 type Props = {
   children?: ReactNode;
-  onClick?: CallableFunction;
+  onClick?: MouseEventHandler;
   style?: ButtonStyle;
   color?: ButtonColor;
   size?: ButtonSize;
@@ -14,10 +14,6 @@ type Props = {
 };
 
 const Button = ({ children, onClick, style, color, size, disabled }: Props) => {
-  function onClickHandler() {
-    if (onClick) onClick();
-  }
-
   return (
     <div className={styles.container}>
       <button
@@ -25,7 +21,7 @@ const Button = ({ children, onClick, style, color, size, disabled }: Props) => {
           styles[color || ButtonColor.PRIMARY]
         } ${styles[size || ButtonSize.NORMAL]}
         `}
-        onClick={onClickHandler}
+        onClick={onClick}
         disabled={disabled}
       >
         {children}
