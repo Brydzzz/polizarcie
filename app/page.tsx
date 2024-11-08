@@ -1,6 +1,7 @@
+import LandingHeader from "@/components/headers/landing-header.component";
+import CenterSection from "@/components/sections/center-section.component";
 import { prisma } from "@/utils/prisma";
-import Image from "next/image";
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 
 export const dynamic = "force-dynamic";
 
@@ -9,25 +10,43 @@ export default async function Home() {
   console.log(users);
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <div>
-          Database connection and migration test:
-          <br />
-          Found users:
-          {users.map((user) => (
-            <h2 key={user.id}>{user.name}</h2>
-          ))}
-        </div>
-      </main>
+    <div className={styles.container}>
+      <LandingHeader />
+      <CenterSection width="600px" offsetX="-200px">
+        <h1>Co to jest?</h1>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce luctus
+        blandit neque sit amet imperdiet. Aliquam vehicula nec justo ac
+        imperdiet. Vivamus elementum sit amet libero ut scelerisque. Phasellus
+        sit amet arcu quis nibh cursus vestibulum nec non velit. Phasellus eget
+        cursus mi, nec mattis eros. Proin eget consectetur nisi, nec rutrum
+        erat. In bibendum augue vitae odio convallis, in mattis ipsum pharetra.
+        Aenean aliquet in tellus ac tincidunt. Quisque sit amet risus malesuada
+        eros lacinia semper id volutpat risus. Aenean tristique libero massa, in
+        efficitur neque eleifend quis. Etiam porttitor mauris neque, mollis
+        mattis dolor lacinia sit amet. Phasellus molestie urna ut metus egestas,
+        vitae bibendum tortor tristique. Lorem ipsum dolor sit amet, consectetur
+        adipiscing elit. Nullam posuere pellentesque rhoncus. Sed faucibus metus
+        purus, a scelerisque mi tempus at. Duis ac porta nisl.
+      </CenterSection>
+      <section className={styles.light}>
+        <CenterSection width="600px" offsetX="200px">
+          <h1>Co to jest?</h1>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce luctus
+          blandit neque sit amet imperdiet. Aliquam vehicula nec justo ac
+          imperdiet. Vivamus elementum sit amet libero ut scelerisque. Phasellus
+          sit amet arcu quis nibh cursus vestibulum nec non velit. Phasellus
+          eget cursus mi, nec mattis eros. Proin eget consectetur nisi, nec
+          rutrum erat. In bibendum augue vitae odio convallis, in mattis ipsum
+          pharetra. Aenean aliquet in tellus ac tincidunt. Quisque sit amet
+          risus malesuada eros lacinia semper id volutpat risus. Aenean
+          tristique libero massa, in efficitur neque eleifend quis. Etiam
+          porttitor mauris neque, mollis mattis dolor lacinia sit amet.
+          Phasellus molestie urna ut metus egestas, vitae bibendum tortor
+          tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Nullam posuere pellentesque rhoncus. Sed faucibus metus purus, a
+          scelerisque mi tempus at. Duis ac porta nisl.
+        </CenterSection>
+      </section>
     </div>
   );
 }

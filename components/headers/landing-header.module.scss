@@ -1,0 +1,40 @@
+.container {
+  width: 100vw;
+  --height: 300px;
+  padding-top: 125px;
+  height: var(--height);
+  position: relative;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+  margin-bottom: 300px;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 75px;
+
+    h1 {
+      font-family: "Gluten";
+      font-size: 100pt;
+      text-shadow: 10px 10px #0005;
+    }
+  }
+
+  .background {
+    width: 100vw;
+    min-width: 1000px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: -1;
+
+    & > div {
+      width: 100%;
+      height: var(--height);
+      background-color: var(--primary);
+    }
+  }
+}

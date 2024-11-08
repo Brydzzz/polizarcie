@@ -1,0 +1,17 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: left;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--text);
+  padding-bottom: 300px;
+
+  .light {
+    padding: 100px 0;
+    margin: 100px 0;
+    width: 100%;
+    background-color: var(--background-light);
+  }
+}
