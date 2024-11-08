@@ -11,6 +11,7 @@
   --secondary-dark: #57614c;
   --secondary: #646f58;
   --secondary-light: #717e63;
+  --disabled: #aaa;
 }
 
 html,
@@ -37,6 +38,22 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.centralized-x {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.centralized-y {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
 }
 
 button {

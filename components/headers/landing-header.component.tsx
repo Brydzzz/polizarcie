@@ -1,5 +1,6 @@
 import MainHeaderCurves from "@/assets/main-header-curves";
-import Button from "../buttons/button.component";
+import Button from "../button/button.component";
+import { ButtonColor, ButtonSize, ButtonStyle } from "../button/button.types";
 import styles from "./landing-header.module.scss";
 
 const LandingHeader = () => {
@@ -12,7 +13,13 @@ const LandingHeader = () => {
       <div className={styles.content}>
         <h1>Poliżarcie</h1>
         <div className={styles.buttons}>
-          <Button>Wejdź w świat poliżarcia</Button>
+          <Button
+            style={ButtonStyle.BACKDROP}
+            size={ButtonSize.LARGE}
+            color={ButtonColor.TEXT}
+          >
+            Wejdź w świat poliżarcia
+          </Button>
         </div>
       </div>
     </div>
