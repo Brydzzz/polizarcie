@@ -86,7 +86,7 @@
           content: "";
           position: absolute;
           top: 50%;
-          height: 5px;
+          height: 6px;
           width: 100%;
           background-color: var(--disabled);
           transform: translate(0, -50%);
@@ -117,6 +117,11 @@
           position: absolute;
           top: 50%;
           left: 0;
+          width: var(--dot-size);
+          height: var(--dot-size);
+          display: flex;
+          justify-content: center;
+          align-items: center;
           transform: translate(-50%, -50%);
           z-index: 5;
           font-size: 16pt;
