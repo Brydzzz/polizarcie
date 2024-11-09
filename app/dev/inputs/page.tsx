@@ -3,8 +3,14 @@
 import Input from "@/components/inputs/generic-input.component";
 import SelectBox from "@/components/inputs/generic-select.component";
 import TextArea from "@/components/inputs/generic-textarea.component";
+import ImageInput from "@/components/inputs/image-input.component";
 import PasswordInput from "@/components/inputs/password-input.component";
 import RangeInput from "@/components/inputs/range-input.component";
+import Searchbar from "@/components/inputs/searchbar.component";
+import {
+  SearchbarSize,
+  SearchbarStyle,
+} from "@/components/inputs/searchbar.types";
 import StarInput from "@/components/inputs/star-input.component";
 import { useState } from "react";
 
@@ -19,6 +25,7 @@ const FiltersPage = () => {
   const [text6, setText6] = useState("");
   const [text7, setText7] = useState("pg1");
   const [text8, setText8] = useState("");
+  const [text9, setText9] = useState("");
 
   return (
     <div
@@ -93,7 +100,34 @@ const FiltersPage = () => {
           suffix=" zł"
           label="Cena"
         />
+        <ImageInput label="Zdjęcie" />
         <StarInput value={stars} max={5} onChange={setStars} />
+        <Searchbar
+          placeholder="Wyszukaj coś"
+          value={text9}
+          onChange={(e) => setText9(e.target.value)}
+          onCancelButtonClick={() => setText9("")}
+          style={SearchbarStyle.INPUT_LIKE}
+          size={SearchbarSize.SMALL}
+        />
+        <Searchbar
+          placeholder="Wyszukaj coś"
+          value={text9}
+          onChange={(e) => setText9(e.target.value)}
+          onCancelButtonClick={() => setText9("")}
+          style={SearchbarStyle.HERO}
+          size={SearchbarSize.NORMAL}
+          filters
+        />
+        <Searchbar
+          placeholder="Wyszukaj coś"
+          value={text9}
+          onChange={(e) => setText9(e.target.value)}
+          onCancelButtonClick={() => setText9("")}
+          style={SearchbarStyle.HERO}
+          size={SearchbarSize.LARGE}
+          filters
+        />
       </div>
     </div>
   );

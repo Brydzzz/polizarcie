@@ -9,6 +9,8 @@ type Range = {
 };
 
 type Props = {
+  id?: string;
+  name?: string;
   value: Range;
   limit: Range;
   onChange: (value: Range) => void;
@@ -16,7 +18,15 @@ type Props = {
   label?: string;
 };
 
-const RangeInput = ({ value, limit, onChange, suffix, label }: Props) => {
+const RangeInput = ({
+  id,
+  name,
+  value,
+  limit,
+  onChange,
+  suffix,
+  label,
+}: Props) => {
   const axisRef = useRef<HTMLDivElement>();
 
   const updateValues = (e: MouseEvent<HTMLDivElement>) => {
@@ -74,7 +84,23 @@ const RangeInput = ({ value, limit, onChange, suffix, label }: Props) => {
         </span>
         <span className={styles.limit}>{limit.max}</span>
       </div>
-      {label && <span className={styles.label}>{label}</span>}
+      <input
+        className={styles.invisible}
+        id={`${id}_min`}
+        name={`${name}_min`}
+        type="number"
+        value={value.min}
+        disabled
+      />
+      <input
+        className={styles.invisible}
+        id={`${id}_max`}
+        name={`${name}_max`}
+        type="number"
+        value={value.max}
+        disabled
+      />
+      {label && <label>{label}</label>}
     </div>
   );
 };

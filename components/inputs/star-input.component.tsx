@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import styles from "./star-input.module.scss";
 
 type Props = {
+  id?: string;
+  name?: string;
   value: number;
   max: number;
   onChange?: (value: number) => void;
   disabled?: boolean;
 };
 
-const StarInput = ({ value, max, onChange, disabled }: Props) => {
+const StarInput = ({ id, name, value, max, onChange, disabled }: Props) => {
   const [stars, setStars] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -37,6 +39,14 @@ const StarInput = ({ value, max, onChange, disabled }: Props) => {
           )}
         </span>
       ))}
+      <input
+        className={styles.invisible}
+        id={id}
+        name={name}
+        type="number"
+        value={value}
+        disabled
+      />
     </div>
   );
 };

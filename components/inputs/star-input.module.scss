@@ -12,6 +12,10 @@
     }
   }
 
+  .invisible {
+    display: none;
+  }
+
   &.disabled {
     .star {
       &:hover {

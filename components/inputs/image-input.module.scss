@@ -1,0 +1,72 @@
+.container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 270px;
+  height: 135px;
+  --bg-local: var(--background-light);
+  border: 1px solid var(--bg-local);
+  border-radius: 5px;
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  &.error {
+    border-color: var(--error);
+  }
+
+  & > label {
+    color: var(--primary);
+    font-size: 10pt;
+    position: absolute;
+    pointer-events: none;
+    left: 7.5px;
+    top: 0;
+    background-color: var(--bg-local);
+    padding: 0 7.5px;
+    border-radius: 3px;
+    height: auto;
+    transform: translate(0, -50%);
+  }
+
+  .preview {
+    height: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--disabled);
+    position: relative;
+
+    & > img {
+      object-fit: cover;
+      border-radius: 5px 0 0 5px;
+    }
+  }
+
+  .invisible {
+    display: none;
+  }
+
+  & > button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-local);
+    border: none;
+    border-radius: 0 5px 5px 0;
+    outline: none;
+    color: var(--text);
+    font-size: 12pt;
+    line-break: anywhere;
+    padding: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

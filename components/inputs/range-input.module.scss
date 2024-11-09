@@ -142,19 +142,19 @@
     }
   }
 
-  .error {
-    position: absolute;
+  .invisible {
+    display: none;
   }
 
-  .label {
+  label {
     color: var(--primary);
     font-size: 10pt;
     position: absolute;
     pointer-events: none;
-    left: 5px;
+    left: 7.5px;
     top: 0;
     background-color: var(--bg-local);
-    padding: 0 5px;
+    padding: 0 7.5px;
     border-radius: 3px;
     height: auto;
     transform: translate(0, -50%);
