@@ -7,9 +7,89 @@ datasource db {
   provider = "postgresql"
 }
 
-// TODO remove this temp model
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+model Users {
+  user_id        Int          @id @default(autoincrement())
+  name           String
+  email          String       @unique
+  gender         String
+  pref_gend      String?
+  meeting_status Boolean
+  media_link     String?
+  fav_rest_id_1  Int?
+  fav_rest_id_2  Int?
+  fav_rest_id_3  Int?
+  points         Int
+  fav_rest_1     Restaurants? @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [restaurant_id], map: "fav_rest_1_FK")
+  fav_rest_2     Restaurants? @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [restaurant_id], map: "fav_rest_2_FK")
+  fav_rest_3     Restaurants? @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [restaurant_id], map: "fav_rest_3_FK")
+  Review         Review[]
+  sent_fw        Follows?     @relation("sent_fw")
+  reciewv        Follows?     @relation("to_who")
+}
+
+model Restaurants {
+  restaurant_id    Int       @id @default(autoincrement())
+  name             String
+  address_id       Int       @unique
+  description      String
+  top_dish_id      Int       @unique
+  opening_hour_mon Int
+  closing_hour_mon Int
+  opening_hour_tue Int
+  closing_hour_tue Int
+  opening_hour_wen Int
+  closing_hour_wen Int
+  opening_hour_thu Int
+  closing_hour_thu Int
+  opening_hour_fri Int
+  closing_hour_fri Int
+  opening_hour_sat Int
+  closing_hour_sat Int
+  opening_hour_sun Int
+  closing_hour_sun Int
+  top_dish         Dishes?   @relation("Top_dish", fields: [top_dish_id], references: [dish_id])
+  favs1            Users[]   @relation("Fav_rest_1")
+  favs2            Users[]   @relation("Fav_rest_2")
+  favs3            Users[]   @relation("Fav_rest_3")
+  menu             Dishes[]  @relation("Menu")
+  address          Addresses @relation(fields: [address_id], references: [address_id])
+  Review           Review[]
+}
+
+model Dishes {
+  dish_id       Int          @id @default(autoincrement())
+  name          String
+  description   String
+  price         Int
+  restaurant_id Int
+  restid        Restaurants  @relation("Menu", fields: [restaurant_id], references: [restaurant_id])
+  top_dish_in   Restaurants? @relation("Top_dish")
+}
+
+model Addresses {
+  address_id  Int          @id @default(autoincrement())
+  name        String
+  X_coords    Int
+  Y_coords    Int
+  Restaurants Restaurants?
+}
+
+model Review {
+  review_id        Int         @id @default(autoincrement())
+  content          String
+  restaurant_id    Int
+  points           Int
+  spent_per_person Int
+  date             DateTime
+  who_wrote        Int
+  wrote            Users       @relation(fields: [who_wrote], references: [user_id])
+  restaurant       Restaurants @relation(fields: [restaurant_id], references: [restaurant_id])
+}
+
+model Follows {
+  follow_id Int   @id @default(autoincrement())
+  who_sent  Int   @unique
+  to_who    Int   @unique
+  sent      Users @relation("sent_fw", fields: [who_sent], references: [user_id], map: "sent_fw_FK")
+  to        Users @relation("to_who", fields: [who_sent], references: [user_id], map: "to_who_FK")
 }

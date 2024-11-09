@@ -6,7 +6,7 @@ import styles from "./page.module.scss";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const users = await prisma.user.findMany();
+  const users = await prisma.users.findMany();
   console.log(users);
 
   return (
