@@ -6,10 +6,11 @@ import styles from "./star-input.module.scss";
 type Props = {
   value: number;
   max: number;
-  onChange: (value: number) => void;
+  onChange?: (value: number) => void;
+  disabled?: boolean;
 };
 
-const StarInput = ({ value, max, onChange }: Props) => {
+const StarInput = ({ value, max, onChange, disabled }: Props) => {
   const [stars, setStars] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -19,13 +20,14 @@ const StarInput = ({ value, max, onChange }: Props) => {
   }, [value, max]);
 
   const handleClick = (i: number) => {
+    if (disabled) return;
     if (value !== i + 1) value = i + 1;
     else if (i !== 0) value = i;
-    onChange(value);
+    if (onChange) onChange(value);
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       {stars.map((star, i) => (
         <span key={i} className={styles.star} onClick={() => handleClick(i)}>
           {star ? (

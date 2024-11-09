@@ -1,8 +1,9 @@
-import { LegacyRef, useEffect, useRef } from "react";
+import { ComponentProps, LegacyRef, useEffect, useRef } from "react";
 import styles from "./generic-inputs.module.scss";
 
-type Props = Omit<React.ComponentProps<"textarea">, "className"> & {
+type Props = Omit<ComponentProps<"textarea">, "className"> & {
   label: string;
+  error?: boolean | undefined;
 };
 const TextArea = (props: Props) => {
   const ref = useRef<HTMLTextAreaElement>();
@@ -15,9 +16,14 @@ const TextArea = (props: Props) => {
 
   return (
     <div
-      className={`${styles.container} ${props.required ? styles.required : ""}`}
+      className={`${styles.container} ${
+        props.required ? styles.required : ""
+      } ${props.error ? styles.error : ""}`}
     >
-      <textarea ref={ref as LegacyRef<HTMLTextAreaElement>} {...props} />
+      <textarea
+        ref={ref as LegacyRef<HTMLTextAreaElement>}
+        {...{ ...props, error: undefined }}
+      />
       <label
         className={
           props.value && props.value.toString().length > 0 ? styles.shrink : ""

@@ -11,4 +11,12 @@
       cursor: pointer;
     }
   }
+
+  &.disabled {
+    .star {
+      &:hover {
+        cursor: initial;
+      }
+    }
+  }
 }

@@ -3,6 +3,7 @@
 import Input from "@/components/inputs/generic-input.component";
 import SelectBox from "@/components/inputs/generic-select.component";
 import TextArea from "@/components/inputs/generic-textarea.component";
+import PasswordInput from "@/components/inputs/password-input.component";
 import RangeInput from "@/components/inputs/range-input.component";
 import StarInput from "@/components/inputs/star-input.component";
 import { useState } from "react";
@@ -17,6 +18,7 @@ const FiltersPage = () => {
   const [text5, setText5] = useState("");
   const [text6, setText6] = useState("");
   const [text7, setText7] = useState("pg1");
+  const [text8, setText8] = useState("");
 
   return (
     <div
@@ -24,13 +26,6 @@ const FiltersPage = () => {
       style={{ marginTop: "100px", paddingBottom: "100px" }}
     >
       <div className="centralized-y" style={{ width: "350px" }}>
-        <RangeInput
-          value={range}
-          limit={{ min: 0, max: 100 }}
-          onChange={setRange}
-          suffix=" zł"
-        />
-        <StarInput value={stars} max={5} onChange={setStars} />
         <Input
           label="Imię"
           value={text1}
@@ -43,16 +38,22 @@ const FiltersPage = () => {
           required
         />
         <Input
+          label="Błąd"
+          value={text8}
+          onChange={(e) => setText8(e.target.value)}
+          error
+        />
+        <Input
           label="Wyłączony"
           value={text3}
           onChange={(e) => setText3(e.target.value)}
           disabled
         />
-        <Input
-          type="password"
+        <PasswordInput
           label="Hasło"
           value={text4}
           onChange={(e) => setText4(e.target.value)}
+          // disabled
         />
         <Input
           type="date"
@@ -69,6 +70,7 @@ const FiltersPage = () => {
           label="Wybierz coś"
           value={text7}
           onChange={(e) => setText7(e.target.value)}
+          // disabled
           options={[
             {
               name: "Opcja 1",
@@ -84,6 +86,14 @@ const FiltersPage = () => {
             },
           ]}
         />
+        <RangeInput
+          value={range}
+          limit={{ min: 0, max: 100 }}
+          onChange={setRange}
+          suffix=" zł"
+          label="Cena"
+        />
+        <StarInput value={stars} max={5} onChange={setStars} />
       </div>
     </div>
   );

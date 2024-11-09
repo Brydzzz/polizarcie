@@ -6,7 +6,7 @@
 
   &.required::before {
     content: "*";
-    color: red;
+    color: var(--error);
     position: absolute;
     top: -5px;
     left: -12px;
@@ -52,7 +52,7 @@
     padding: var(--padding);
     display: block;
     width: 100%;
-    height: 100%;
+    height: 45px;
     border: 1px solid var(--bg-local);
     border-radius: 5px;
     box-sizing: border-box;
@@ -62,17 +62,53 @@
     }
 
     &[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(0.8);
+      filter: invert(1);
     }
 
     &:disabled {
       color: var(--disabled);
       border-color: var(--bg-local);
+
+      & ~ label {
+        color: var(--disabled);
+        border: 1px solid var(--disabled);
+      }
     }
 
     &:focus {
       outline: none;
       border-color: var(--primary);
+    }
+  }
+
+  &.error {
+    input,
+    select,
+    textarea {
+      border-color: var(--error);
+    }
+  }
+
+  select {
+    appearance: none;
+    ~ .arrow {
+      position: absolute;
+      top: 0;
+      right: 5px;
+      height: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      transition: all 0.1s linear;
+
+      &.rotate {
+        transform: rotate(180deg);
+      }
+    }
+    &:disabled ~ .arrow {
+      color: var(--disabled);
     }
   }
 
