@@ -3,8 +3,6 @@ import CenterSection from "@/components/sections/center-section.component";
 import { prisma } from "@/utils/prisma";
 import styles from "./page.module.scss";
 
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
   const users = await prisma.user.findMany();
   console.log(users);

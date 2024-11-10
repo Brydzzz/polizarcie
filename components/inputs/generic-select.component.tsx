@@ -3,7 +3,7 @@
 import { useState } from "react";
 import styles from "./generic-inputs.module.scss";
 
-type Props = Omit<React.ComponentProps<"select">, "className"> & {
+type Props = Omit<React.ComponentProps<"select">, "className" | "multiple"> & {
   label: string;
   options: {
     name: string;

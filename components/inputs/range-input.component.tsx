@@ -1,7 +1,7 @@
 "use client";
 
 import { LegacyRef, MouseEvent, useRef, useState } from "react";
-import styles from "./range-input.module.scss";
+import styles from "./sliders.module.scss";
 
 type Range = {
   min: number;
@@ -85,7 +85,7 @@ const RangeInput = ({
   return (
     <div className={styles.container}>
       <div
-        className={styles.slider}
+        className={styles.range}
         onMouseDown={handleOnMouseDown}
         onMouseUp={handleMouseUp}
         onMouseMove={handleOnMouseMove}
@@ -117,16 +117,16 @@ const RangeInput = ({
       </div>
       <input
         className={styles.invisible}
-        id={`${id}_min`}
-        name={`${name}_min`}
+        id={`${id}Min`}
+        name={`${name}Min`}
         type="number"
         value={value.min}
         disabled
       />
       <input
         className={styles.invisible}
-        id={`${id}_max`}
-        name={`${name}_max`}
+        id={`${id}Max`}
+        name={name && `${name}Max`}
         type="number"
         value={value.max}
         disabled

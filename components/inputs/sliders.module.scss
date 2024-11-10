@@ -3,6 +3,7 @@
   width: 100%;
   --bg-local: var(--background-light);
 
+  .range,
   .slider {
     position: relative;
     display: flex;
@@ -45,7 +46,8 @@
         left: var(--padding);
         transform: translate(-50%, -50%);
       }
-      &:nth-child(5) {
+      &:nth-child(5),
+      &:nth-child(4) {
         right: var(--padding);
         transform: translate(50%, -50%);
       }
@@ -144,6 +146,27 @@
       &:nth-child(4) {
         right: 0px;
       }
+    }
+  }
+
+  .slider {
+    padding-left: calc(10px + calc(var(--dot-size) / 2));
+
+    .limit:nth-child(1) {
+      background-color: var(--primary);
+      left: calc(10px + calc(var(--dot-size) / 2));
+      transform: translate(-50%, -50%);
+    }
+    .axis .dot {
+      & > i {
+        font-size: calc(var(--dot-size) * 0.66);
+      }
+      &:nth-child(1)::before {
+        left: 0;
+      }
+    }
+    .value:nth-child(3) {
+      right: 0px;
     }
   }
 

@@ -1,0 +1,38 @@
+.container {
+  padding-left: calc(12pt + 10px);
+  position: relative;
+  font-size: 12pt;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.required::before {
+    content: "*";
+    color: var(--error);
+    position: absolute;
+    top: -5px;
+    left: -12px;
+  }
+
+  .invisible {
+    display: none;
+  }
+
+  & > i {
+    position: absolute;
+    top: 0;
+    left: 6pt;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%, 0);
+
+    &:nth-child(4) {
+      font-size: 15pt;
+      color: var(--primary);
+      transform: translate(calc(-50% + 1.5pt), -1.5pt);
+    }
+  }
+}
