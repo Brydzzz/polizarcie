@@ -16,10 +16,6 @@ import {
 const SearchPage = () => {
   const [rests, updateRestaurants] = useState<Restaurant[]>([]);
   const [input, setInput] = useState("");
-  const [first, setFirst] = useState("");
-  const [second, setSecond] = useState("");
-  const [third, setThird] = useState("");
-  const [fourth, setFourth] = useState("");
   useEffect(() => {
     const update = async () => {
       const data = await get_restaurants_by_name(input);
@@ -28,57 +24,27 @@ const SearchPage = () => {
     }
     update();
 
-    if (rests.length === 1) {
-      console.log(1)
-      setFirst(rests[0].name);
-      setSecond("...");
-      setThird("...");
-      setFourth("...");
-    }
-    else if (rests.length === 2) {
-      console.log(2)
-      setFirst(rests[0].name);
-      setSecond(rests[1].name);
-      setThird("...");
-      setFourth("...");
-    }
-    else if (rests.length === 3) {
-      console.log(3)
-      setFirst(rests[0].name);
-      setSecond(rests[1].name);
-      setThird(rests[2].name);
-      setFourth("...");
-    }
-    else if (rests.length === 4) {
-      console.log(4)
-      setFirst(rests[0].name);
-      setSecond(rests[1].name);
-      setThird(rests[2].name);
-      setFourth(rests[3].name);
-    }
-    else {
-      setFirst("...");
-      setSecond("...");
-      setThird("...");
-      setFourth("...");
-    };
   }, [input])
+  const middleIndex = Math.ceil(rests.length / 2);
+  const [first_half, second_half] = [rests.slice(0, middleIndex), rests.slice(middleIndex)];
   return (
     <main className={styles.container}>
       <h1>Jedzonko w okolicy</h1>
       <Searchbar id="search" placeholder="Co byś dziś przekąsił?" value={input} onChange={(e) => setInput(e.target.value)} />
-        <table className={styles.matrix}>
-          <tbody>
-          <tr>
-            <td><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{first}</Button></td>
-            <td><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{third}</Button></td>
-          </tr>
-          <tr>
-            <td><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{second}</Button></td>
-            <td><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{fourth}</Button></td>
-          </tr>
-          </tbody>
-        </table>
+      <div className={styles.matrix}>
+      <ul>
+        {first_half.map((rest, index) => (
+          <li key = {index}><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{rest.name}</Button>  </li>
+        ))}
+      </ul>
+      <ul>
+        {second_half.map((rest, index) => (
+          <li key = {index}><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{rest.name}</Button>  </li>
+        ))}
+        </ul>
+        </div>
+
+
     </main>
   );
 };

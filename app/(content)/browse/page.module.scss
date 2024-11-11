@@ -18,35 +18,33 @@
 }
 
 .matrix {
-  width: 80%;
-  height: 50%;
-  margin: 20px;
-  // border-collapse: collapse;
-  min-height: 200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: '20px';
 
-    & > em {
-    font-family: "Gluten";
-    color: var(--background-light);
-    font-size: 36pt;
-    margin-bottom: 100px;
-    text-transform: uppercase;
-  };
+    & > ul   {
+          padding: 0;
+          width: '100%';
+    };
+
   };
 
 
-.matrix td {
-  width: 60%;
-  height: 40%;
-  padding :10px;
-  text-align: center;
-  & > div {
-    font-family: "Chivo";
-    color: var(--text);
-    font-size: 20pt;
-    margin-bottom: 100px;
-    text-transform: uppercase;
-  };
-}
+
+// .matrix td {
+//   width: 60%;
+//   height: 40%;
+//   padding :10px;
+//   text-align: center;
+//   & > div {
+//     font-family: "Chivo";
+//     color: var(--text);
+//     font-size: 20pt;
+//     margin-bottom: 100px;
+//     text-transform: uppercase;
+//   };
+// }
 
 
 
