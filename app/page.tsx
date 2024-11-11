@@ -4,7 +4,7 @@ import { prisma } from "@/utils/prisma";
 import styles from "./page.module.scss";
 
 export default async function Home() {
-  const users = await prisma.users.findMany();
+  const users = await prisma.user.findMany();
   console.log(users);
 
   return (
