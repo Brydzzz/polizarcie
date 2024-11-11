@@ -29,10 +29,10 @@ model User {
 
 model Restaurant {
   restaurant_id    Int       @id @default(autoincrement())
-  name             String
-  address_id       Int       @unique
+  name             String     @unique
+  address_id       Int?       @unique
   description      String
-  top_dish_id      Int       @unique
+  top_dish_id      Int?       @unique
   opening_hour_mon Int
   closing_hour_mon Int
   opening_hour_tue Int
@@ -52,7 +52,7 @@ model Restaurant {
   favs2            User[]   @relation("Fav_rest_2")
   favs3            User[]   @relation("Fav_rest_3")
   menu             Dishes[]  @relation("Menu")
-  address          Address @relation(fields: [address_id], references: [address_id])
+  address          Address? @relation(fields: [address_id], references: [address_id])
   Review           Review[]
 }
 
