@@ -2,7 +2,7 @@ import { prisma } from "../utils/prisma";
 
 async function initData() {
   // TODO add some actual database initialization
-  await prisma.users.upsert({
+  await prisma.user.upsert({
     update: {},
     create: {
       name: "Balbinka",
