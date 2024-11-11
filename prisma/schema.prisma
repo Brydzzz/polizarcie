@@ -7,7 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 
-model Users {
+model User {
   user_id        Int          @id @default(autoincrement())
   name           String
   email          String       @unique
@@ -19,15 +19,15 @@ model Users {
   fav_rest_id_2  Int?
   fav_rest_id_3  Int?
   points         Int
-  fav_rest_1     Restaurants? @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [restaurant_id], map: "fav_rest_1_FK")
-  fav_rest_2     Restaurants? @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [restaurant_id], map: "fav_rest_2_FK")
-  fav_rest_3     Restaurants? @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [restaurant_id], map: "fav_rest_3_FK")
+  fav_rest_1     Restaurant? @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [restaurant_id], map: "fav_rest_1_FK")
+  fav_rest_2     Restaurant? @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [restaurant_id], map: "fav_rest_2_FK")
+  fav_rest_3     Restaurant? @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [restaurant_id], map: "fav_rest_3_FK")
   Review         Review[]
-  sent_fw        Follows?     @relation("sent_fw")
-  reciewv        Follows?     @relation("to_who")
+  sent_fw        Follow?     @relation("sent_fw")
+  reciewv        Follow?     @relation("to_who")
 }
 
-model Restaurants {
+model Restaurant {
   restaurant_id    Int       @id @default(autoincrement())
   name             String
   address_id       Int       @unique
@@ -48,11 +48,11 @@ model Restaurants {
   opening_hour_sun Int
   closing_hour_sun Int
   top_dish         Dishes?   @relation("Top_dish", fields: [top_dish_id], references: [dish_id])
-  favs1            Users[]   @relation("Fav_rest_1")
-  favs2            Users[]   @relation("Fav_rest_2")
-  favs3            Users[]   @relation("Fav_rest_3")
+  favs1            User[]   @relation("Fav_rest_1")
+  favs2            User[]   @relation("Fav_rest_2")
+  favs3            User[]   @relation("Fav_rest_3")
   menu             Dishes[]  @relation("Menu")
-  address          Addresses @relation(fields: [address_id], references: [address_id])
+  address          Address @relation(fields: [address_id], references: [address_id])
   Review           Review[]
 }
 
@@ -62,16 +62,16 @@ model Dishes {
   description   String
   price         Int
   restaurant_id Int
-  restid        Restaurants  @relation("Menu", fields: [restaurant_id], references: [restaurant_id])
-  top_dish_in   Restaurants? @relation("Top_dish")
+  restid        Restaurant  @relation("Menu", fields: [restaurant_id], references: [restaurant_id])
+  top_dish_in   Restaurant? @relation("Top_dish")
 }
 
-model Addresses {
+model Address {
   address_id  Int          @id @default(autoincrement())
   name        String
   X_coords    Int
   Y_coords    Int
-  Restaurants Restaurants?
+  Restaurants Restaurant?
 }
 
 model Review {
@@ -82,14 +82,14 @@ model Review {
   spent_per_person Int
   date             DateTime
   who_wrote        Int
-  wrote            Users       @relation(fields: [who_wrote], references: [user_id])
-  restaurant       Restaurants @relation(fields: [restaurant_id], references: [restaurant_id])
+  wrote            User       @relation(fields: [who_wrote], references: [user_id])
+  restaurant       Restaurant @relation(fields: [restaurant_id], references: [restaurant_id])
 }
 
-model Follows {
+model Follow {
   follow_id Int   @id @default(autoincrement())
   who_sent  Int   @unique
   to_who    Int   @unique
-  sent      Users @relation("sent_fw", fields: [who_sent], references: [user_id], map: "sent_fw_FK")
-  to        Users @relation("to_who", fields: [who_sent], references: [user_id], map: "to_who_FK")
+  sent      User @relation("sent_fw", fields: [who_sent], references: [user_id], map: "sent_fw_FK")
+  to        User @relation("to_who", fields: [who_sent], references: [user_id], map: "to_who_FK")
 }
