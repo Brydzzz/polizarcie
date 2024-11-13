@@ -1,0 +1,69 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  --bg-local: var(--background-light);
+  border: 5px solid var(--bg-local);
+  border-radius: 8px;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+  width: 600px;
+  height: 135px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-1px); /* Hover effect to lift the card */
+    box-shadow: 10px 10px var(--primary-background-fade-1);
+  }
+}
+
+.photo {
+  margin: 5px;
+  border: 1px solid var(--bg-local);
+  flex: 0 0 25%;
+
+  /* Only for now to center temporary text */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  & > p {
+    text-align: center;
+    padding: 2px;
+  }
+}
+
+.details {
+  padding: 20px;
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden; /* TODO find better way to handle overflow */
+}
+
+.name {
+  font-size: 1.6rem;
+  margin: 0;
+  color: var(--primary);
+  padding: 2px;
+}
+
+.address {
+  font-size: 1.1rem;
+  color: var(--text);
+
+  padding: 2px;
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 0.1em;
+  }
+}
+
+.description {
+  font-size: 0.9rem;
+  --text-secondary: #b8b6b5;
+  color: var(--text-secondary);
+  padding: 2px;
+}
