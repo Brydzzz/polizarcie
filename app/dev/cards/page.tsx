@@ -1,4 +1,24 @@
 import RestaurantCard from "@/components/cards/restaurant-card.component";
+import { Address, Restaurant } from "@prisma/client";
+
+const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
+  {
+    name: "Marszałkowski Bar Mleczny",
+    address: {
+      name: "ul. Czekoladowa 55",
+    },
+    description:
+      "Marszałkowski Bar Mleczny to klasyczna polska restauracja typu bar mleczny, która oferuje tradycyjne dania kuchni polskiej w przystępnych cenach.",
+  },
+  {
+    name: "Marszałkowski Bar Mleczny",
+    address: {
+      name: "ul. Czekoladowa 55",
+    },
+    description:
+      "Marszałkowski Bar Mleczny to klasyczna polska restauracja typu bar mleczny, która oferuje tradycyjne dania kuchni polskiej w przystępnych cenach.",
+  },
+];
 
 const CardPage = () => {
   return (
@@ -7,16 +27,9 @@ const CardPage = () => {
       style={{ marginTop: "100px", paddingBottom: "100px" }}
     >
       <div className="centralized-y" style={{ width: "600px" }}>
-        <RestaurantCard
-          name="Marszałkowski Bar Mleczny"
-          address="ul. Czekoladowa 55"
-          description="Marszałkowski Bar Mleczny to klasyczna polska restauracja
-          typu bar mleczny, która oferuje tradycyjne dania kuchni polskiej w przystępnych cenach."
-        ></RestaurantCard>
-        <RestaurantCard
-          name="Marszałkowski Bar Mleczny"
-          address="ul. Czekoladowa 55"
-        ></RestaurantCard>
+        {TEST_REST.map((rest, i) => (
+          <RestaurantCard key={i} data={rest}></RestaurantCard>
+        ))}
       </div>
     </div>
   );
