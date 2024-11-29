@@ -25,10 +25,12 @@
 
   & > .column {
     padding: 20px;
-    width: "100%";
     display: flex;
     flex-direction: column;
     flex: 1;
     row-gap: 25px;
+  }
+  .column:empty {
+  display: none;
   }
 }

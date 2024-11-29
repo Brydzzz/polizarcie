@@ -47,16 +47,16 @@ model Restaurant {
     closing_hour_sat Int
     opening_hour_sun Int
     closing_hour_sun Int
-    top_dish         Dishes?  @relation("Top_dish", fields: [top_dish_id], references: [dish_id])
+    top_dish         Dish?    @relation("Top_dish", fields: [top_dish_id], references: [dish_id])
     favs1            User[]   @relation("Fav_rest_1")
     favs2            User[]   @relation("Fav_rest_2")
     favs3            User[]   @relation("Fav_rest_3")
-    menu             Dishes[] @relation("Menu")
+    menu             Dish[]   @relation("Menu")
     address          Address? @relation(fields: [address_id], references: [address_id])
     Review           Review[]
 }
 
-model Dishes {
+model Dish {
     dish_id       Int         @id @default(autoincrement())
     name          String
     description   String
