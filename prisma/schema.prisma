@@ -9,7 +9,7 @@ datasource db {
 
 model User {
     // required by Next-Auth
-    id             String          @id @default(cuid()) @map("user_id")
+    id             String          @id @default(cuid())
     name           String?
     email          String          @unique
     emailVerified  DateTime?
@@ -37,7 +37,7 @@ model User {
 }
 
 model Restaurant {
-    id               Int      @id @default(autoincrement()) @map("restaurant_id")
+    id               Int      @id @default(autoincrement())
     name             String   @unique
     address_id       Int?     @unique
     description      String
@@ -56,17 +56,17 @@ model Restaurant {
     closing_hour_sat Int
     opening_hour_sun Int
     closing_hour_sun Int
-    top_dish         Dishes?  @relation("Top_dish", fields: [top_dish_id], references: [id])
+    top_dish         Dish?    @relation("Top_dish", fields: [top_dish_id], references: [id])
     favs1            User[]   @relation("Fav_rest_1")
     favs2            User[]   @relation("Fav_rest_2")
     favs3            User[]   @relation("Fav_rest_3")
-    menu             Dishes[] @relation("Menu")
+    menu             Dish[]   @relation("Menu")
     address          Address? @relation(fields: [address_id], references: [id])
     Review           Review[]
 }
 
-model Dishes {
-    id            Int         @id @default(autoincrement()) @map("dish_id")
+model Dish {
+    id            Int         @id @default(autoincrement())
     name          String
     description   String
     price         Int
@@ -76,7 +76,7 @@ model Dishes {
 }
 
 model Address {
-    id          Int         @id @default(autoincrement()) @map("address_id")
+    id          Int         @id @default(autoincrement())
     name        String      @unique
     X_coords    Decimal
     Y_coords    Decimal
@@ -84,7 +84,7 @@ model Address {
 }
 
 model Review {
-    id               Int        @id @default(autoincrement()) @map("review_id")
+    id               Int        @id @default(autoincrement())
     content          String
     restaurant_id    Int
     points           Int
@@ -96,7 +96,7 @@ model Review {
 }
 
 model Follow {
-    id       Int    @id @default(autoincrement()) @map("follow_id")
+    id       Int    @id @default(autoincrement())
     who_sent String @unique
     to_who   String @unique
     sent     User   @relation("sent_fw", fields: [who_sent], references: [id], map: "sent_fw_FK")

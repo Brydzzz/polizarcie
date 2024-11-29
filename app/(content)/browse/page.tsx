@@ -31,6 +31,7 @@ const SearchPage = () => {
         placeholder="Co byś dziś przekąsił?"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onCancelButtonClick={() => setInput("")}
       />
       <div className={styles.matrix}>
         <div className={styles.column}>

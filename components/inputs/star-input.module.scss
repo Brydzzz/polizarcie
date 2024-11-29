@@ -5,6 +5,8 @@
   font-size: 18pt;
   gap: 5px;
   color: var(--secondary);
+  width: fit-content;
+  height: fit-content;
 
   .star {
     &:hover {
