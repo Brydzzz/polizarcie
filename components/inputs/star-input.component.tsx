@@ -10,9 +10,18 @@ type Props = {
   max: number;
   onChange?: (value: number) => void;
   disabled?: boolean;
+  size: number;
 };
 
-const StarInput = ({ id, name, value, max, onChange, disabled }: Props) => {
+const StarInput = ({
+  id,
+  name,
+  value,
+  max,
+  onChange,
+  disabled,
+  star_size,
+}: Props) => {
   const [stars, setStars] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -31,7 +40,12 @@ const StarInput = ({ id, name, value, max, onChange, disabled }: Props) => {
   return (
     <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       {stars.map((star, i) => (
-        <span key={i} className={styles.star} onClick={() => handleClick(i)}>
+        <span
+          key={i}
+          className={styles.star}
+          onClick={() => handleClick(i)}
+          style={{ fontSize: star_size }}
+        >
           {star ? (
             <i className="fa-solid fa-star"></i>
           ) : (
@@ -46,6 +60,7 @@ const StarInput = ({ id, name, value, max, onChange, disabled }: Props) => {
         type="number"
         value={value}
         disabled
+        star_size={star_size}
       />
     </div>
   );
