@@ -90,6 +90,7 @@ async function initData() {
   const users = [
     {
       user_id: 1,
+      login: "@balbi",
       name: "Balbinka",
       email: "balbinka@gmail.com",
       gender: "F",
@@ -99,6 +100,7 @@ async function initData() {
     {
       user_id: 3,
       name: "Brygida",
+      login: "@brydzz",
       email: "brygida@gmail.com",
       gender: "F",
       meeting_status: false,
@@ -107,6 +109,7 @@ async function initData() {
     {
       user_id: 2,
       name: "Mateusz",
+      login: "@mati04",
       email: "mateusz@gmail.com",
       gender: "M",
       meeting_status: false,
@@ -121,37 +124,33 @@ async function initData() {
     });
   }
 
-
-
-
-
   const reviews = [
     {
       review_id: 1,
       content: "Wybitny kebab",
-      restaurant_id:   5,
-      points:    5,
+      restaurant_id: 5,
+      points: 5,
       spent_per_person: 23,
-      date: new Date('2024-11-25'),
-      who_wrote : 1
+      date: new Date("2024-11-25"),
+      who_wrote: 1,
     },
     {
       review_id: 2,
       content: "Nawet nienajgorszy",
-      restaurant_id:   5,
-      points:    4,
+      restaurant_id: 5,
+      points: 4,
       spent_per_person: 26,
-      date: new Date('2024-10-19'),
-      who_wrote : 2
+      date: new Date("2024-10-19"),
+      who_wrote: 2,
     },
     {
       review_id: 3,
       content: "Obrzydliwy! Już nigdy tam nie zjem!",
-      restaurant_id:   5,
-      points:    1,
+      restaurant_id: 5,
+      points: 1,
       spent_per_person: 20,
-      date: new Date('2024-10-31'),
-      who_wrote : 3
+      date: new Date("2024-10-31"),
+      who_wrote: 3,
     },
   ];
   for (const review of reviews) {
@@ -161,8 +160,6 @@ async function initData() {
       create: review,
     });
   }
-
-
 
   await prisma.restaurant.upsert({
     where: {
@@ -291,7 +288,6 @@ async function initData() {
       name: "Amman Kebab",
     },
   });
-
 }
 
 initData()
@@ -303,4 +299,3 @@ initData()
     await prisma.$disconnect();
     process.exit(1);
   });
-
