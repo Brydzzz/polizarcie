@@ -7,6 +7,7 @@
   justify-content: flex-start;
   flex-direction: column;
   padding-top: 100px;
+  overflow: hidden;
 
   & > h1 {
     font-family: "Gluten";
@@ -21,11 +22,14 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: '20px';
+    margin-top: 40px;
 
-    & > ul   {
-          padding: 0;
+    & > .column   {
+          padding: 20px;
           width: '100%';
+          display: flex;
+          flex-direction: column;
+          row-gap: 25px;
     };
 
   };

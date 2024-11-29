@@ -1,17 +1,11 @@
-"use client"
+"use client";
 
-import Searchbar from "@/components/inputs/searchbar.component";
-import styles from "./page.module.scss";
-import { get_restaurants } from "@/actions/get_restaurants";
-import { useState, useEffect } from "react";
-import { Restaurant } from "@prisma/client";
 import { get_restaurants_by_name } from "@/actions/get_restaurants_by_name";
-import Button from "@/components/button/button.component";
-import {
-  ButtonColor,
-  ButtonSize,
-  ButtonStyle,
-} from "@/components/button/button.types";
+import RestaurantCard from "@/components/cards/restaurant-card.component";
+import Searchbar from "@/components/inputs/searchbar.component";
+import { Restaurant } from "@prisma/client";
+import { useEffect, useState } from "react";
+import styles from "./page.module.scss";
 
 const SearchPage = () => {
   const [rests, updateRestaurants] = useState<Restaurant[]>([]);
@@ -21,30 +15,35 @@ const SearchPage = () => {
       const data = await get_restaurants_by_name(input);
       updateRestaurants(data);
       return data;
-    }
+    };
     update();
-
-  }, [input])
+  }, [input]);
   const middleIndex = Math.ceil(rests.length / 2);
-  const [first_half, second_half] = [rests.slice(0, middleIndex), rests.slice(middleIndex)];
+  const [first_half, second_half] = [
+    rests.slice(0, middleIndex),
+    rests.slice(middleIndex),
+  ];
   return (
     <main className={styles.container}>
       <h1>Jedzonko w okolicy</h1>
-      <Searchbar id="search" placeholder="Co byś dziś przekąsił?" value={input} onChange={(e) => setInput(e.target.value)} />
+      <Searchbar
+        id="search"
+        placeholder="Co byś dziś przekąsił?"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
       <div className={styles.matrix}>
-      <ul>
-        {first_half.map((rest, index) => (
-          <li key = {index}><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{rest.name}</Button>  </li>
-        ))}
-      </ul>
-      <ul>
-        {second_half.map((rest, index) => (
-          <li key = {index}><Button style={ButtonStyle.OUTLINE} color={ButtonColor.TEXT} size={ButtonSize.LARGE}>{rest.name}</Button>  </li>
-        ))}
-        </ul>
+        <div className={styles.column}>
+          {first_half.map((rest, index) => (
+            <RestaurantCard key={index} data={rest}></RestaurantCard>
+          ))}
         </div>
-
-
+        <div className={styles.column}>
+          {second_half.map((rest, index) => (
+            <RestaurantCard key={index} data={rest}></RestaurantCard>
+          ))}
+        </div>
+      </div>
     </main>
   );
 };
