@@ -46,6 +46,7 @@ const MapView = ({ X_coord, Y_coord }: Props) => {
       view: new View({
         center: place,
         zoom: 18,
+        rotation: 0,
       }),
       layers: [
         new TileLayer({ source: new OSM() }),
@@ -56,9 +57,9 @@ const MapView = ({ X_coord, Y_coord }: Props) => {
         }),
       ],
       controls: defaultControls({
-        zoom: true, // Enable zoom controls
-        attribution: true, // Disable attribution control
-        rotate: true, // Enable rotation control
+        zoom: true,
+        attribution: true,
+        rotate: false,
       }),
     });
 
