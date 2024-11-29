@@ -2,19 +2,6 @@ import { prisma } from "../utils/prisma";
 
 async function initData() {
   // TODO add some actual database initialization
-  await prisma.user.upsert({
-    update: {},
-    create: {
-      name: "Balbinka",
-      email: "balbinka@gmail.com",
-      gender: "F",
-      meeting_status: false,
-      points: 0,
-    },
-    where: {
-      email: "balbinka@gmail.com",
-    },
-  });
   const addresses = [
     {
       address_id: 1,
@@ -78,14 +65,14 @@ async function initData() {
       restaurant_id: 5,
     },
     {
-      dish_id: 3,
+      dish_id: 4,
       name: "Talerz kebab",
       description: "Baranina/wołowina, sórówkai i frytki razem na talerzu",
       price: 30,
       restaurant_id: 5,
     },
     {
-      dish_id: 3,
+      dish_id: 5,
       name: "Fryto kebab",
       description: "Baranina/wołowina, sórówka i, frytki, w picie",
       price: 25,
@@ -100,6 +87,42 @@ async function initData() {
     });
   }
 
+  const users = [
+    {
+      user_id: 1,
+      name: "Balbinka",
+      email: "balbinka@gmail.com",
+      gender: "F",
+      meeting_status: false,
+      points: 0,
+    },
+    {
+      user_id: 3,
+      name: "Brygida",
+      email: "brygida@gmail.com",
+      gender: "F",
+      meeting_status: false,
+      points: 0,
+    },
+    {
+      user_id: 2,
+      name: "Mateusz",
+      email: "mateusz@gmail.com",
+      gender: "M",
+      meeting_status: false,
+      points: 0,
+    },
+  ];
+  for (const user of users) {
+    await prisma.user.upsert({
+      where: { user_id: user.user_id },
+      update: user,
+      create: user,
+    });
+  }
+
+
+
 
 
   const reviews = [
@@ -109,7 +132,7 @@ async function initData() {
       restaurant_id:   5,
       points:    5,
       spent_per_person: 23,
-      date: '2024-11-25',
+      date: new Date('2024-11-25'),
       who_wrote : 1
     },
     {
@@ -118,7 +141,7 @@ async function initData() {
       restaurant_id:   5,
       points:    4,
       spent_per_person: 26,
-      date: '2024-10-19',
+      date: new Date('2024-10-19'),
       who_wrote : 2
     },
     {
@@ -127,7 +150,7 @@ async function initData() {
       restaurant_id:   5,
       points:    1,
       spent_per_person: 20,
-      date: '2024-10-31',
+      date: new Date('2024-10-31'),
       who_wrote : 3
     },
   ];
@@ -269,6 +292,8 @@ async function initData() {
     },
   });
 
+}
+
 initData()
   .then(async () => {
     await prisma.$disconnect();
@@ -278,4 +303,4 @@ initData()
     await prisma.$disconnect();
     process.exit(1);
   });
-}
+
