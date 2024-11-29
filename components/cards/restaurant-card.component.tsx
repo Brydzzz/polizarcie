@@ -1,17 +1,19 @@
 import { Address, Restaurant } from "@prisma/client";
 import { MouseEventHandler } from "react";
+import Link from "next/link";
 import styles from "./restaurant-card.module.scss";
 
 type Props = {
   data: Partial<Restaurant & { address: Partial<Address> }>;
-  onClickCard?: MouseEventHandler;
   onClickAddress?: MouseEventHandler;
 };
 
-const RestaurantCard = ({ data, onClickCard, onClickAddress }: Props) => {
+
+const RestaurantCard = ({ data, onClickAddress }: Props) => {
   const { name, address, description } = data;
   return (
-    <div className={styles.container} onClick={onClickCard}>
+    <Link href={`/restaurant/${data.restaurant_id}`}>
+    <div className={styles.container}>
       <div className={styles.photo}>
         <p>Restaurant Photo</p>
       </div>
@@ -23,6 +25,7 @@ const RestaurantCard = ({ data, onClickCard, onClickAddress }: Props) => {
         <p className={styles.description}>{description}</p>
       </div>
     </div>
+    </Link>
   );
 };
 
