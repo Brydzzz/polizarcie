@@ -6,6 +6,7 @@ import {
   ButtonStyle,
 } from "@/components/button/button.types";
 import StarInput from "@/components/inputs/star-input.component";
+import MapView from "@/components/map-view.component";
 import { get_restaurant_by_id } from "@/utils/prisma/restaurants";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
@@ -89,11 +90,15 @@ const RestaurantPage = () => {
           <i className="fa-regular fa-heart fa-3x"></i>
         </span>
       </div>
-
       <div className={styles.content}>
         <div className={styles.column}>
           {/* TODO: embed open street map view */}
-          <div className={styles.mapContainer}>Map</div>
+          <div className={styles.mapContainer}>
+            <MapView
+              X_coord={Number(restaurant?.address?.X_coords)}
+              Y_coord={Number(restaurant?.address?.Y_coords)}
+            ></MapView>
+          </div>
         </div>
         <div className={styles.column}>
           <div className={styles.rating}>
