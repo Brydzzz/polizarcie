@@ -10,7 +10,7 @@ type Props = {
   max: number;
   onChange?: (value: number) => void;
   disabled?: boolean;
-  size: number;
+  starSize?: string;
 };
 
 const StarInput = ({
@@ -20,7 +20,7 @@ const StarInput = ({
   max,
   onChange,
   disabled,
-  star_size,
+  starSize,
 }: Props) => {
   const [stars, setStars] = useState<boolean[]>([]);
 
@@ -44,7 +44,7 @@ const StarInput = ({
           key={i}
           className={styles.star}
           onClick={() => handleClick(i)}
-          style={{ fontSize: star_size }}
+          style={{ fontSize: starSize }}
         >
           {star ? (
             <i className="fa-solid fa-star"></i>
@@ -60,7 +60,6 @@ const StarInput = ({
         type="number"
         value={value}
         disabled
-        star_size={star_size}
       />
     </div>
   );
