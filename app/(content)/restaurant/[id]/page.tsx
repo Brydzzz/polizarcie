@@ -89,6 +89,7 @@ const RestaurantPage = () => {
 
       <div className={styles.content}>
         <div className={styles.column}>
+            {/* TODO: embed open street map view */}
           <div className={styles.mapContainer}>Map</div>
         </div>
         <div className={styles.column}>
