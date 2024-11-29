@@ -13,7 +13,6 @@ const SearchPage = () => {
   useEffect(() => {
     const update = async () => {
       const data = await get_restaurants_by_name(input);
-      console.log(data)
       updateRestaurants(data);
       return data;
     };
@@ -32,6 +31,7 @@ const SearchPage = () => {
         placeholder="Co byś dziś przekąsił?"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onCancelButtonClick={() => setInput("")}
       />
       <div className={styles.matrix}>
         <div className={styles.column}>
