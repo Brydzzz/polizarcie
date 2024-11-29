@@ -28,5 +28,6 @@ export async function get_restaurant_by_id(id: number) {
   if (!data) {
     throw new Error(`Restaurant with ID ${id} not found`);
   }
-  return data;
+
+  return JSON.stringify(data);
 }
