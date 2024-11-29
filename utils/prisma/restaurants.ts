@@ -17,13 +17,16 @@ export async function get_restaurants_like(like: string) {
 }
 
 export async function get_restaurant_by_id(id: number) {
-  const restaurant = await prisma.restaurant.findUnique({
+  const data = await prisma.restaurant.findUnique({
     where: {
       restaurant_id: id,
     },
+    include: {
+      address: true,
+    },
   });
-  if (!restaurant) {
+  if (!data) {
     throw new Error(`Restaurant with ID ${id} not found`);
   }
-  return restaurant;
+  return data;
 }
