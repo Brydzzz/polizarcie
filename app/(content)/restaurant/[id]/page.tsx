@@ -85,11 +85,14 @@ const RestaurantPage = () => {
       <div className={styles.header}>
         <p>{restaurant?.name}</p>
         {/* TODO: heart input for adding to favorite restaurants */}
+        <span>
+          <i className="fa-regular fa-heart fa-3x"></i>
+        </span>
       </div>
 
       <div className={styles.content}>
         <div className={styles.column}>
-            {/* TODO: embed open street map view */}
+          {/* TODO: embed open street map view */}
           <div className={styles.mapContainer}>Map</div>
         </div>
         <div className={styles.column}>

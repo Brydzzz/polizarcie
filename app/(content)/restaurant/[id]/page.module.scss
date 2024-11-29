@@ -11,10 +11,21 @@
   padding: 60px;
 
   & > .header {
-    font-family: "Chivo";
-    color: var(--text);
-    font-size: 36pt;
-    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 25px;
+
+    & > p {
+      font-family: "Chivo";
+      color: var(--text);
+      font-size: 36pt;
+      text-align: left;
+    }
+    & > span {
+        color: var(--primary)
+    }
   }
 }
 
