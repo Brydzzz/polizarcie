@@ -1,0 +1,27 @@
+.restaurantPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding: 60px;
+
+  & > .header {
+    font-family: "Chivo";
+    color: var(--text);
+    font-size: 36pt;
+    text-align: left;
+  }
+}
+
+.content {
+    & > .rating {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        column-gap: 10px;
+    }
+}
+
