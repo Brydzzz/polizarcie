@@ -13,6 +13,7 @@ const SearchPage = () => {
   useEffect(() => {
     const update = async () => {
       const data = await get_restaurants_by_name(input);
+      console.log(data)
       updateRestaurants(data);
       return data;
     };
