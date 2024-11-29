@@ -8,21 +8,27 @@ import styles from "./page.module.scss";
 
 const RestaurantPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [restaurant, setRestaurant] =
-    useState<Restaurant & { address: Partial<Address> | null }>();
+  const [restaurant, setRestaurant] = useState<
+    Restaurant & { address: Partial<Address> | null }
+  >();
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const data = await get_restaurant_by_id(Number(id));
+        const data_str = await get_restaurant_by_id(Number(id));
+        const data = JSON.parse(data_str);
         setRestaurant(data);
+        setLoading(false);
       } catch (err: unknown) {
         setError((err as Error).message);
       }
     };
     fetchRestaurant();
   }, [id]);
+  if (loading) return <div>Loading...</div>;
+
   if (error) return <div>Error: {error}</div>;
   return (
     <main className={styles.restaurantPage}>
