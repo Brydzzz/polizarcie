@@ -6,32 +6,32 @@ async function initData() {
     {
       address_id: 1,
       name: "Marszałkowska 55/73, 00-676 Warszawa",
-      X_coords: 52.22384809269264,
-      Y_coords: 21.014972257671275,
+      X_coords: 21.0148725,
+      Y_coords: 52.2237223,
     },
     {
       address_id: 2,
       name: "999, Lwowska 1, 00-660 Warszawa",
-      X_coords: 52.222647666815845,
-      Y_coords: 21.011307754440278,
+      Y_coords: 52.2204328,
+      X_coords: 21.0119943,
     },
     {
       address_id: 3,
       name: "Lwowska 1, 00-660 Warszawa",
-      X_coords: 52.22252816861938,
-      Y_coords: 21.0111360496488,
+      Y_coords: 52.2204523,
+      X_coords: 21.0117746,
     },
     {
       address_id: 4,
       name: "Marszałkowska 28, 00-576 Warszawa",
-      X_coords: 52.21953492198973,
-      Y_coords: 21.018708227263527,
+      Y_coords: 52.2189224,
+      X_coords: 21.0187853,
     },
     {
       address_id: 5,
       name: "Jana i Jędrzeja Śniadeckich 23, 00-654 Warszawa",
-      X_coords: 52.22049482276576,
-      Y_coords: 21.0120639520506,
+      Y_coords: 52.220232,
+      X_coords: 21.0128405,
     },
   ];
   for (const address of addresses) {
