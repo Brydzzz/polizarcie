@@ -2,11 +2,13 @@
 
 import { ComponentProps, useState } from "react";
 import Input from "./generic-input.component";
+import { InputSize, InputStyle } from "./input.types";
 import styles from "./password-input.module.scss";
 
 type Props = Omit<ComponentProps<typeof Input>, "type">;
 
 const PasswordInput = (props: Props) => {
+  const { style, size } = props;
   const [visible, setVisible] = useState(false);
 
   const toggleVisible = (toggle: boolean) => {
@@ -14,7 +16,11 @@ const PasswordInput = (props: Props) => {
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${
+        styles[style || InputStyle.INPUT_LIKE]
+      } ${styles[size || InputSize.SMALL]}`}
+    >
       <Input type={visible ? "text" : "password"} {...props} />
       <span
         className={`${styles.eye} ${props.disabled ? styles.disabled : ""}`}

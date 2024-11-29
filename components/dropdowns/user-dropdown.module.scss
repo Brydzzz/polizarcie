@@ -1,0 +1,49 @@
+.container {
+  position: relative;
+
+  .icon {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .dropdown {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translate(0, calc(100% - 10px));
+    padding-bottom: 10px;
+    min-width: 200px;
+    background-color: var(--background-light);
+    z-index: 2;
+    border-radius: 0 0 0 10px;
+    font-size: 16pt;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+
+    &.hidden {
+      display: none;
+    }
+
+    & > h2 {
+      font-size: 16pt;
+      white-space: nowrap;
+      color: var(--primary);
+      padding: 20px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--primary);
+    }
+
+    .item {
+      width: 100%;
+      padding: 10px 20px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: var(--primary);
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 "use client";
 
 import { MouseEventHandler } from "react";
+import { InputSize, InputStyle } from "./input.types";
 import styles from "./searchbar.module.scss";
-import { SearchbarSize, SearchbarStyle } from "./searchbar.types";
 
 type Props = Omit<
   React.ComponentProps<"input">,
@@ -11,8 +11,8 @@ type Props = Omit<
   onCancelButtonClick?: MouseEventHandler;
   onSubmitButtonClick?: MouseEventHandler;
   onFilterButtonClick?: MouseEventHandler;
-  style?: SearchbarStyle;
-  size?: SearchbarSize;
+  style?: InputStyle;
+  size?: InputSize;
   filters?: boolean;
 };
 
@@ -33,8 +33,8 @@ const Searchbar = ({
 }: Props) => {
   return (
     <div
-      className={`${styles.container} ${styles[style || SearchbarStyle.HERO]} ${
-        styles[size || SearchbarSize.LARGE]
+      className={`${styles.container} ${styles[style || InputStyle.HERO]} ${
+        styles[size || InputSize.LARGE]
       }
         `}
     >

@@ -12,6 +12,7 @@
     transition: all 0.5s;
     box-sizing: border-box;
     user-select: none;
+    outline: none;
 
     &.small {
       font-size: 12pt;
@@ -63,8 +64,10 @@
       }
     }
 
-    &:hover {
+    &:hover,
+    &:focus {
       cursor: pointer;
+      transform: scale(0.95);
     }
 
     &:disabled {

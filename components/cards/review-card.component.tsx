@@ -11,7 +11,10 @@ type Props = {
   onClickRestaurant?: MouseEventHandler;
 };
 
-function formatDate(date: Date) {
+function formatDate(date: Date | undefined) {
+  if (!date) {
+    return "undefined";
+  }
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
@@ -33,12 +36,10 @@ const ReviewCard = ({ data, onClickUser, onClickRestaurant }: Props) => {
       </div>
       <div className={styles.details}>
         <p className={styles.user} onClick={onClickUser}>
-          {user?.login}
+          {user?.name}
         </p>
         <div className={styles.stars}>
-          <StarInput value={points} max={5} star_size={25} disabled>
-            {points}
-          </StarInput>
+          <StarInput value={points || 0} max={5} starSize={"25pt"} disabled />
         </div>
         <p
           className={styles.spent_per_person}

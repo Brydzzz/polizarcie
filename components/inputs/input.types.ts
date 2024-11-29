@@ -1,10 +1,10 @@
-export enum SearchbarStyle {
+export enum InputStyle {
   INPUT_LIKE = "input-like",
   HERO = "hero",
 }
 
-export enum SearchbarSize {
+export enum InputSize {
   SMALL = "small",
-  NORMAL = "normal",
+  MEDIUM = "normal",
   LARGE = "large",
 }

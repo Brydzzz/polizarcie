@@ -15,6 +15,9 @@
   --primary-background-fade-1: #bc564d;
   --primary-background-fade-2: #743745;
   --error: #c33149;
+
+  --github-color: #2b3137;
+  --google-color: #174ea6;
 }
 
 html,
@@ -57,6 +60,10 @@ a {
   align-items: center;
   flex-direction: column;
   gap: 20px;
+}
+
+.error {
+  color: var(--error);
 }
 
 button {
