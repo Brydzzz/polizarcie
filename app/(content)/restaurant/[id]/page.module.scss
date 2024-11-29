@@ -16,11 +16,12 @@
     justify-content: flex-start;
     align-items: center;
     gap: 25px;
+    padding-left: 20px;
 
     & > p {
       font-family: "Chivo";
       color: var(--text);
-      font-size: 36pt;
+      font-size: 30pt;
       text-align: left;
     }
     & > span {
@@ -41,7 +42,10 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+
+    & > .mapContainer {
+        height: 300px;
+    }
 
     & > .rating {
       display: flex;

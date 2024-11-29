@@ -87,12 +87,11 @@ const RestaurantPage = () => {
         <p>{restaurant?.name}</p>
         {/* TODO: heart input for adding to favorite restaurants */}
         <span>
-          <i className="fa-regular fa-heart fa-3x"></i>
+          <i className="fa-regular fa-heart fa-2x"></i>
         </span>
       </div>
       <div className={styles.content}>
         <div className={styles.column}>
-          {/* TODO: embed open street map view */}
           <div className={styles.mapContainer}>
             <MapView
               X_coord={Number(restaurant?.address?.X_coords)}
