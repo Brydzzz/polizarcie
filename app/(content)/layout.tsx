@@ -1,4 +1,5 @@
 import MainHeader from "@/components/headers/main-header.component";
+import { SessionProvider } from "next-auth/react";
 
 export default function ContentLayout({
   children,
@@ -6,9 +7,9 @@ export default function ContentLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <SessionProvider>
       <MainHeader />
       {children}
-    </>
+    </SessionProvider>
   );
 }

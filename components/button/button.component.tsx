@@ -1,6 +1,6 @@
 "use client";
 
-import { MouseEventHandler, ReactNode } from "react";
+import { ComponentProps, MouseEventHandler, ReactNode } from "react";
 import styles from "./button.module.scss";
 import { ButtonColor, ButtonSize, ButtonStyle } from "./button.types";
 
@@ -11,7 +11,7 @@ type Props = {
   color?: ButtonColor;
   size?: ButtonSize;
   disabled?: boolean;
-};
+} & Pick<ComponentProps<"button">, "type">;
 
 const Button = ({ children, onClick, style, color, size, disabled }: Props) => {
   return (

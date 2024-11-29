@@ -8,27 +8,36 @@ datasource db {
 }
 
 model User {
-    user_id        Int         @id @default(autoincrement())
-    name           String
-    email          String      @unique
-    gender         String
+    // required by Next-Auth
+    id             String          @id @default(cuid()) @map("user_id")
+    name           String?
+    email          String          @unique
+    emailVerified  DateTime?
+    image          String?
+    accounts       Account[]
+    sessions       Session[]
+    Authenticator  Authenticator[]
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    // Custom
+    gender         String?
     pref_gend      String?
-    meeting_status Boolean
+    meeting_status Boolean         @default(false)
     media_link     String?
     fav_rest_id_1  Int?
     fav_rest_id_2  Int?
     fav_rest_id_3  Int?
-    points         Int
-    fav_rest_1     Restaurant? @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [restaurant_id], map: "fav_rest_1_FK")
-    fav_rest_2     Restaurant? @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [restaurant_id], map: "fav_rest_2_FK")
-    fav_rest_3     Restaurant? @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [restaurant_id], map: "fav_rest_3_FK")
+    points         Int             @default(0)
+    fav_rest_1     Restaurant?     @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [id], map: "fav_rest_1_FK")
+    fav_rest_2     Restaurant?     @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [id], map: "fav_rest_2_FK")
+    fav_rest_3     Restaurant?     @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [id], map: "fav_rest_3_FK")
     Review         Review[]
-    sent_fw        Follow?     @relation("sent_fw")
-    reciewv        Follow?     @relation("to_who")
+    sent_fw        Follow?         @relation("sent_fw")
+    reciewv        Follow?         @relation("to_who")
 }
 
 model Restaurant {
-    restaurant_id    Int      @id @default(autoincrement())
+    id               Int      @id @default(autoincrement()) @map("restaurant_id")
     name             String   @unique
     address_id       Int?     @unique
     description      String
@@ -47,27 +56,27 @@ model Restaurant {
     closing_hour_sat Int
     opening_hour_sun Int
     closing_hour_sun Int
-    top_dish         Dishes?  @relation("Top_dish", fields: [top_dish_id], references: [dish_id])
+    top_dish         Dishes?  @relation("Top_dish", fields: [top_dish_id], references: [id])
     favs1            User[]   @relation("Fav_rest_1")
     favs2            User[]   @relation("Fav_rest_2")
     favs3            User[]   @relation("Fav_rest_3")
     menu             Dishes[] @relation("Menu")
-    address          Address? @relation(fields: [address_id], references: [address_id])
+    address          Address? @relation(fields: [address_id], references: [id])
     Review           Review[]
 }
 
 model Dishes {
-    dish_id       Int         @id @default(autoincrement())
+    id            Int         @id @default(autoincrement()) @map("dish_id")
     name          String
     description   String
     price         Int
     restaurant_id Int
-    restid        Restaurant  @relation("Menu", fields: [restaurant_id], references: [restaurant_id])
+    restid        Restaurant  @relation("Menu", fields: [restaurant_id], references: [id])
     top_dish_in   Restaurant? @relation("Top_dish")
 }
 
 model Address {
-    address_id  Int         @id @default(autoincrement())
+    id          Int         @id @default(autoincrement()) @map("address_id")
     name        String      @unique
     X_coords    Decimal
     Y_coords    Decimal
@@ -75,21 +84,77 @@ model Address {
 }
 
 model Review {
-    review_id        Int        @id @default(autoincrement())
+    id               Int        @id @default(autoincrement()) @map("review_id")
     content          String
     restaurant_id    Int
     points           Int
     spent_per_person Int
     date             DateTime
-    who_wrote        Int
-    wrote            User       @relation(fields: [who_wrote], references: [user_id])
-    restaurant       Restaurant @relation(fields: [restaurant_id], references: [restaurant_id])
+    who_wrote        String
+    wrote            User       @relation(fields: [who_wrote], references: [id])
+    restaurant       Restaurant @relation(fields: [restaurant_id], references: [id])
 }
 
 model Follow {
-    follow_id Int  @id @default(autoincrement())
-    who_sent  Int  @unique
-    to_who    Int  @unique
-    sent      User @relation("sent_fw", fields: [who_sent], references: [user_id], map: "sent_fw_FK")
-    to        User @relation("to_who", fields: [who_sent], references: [user_id], map: "to_who_FK")
+    id       Int    @id @default(autoincrement()) @map("follow_id")
+    who_sent String @unique
+    to_who   String @unique
+    sent     User   @relation("sent_fw", fields: [who_sent], references: [id], map: "sent_fw_FK")
+    to       User   @relation("to_who", fields: [who_sent], references: [id], map: "to_who_FK")
+}
+
+// Required by Next-Auth
+model Account {
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String?
+    access_token      String?
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String?
+    session_state     String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([provider, providerAccountId])
+}
+
+model Session {
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@id([identifier, token])
+}
+
+// Optional for WebAuthn support
+model Authenticator {
+    credentialID         String  @unique
+    userId               String
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId, credentialID])
 }
