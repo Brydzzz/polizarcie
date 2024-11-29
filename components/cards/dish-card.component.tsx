@@ -4,7 +4,6 @@ type Props = {
   data: Partial<Dish>;
 };
 
-
 const DishCard = ({ data }: Props) => {
   const { name, description, price } = data;
   return (
@@ -13,12 +12,11 @@ const DishCard = ({ data }: Props) => {
         <p className={styles.name}>{name}</p>
         <p className={styles.description}>{description}</p>
       </div>
-      <div>
+      <div className={styles.right}>
         <p className={styles.price}>{`${price} zł`}</p>
       </div>
     </div>
   );
 };
-
 
 export default DishCard;
