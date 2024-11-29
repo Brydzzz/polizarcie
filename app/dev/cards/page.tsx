@@ -1,5 +1,6 @@
+import DishCard from "@/components/cards/dish-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
-import { Address, Restaurant } from "@prisma/client";
+import { Address, Dish, Restaurant } from "@prisma/client";
 
 const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
   {
@@ -20,6 +21,14 @@ const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
   },
 ];
 
+const TEST_DISH: Partial<Dish>[] = [
+  {
+    name: "Kebab średni",
+    description: "Baranina/Kurczak, surówka, pita, sosy",
+    price: 23
+  }
+];
+
 const CardPage = () => {
   return (
     <div
@@ -29,6 +38,9 @@ const CardPage = () => {
       <div className="centralized-y" style={{ width: "600px" }}>
         {TEST_REST.map((rest, i) => (
           <RestaurantCard key={i} data={rest}></RestaurantCard>
+        ))}
+        {TEST_DISH.map((dish, i) => (
+          <DishCard key = {i} data = {dish}></DishCard>
         ))}
       </div>
     </div>

@@ -1,0 +1,57 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  --bg-local: var(--background-light);
+  border: 2px solid var(--primary-dark);
+  border-radius: 8px;
+  min-width: 300px;
+  width: 100%;
+  height: 135px;
+}
+
+
+.details {
+  padding-top: 20px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 20px;
+  flex: 0 0 75%;
+  display: flex;
+  flex-direction: column;
+  justify-content: top;
+  overflow: hidden;
+}
+
+.name {
+  font-size: 1.7rem;
+  margin: 0;
+  color: var(--text);
+  padding-bottom: 7px;
+  width: 100%;
+}
+
+.description {
+  font-size: 1rem;
+  align-content: center;
+  flex-direction: row;
+  margin: 0;
+  color: var(--text);
+  width: 100%;
+}
+
+
+.price {
+  align-self: flex-end;
+  font-size: 1.8rem;
+  text-align: right;
+  align-content: top;
+  margin: 0;
+  color: var(--text);
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 10px;
+  padding-top: 20px;
+  width: 100%;
+  height: 20px;
+}
