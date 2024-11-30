@@ -67,3 +67,19 @@ export async function fetchRestaurantBySlug(slug: string) {
 
   return JSON.stringify(data);
 }
+
+export async function fetchMenuByRestaurantId(id: string) {
+  const data = await prisma.dish.findMany({
+    select: {
+      name: true,
+      description: true,
+      price: true,
+      type: true
+    },
+    where: {
+      restaurantId: id,
+    },
+    orderBy: { type: "asc" },
+  });
+  return JSON.stringify(data);
+}
