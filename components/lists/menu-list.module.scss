@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px;
+  border-radius: 20px;
+
+  .dishCategory {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-bottom: 40px;
+    padding: 20px;
+    row-gap: 15px;
+    & > p {
+      font-family: "Gluten";
+      font-size: 34pt;
+    }
+    .dishList {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      row-gap: 20px;
+    }
+  }
+}
