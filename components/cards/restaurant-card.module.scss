@@ -8,7 +8,7 @@
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
   min-width: 135px;
   width: 100%;
-  height: 135px;
+  height: 150px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
@@ -38,8 +38,7 @@
   flex: 0 0 75%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  overflow: hidden; /* TODO find better way to handle overflow */
+  justify-content: flex-start;
 }
 
 .name {
@@ -66,4 +65,11 @@
   --text-secondary: #b8b6b5;
   color: var(--text-secondary);
   padding: 2px;
+  display: -webkit-box;
+  --lines-number: 2;
+  line-clamp: var(--lines-number);
+  -webkit-line-clamp: var(--lines-number);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

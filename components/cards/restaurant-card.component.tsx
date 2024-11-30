@@ -21,7 +21,9 @@ const RestaurantCard = ({ data, onClickAddress }: Props) => {
           <p className={styles.address} onClick={onClickAddress}>
             {address?.name}
           </p>
-          <p className={styles.description}>{description}</p>
+          <div className={styles.description}>
+            <p>{description}</p>
+          </div>
         </div>
       </div>
     </Link>
