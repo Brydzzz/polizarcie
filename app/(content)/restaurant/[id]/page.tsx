@@ -81,6 +81,8 @@ const RestaurantPage = () => {
     },
   ];
 
+  console.log(hours);
+
   return (
     <main className={styles.restaurantPage}>
       <div className={styles.header}>
@@ -118,13 +120,19 @@ const RestaurantPage = () => {
             <ul>
               {hours.map((hour, index) => (
                 <li key={index}>
-                  <div className={styles.open_hours}>
+                  <div className={styles.openHours}>
                     <p>
                       <strong>{hour.day}:</strong>
-                    </p>
-                    <p>
-                      {hour.opening?.getTime()}:00 - {hour.closing?.getTime()}
-                      :00
+                      &nbsp;
+                      {new Date(hour.opening || "").toLocaleTimeString("pl", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                      -
+                      {new Date(hour.closing || "").toLocaleTimeString("pl", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
                 </li>
