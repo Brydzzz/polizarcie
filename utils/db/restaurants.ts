@@ -2,7 +2,7 @@
 
 import { prisma } from "@/utils/prisma";
 
-export async function get_all_restaurants() {
+export async function fetchAllRestaurants() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
       address: {
@@ -15,7 +15,7 @@ export async function get_all_restaurants() {
   return restaurants;
 }
 
-export async function get_restaurants_like(like: string) {
+export async function fetchRestaurantsLike(like: string) {
   const restaurants = await prisma.restaurant.findMany({
     include: {
       address: {
@@ -36,7 +36,7 @@ export async function get_restaurants_like(like: string) {
   return restaurants;
 }
 
-export async function get_restaurant_by_id(id: number) {
+export async function fetchRestaurantById(id: string) {
   const data = await prisma.restaurant.findUnique({
     where: {
       id: id,

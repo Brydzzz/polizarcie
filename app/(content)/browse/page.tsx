@@ -1,6 +1,6 @@
 "use client";
 
-import { get_restaurants_by_name } from "@/actions/get_restaurants_by_name";
+import { getRestaurantsLike } from "@/actions/restaurants";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import { Restaurant } from "@prisma/client";
@@ -12,7 +12,7 @@ const SearchPage = () => {
   const [input, setInput] = useState("");
   useEffect(() => {
     const update = async () => {
-      const data = await get_restaurants_by_name(input);
+      const data = await getRestaurantsLike(input);
       updateRestaurants(data);
       return data;
     };
