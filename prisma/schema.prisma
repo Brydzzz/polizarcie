@@ -9,27 +9,38 @@ datasource db {
 
 model User {
     // required by Next-Auth
-    id                  String             @id @default(cuid())
+    id                  String                   @id @default(cuid())
     name                String?
-    email               String             @unique
+    email               String                   @unique
     emailVerified       DateTime?
     image               String?
     accounts            Account[]
     sessions            Session[]
     Authenticator       Authenticator[]
-    createdAt           DateTime           @default(now())
-    updatedAt           DateTime           @updatedAt
+    createdAt           DateTime                 @default(now())
+    updatedAt           DateTime                 @updatedAt
     // Custom
-    gender              Gender             @default(NOT_SET)
-    profferedGender     Gender             @default(NOT_SET)
-    meetingStatus       Boolean            @default(false)
-    points              Int                @default(0)
+    gender              Gender                   @default(NOT_SET)
+    preferredGender     Gender                   @default(NOT_SET)
+    meetingStatus       Boolean                  @default(false)
+    points              Int                      @default(0)
     medias              UserMedia[]
-    favoriteRestaurants Restaurant[]
+    favoriteRestaurants UserFavoriteRestaurant[]
     restaurantReviews   RestaurantReview[]
     dishReviews         DishReview[]
-    follows             Follow[]           @relation(name: "followUsersFrom")
-    followedBy          Follow[]           @relation(name: "followUsersTo")
+    follows             Follow[]                 @relation(name: "followUsersFrom")
+    followedBy          Follow[]                 @relation(name: "followUsersTo")
+}
+
+model UserFavoriteRestaurant {
+    id              String     @id @default(cuid())
+    user            User?      @relation(fields: [userId], references: [id])
+    userId          String?
+    restaurant      Restaurant @relation(fields: [restaurantId], references: [id])
+    restaurantId    String
+    rankingPosition Int
+    createdDate     DateTime   @default(now())
+    updatedDate     DateTime   @updatedAt @db.Date
 }
 
 model UserMedia {
@@ -44,31 +55,31 @@ model UserMedia {
 }
 
 model Restaurant {
-    id             String             @id @default(cuid())
-    name           String             @unique
-    address        Address?           @relation(fields: [addressId], references: [id])
-    addressId      String?            @unique
+    id             String                   @id @default(cuid())
+    name           String                   @unique
+    address        Address?                 @relation(fields: [addressId], references: [id])
+    addressId      String?                  @unique
     description    String
-    createdDate    DateTime           @default(now())
-    updatedDate    DateTime           @updatedAt @db.Date
-    hidden         Boolean            @default(false)
-    openingTimeMon DateTime           @db.Time()
-    closingTimeMon DateTime           @db.Time()
-    openingTimeTue DateTime           @db.Time()
-    closingTimeTue DateTime           @db.Time()
-    openingTimeWen DateTime           @db.Time()
-    closingTimeWen DateTime           @db.Time()
-    openingTimeThu DateTime           @db.Time()
-    closingTimeThu DateTime           @db.Time()
-    openingTimeFri DateTime           @db.Time()
-    closingTimeFri DateTime           @db.Time()
-    openingTimeSat DateTime           @db.Time()
-    closingTimeSat DateTime           @db.Time()
-    openingTimeSun DateTime           @db.Time()
-    closingTimeSun DateTime           @db.Time()
+    createdDate    DateTime                 @default(now())
+    updatedDate    DateTime                 @updatedAt @db.Date
+    hidden         Boolean                  @default(false)
+    openingTimeMon DateTime                 @db.Time()
+    closingTimeMon DateTime                 @db.Time()
+    openingTimeTue DateTime                 @db.Time()
+    closingTimeTue DateTime                 @db.Time()
+    openingTimeWen DateTime                 @db.Time()
+    closingTimeWen DateTime                 @db.Time()
+    openingTimeThu DateTime                 @db.Time()
+    closingTimeThu DateTime                 @db.Time()
+    openingTimeFri DateTime                 @db.Time()
+    closingTimeFri DateTime                 @db.Time()
+    openingTimeSat DateTime                 @db.Time()
+    closingTimeSat DateTime                 @db.Time()
+    openingTimeSun DateTime                 @db.Time()
+    closingTimeSun DateTime                 @db.Time()
     reviews        RestaurantReview[]
     menu           Dish[]
-    favoriteAmong  User[]
+    favoriteAmong  UserFavoriteRestaurant[]
 }
 
 model Dish {
