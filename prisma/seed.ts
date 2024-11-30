@@ -223,7 +223,7 @@ async function initData() {
       stars: 5,
       amountSpent: new Prisma.Decimal(23),
       createdDate: new Date("2024-11-25"),
-      userId: "dummy-user-1",
+      authorId: "dummy-user-1",
     },
     {
       id: "2",
@@ -232,7 +232,7 @@ async function initData() {
       stars: 4,
       amountSpent: new Prisma.Decimal(26),
       createdDate: new Date("2024-10-19"),
-      userId: "dummy-user-2",
+      authorId: "dummy-user-2",
     },
     {
       id: "3",
@@ -241,7 +241,7 @@ async function initData() {
       stars: 1,
       amountSpent: new Prisma.Decimal(20),
       createdDate: new Date("2024-10-31"),
-      userId: "dummy-user-3",
+      authorId: "dummy-user-3",
     },
   ];
   for (const review of restaurantReviews) {

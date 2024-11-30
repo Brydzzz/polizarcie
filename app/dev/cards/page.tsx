@@ -1,14 +1,6 @@
 import DishCard from "@/components/cards/dish-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
-import ReviewCard from "@/components/cards/review-card.component";
-import {
-  Address,
-  Dish,
-  Prisma,
-  Restaurant,
-  RestaurantReview,
-  User,
-} from "@prisma/client";
+import { Address, Dish, Prisma, Restaurant } from "@prisma/client";
 
 const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
   {
@@ -38,26 +30,6 @@ const TEST_DISH: Partial<Dish>[] = [
   },
 ];
 
-const TEST_REV: Partial<
-  RestaurantReview & { restaurant: Partial<Restaurant> } & {
-    user: Partial<User>;
-  }
->[] = [
-  {
-    content:
-      "Bardzo dobry kebsik, aaaaa ale długa recenzja o moj boze ale ona jest dluga niech ktos ja powstrzyma",
-    stars: 4,
-    amountSpent: new Prisma.Decimal(23),
-    createdDate: new Date("2024-11-23"),
-    restaurant: {
-      name: "Kebab Dubai",
-    },
-    user: {
-      name: "balbior",
-    },
-  },
-];
-
 const CardPage = () => {
   return (
     <div
@@ -70,9 +42,6 @@ const CardPage = () => {
         ))}
         {TEST_DISH.map((dish, i) => (
           <DishCard key={i} data={dish}></DishCard>
-        ))}
-        {TEST_REV.map((rev, i) => (
-          <ReviewCard key={i} data={rev}></ReviewCard>
         ))}
       </div>
     </div>

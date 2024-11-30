@@ -1,0 +1,14 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+
+  & > p {
+    font-size: 16pt;
+    color: var(--secondary);
+    margin: 100px 0;
+  }
+}

@@ -1,41 +1,89 @@
+import { getCurrentUser } from "@/actions/users";
 import { parseDate } from "@/utils/date-time";
-import { Restaurant, RestaurantReview, User } from "@prisma/client";
-import { MouseEventHandler } from "react";
+import { getUserById } from "@/utils/db/users";
+import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
+import { MouseEventHandler, ReactNode } from "react";
 import StarInput from "../inputs/star-input.component";
 import styles from "./review-card.module.scss";
 
-type Props = {
-  data: Partial<
-    RestaurantReview & { restaurant: Partial<Restaurant> } & {
-      user: Partial<User>;
-    }
-  >;
-  onClickUser?: MouseEventHandler;
-  onClickRestaurant?: MouseEventHandler;
+type Props<Type extends keyof ReviewType> = {
+  type: Type;
+  data: ReviewType[Type]["data"];
+  onClickAuthor?: MouseEventHandler;
+  onClickSubject?: MouseEventHandler;
 };
 
-const ReviewCard = ({ data, onClickUser, onClickRestaurant }: Props) => {
-  const { restaurant, user, amountSpent, content, createdDate, stars } = data;
+type ReviewParts = {
+  [Key in keyof ReviewType]: {
+    header: (
+      data: ReviewType[Key]["data"],
+      subject: ReviewType[Key]["subject"] | null,
+      onClickSubject?: MouseEventHandler
+    ) => ReactNode;
+  };
+};
+
+const REVIEW_PARTS: ReviewParts = {
+  restaurant: {
+    header: (data, subject, onClickSubject) => (
+      <>
+        <span className={styles.title} onClick={onClickSubject}>
+          {subject?.name}
+        </span>
+        <StarInput value={data.stars} max={5} starSize={"18pt"} disabled />
+        <span
+          className={styles.amountSpent}
+        >{`Cena na osobę: ${data.amountSpent} zł`}</span>
+      </>
+    ),
+  },
+  dish: {
+    header: (data, subject, onClickSubject) => (
+      <>
+        <span className={styles.title} onClick={onClickSubject}>
+          {subject?.name}
+        </span>
+        <StarInput value={data.stars} max={5} starSize={"18pt"} disabled />
+      </>
+    ),
+  },
+};
+
+const ReviewCard = async <Type extends keyof ReviewType>({
+  type,
+  data,
+  onClickAuthor,
+  onClickSubject,
+}: Props<Type>) => {
+  const { authorId, content, createdDate } = data;
+  const author = await getUserById(authorId);
+  const factory = REVIEW_FACTORY[type];
+  const subject = await factory.getSubject(data);
+  const currentUser = await getCurrentUser();
+
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <p className={styles.restaurant} onClick={onClickRestaurant}>
-          {restaurant?.name}
-        </p>
-        <p className={styles.date}>{parseDate(createdDate)}</p>
-      </div>
-      <div className={styles.details}>
-        <p className={styles.user} onClick={onClickUser}>
-          {user?.name}
-        </p>
-        <div className={styles.stars}>
-          <StarInput value={stars || 0} max={5} starSize={"25pt"} disabled />
+      <div className={styles.spaceBetween}>
+        <div className={styles.stack}>
+          {REVIEW_PARTS[type].header(data, subject, onClickAuthor)}
         </div>
-        <p
-          className={styles.spent_per_person}
-        >{`Cena na osobę: ${amountSpent} zł`}</p>
-        <p className={styles.content}>{content}</p>
+        <div className={styles.stack}>
+          <span className={styles.date}>{parseDate(createdDate)}</span>
+          <span
+            className={styles.user}
+            onClick={onClickSubject}
+            style={{
+              color:
+                currentUser && currentUser.id == author?.id
+                  ? "var(--primary)"
+                  : undefined,
+            }}
+          >
+            {author?.name}
+          </span>
+        </div>
       </div>
+      <p className={styles.content}>{content}</p>
     </div>
   );
 };

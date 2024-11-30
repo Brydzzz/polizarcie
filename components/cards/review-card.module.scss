@@ -2,87 +2,59 @@
   display: flex;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
   flex-direction: column;
-  align-content: space-between;
-  --bg-local: var(--background-light);
-  border: 2px solid var(--primary-dark);
+  justify-content: center;
+  align-items: flex-start;
+  border: 2px solid var(--primary);
+  padding: 20px;
   border-radius: 8px;
   min-width: 300px;
   width: 100%;
-  height: 100%;
-  & > .header {
-    padding-top: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    & > .restaurant {
-      font-size: 1.5rem;
-      width: fit-content;
-      height: fit-content;
-      cursor: pointer;
-      &:hover {
-        text-decoration: underline;
-        text-decoration-thickness: 0.1em;
-      }
-    }
-    & > .date {
-      padding-top: 10px;
-      font-size: 1.2rem;
-      width: fit-content;
-      height: fit-content;
-      text-align: right;
-      align-content: top;
-      margin: 0;
-    }
-  }
-  & > .details {
+  gap: 15px;
+
+  .spaceBetween {
     width: 100%;
-    padding-top: 2px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 15px;
-    row-gap: 1px;
-    flex: 0 0 75%;
     display: flex;
-    flex-direction: column;
-    justify-content: top;
-    overflow: hidden;
+    justify-content: space-between;
+    align-items: flex-start;
 
-    & > .user {
-      cursor: pointer;
-      width: fit-content;
-      height: fit-content;
-      font-size: 1.1rem;
-      &:hover {
-        text-decoration: underline;
-        text-decoration-thickness: 0.1em;
+    .stack {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 5px;
+      &:nth-child(2) {
+        justify-content: flex-end;
       }
-    }
-    & > .spent_per_person {
-      background-color: var(--secondary-light);
-      align-content: left;
-      text-align: center;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      padding-left: 4px;
-      padding-right: 4px;
-      border-radius: 6px;
-      width: fit-content;
-      height: fit-content;
-      font-size: 0.8rem;
-    }
 
-    & > .stars {
-      padding: 5px;
-      width: fit-content;
-      height: fit-content;
-    }
-    & > .content {
-      width: 100%;
-      height: 40%;
-      margin-top: 5px;
+      .title {
+        font-size: 18pt;
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+          text-decoration-thickness: 0.1em;
+        }
+      }
+      .date {
+        font-size: 14pt;
+        text-align: right;
+      }
+      .user {
+        font-size: 14pt;
+        text-align: right;
+        &:hover {
+          cursor: pointer;
+          text-decoration: underline;
+          text-decoration-thickness: 0.1em;
+        }
+      }
+      .amountSpent {
+        background-color: var(--secondary-light);
+        align-content: left;
+        text-align: center;
+        padding: 3px 7px;
+        border-radius: 6px;
+        font-size: 12pt;
+      }
     }
   }
 }

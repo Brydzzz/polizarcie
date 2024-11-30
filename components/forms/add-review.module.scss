@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16pt;
+  padding: 40px;
+  background-color: var(--background-light);
+  border-radius: 10px;
+  gap: 25px;
+  width: 600px;
+
+  & > h2 {
+    font-size: 32pt;
+  }
+
+  & > h3 {
+    font-size: 16pt;
+  }
+
+  .form {
+    width: 100%;
+    background-color: var(--background);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+
+    .left {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      width: 100%;
+    }
+  }
+}

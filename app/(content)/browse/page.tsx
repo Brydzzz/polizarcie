@@ -1,8 +1,8 @@
 "use client";
 
-import { getRestaurantsLike } from "@/actions/restaurants";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
+import { getRestaurantsLike } from "@/utils/db/restaurants";
 import { Restaurant } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
