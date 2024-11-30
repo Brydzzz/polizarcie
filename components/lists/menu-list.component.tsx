@@ -23,7 +23,7 @@ const MenuList = ({ data }: Props) => {
     [DishType.DESSERT, "Desery"],
     [DishType.OTHER, "Inne"],
     [DishType.DRINK, "Napoje"],
-    [DishType.SIDE, "Dodatki"]
+    [DishType.SIDE, "Dodatki"],
   ]);
 
   return (

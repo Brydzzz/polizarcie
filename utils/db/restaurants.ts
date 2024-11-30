@@ -74,7 +74,7 @@ export async function fetchMenuByRestaurantId(id: string) {
       name: true,
       description: true,
       price: true,
-      type: true
+      type: true,
     },
     where: {
       restaurantId: id,
