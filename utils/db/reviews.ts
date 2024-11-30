@@ -13,6 +13,17 @@ export async function getRestaurantReviewsByRestaurantId(id: Restaurant["id"]) {
   });
 }
 
+export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
+  return await prisma.restaurantReview.aggregate({
+    _avg: {
+      stars: true,
+    },
+    where: {
+      restaurantId: id,
+    },
+  });
+}
+
 export async function getDishReviewsByDishId(id: Dish["id"]) {
   return await prisma.dishReview.findMany({
     where: {
