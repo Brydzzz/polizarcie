@@ -9,9 +9,9 @@ type Props = {
 };
 
 const RestaurantCard = ({ data, onClickAddress }: Props) => {
-  const { name, address, description } = data;
+  const { name, slug, address, description } = data;
   return (
-    <Link href={`/restaurant/${data.id}`}>
+    <Link href={`/restaurant/${slug}`}>
       <div className={styles.container}>
         <div className={styles.photo}>
           <p>Restaurant Photo</p>

@@ -3,6 +3,15 @@
 import { prisma } from "@/utils/prisma";
 import { Restaurant } from "@prisma/client";
 
+export async function fetchRestaurantReviews(id: string) {
+  const reviews = await prisma.restaurantReview.findMany({
+    where: {
+      restaurantId: id,
+    },
+  });
+  return JSON.stringify(reviews);
+}
+
 export async function getAllRestaurants() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
@@ -44,4 +53,36 @@ export async function getRestaurantById(id: Restaurant["id"]) {
     },
   });
   return data;
+}
+
+export async function fetchRestaurantBySlug(slug: string) {
+  const data = await prisma.restaurant.findUnique({
+    where: {
+      slug: slug,
+    },
+    include: {
+      address: true,
+    },
+  });
+  if (!data) {
+    throw new Error(`Restaurant with slug ${slug} not found`);
+  }
+
+  return JSON.stringify(data);
+}
+
+export async function fetchMenuByRestaurantId(id: string) {
+  const data = await prisma.dish.findMany({
+    select: {
+      name: true,
+      description: true,
+      price: true,
+      type: true,
+    },
+    where: {
+      restaurantId: id,
+    },
+    orderBy: { type: "asc" },
+  });
+  return JSON.stringify(data);
 }

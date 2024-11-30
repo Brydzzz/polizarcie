@@ -2,18 +2,19 @@
   display: flex;
   flex-direction: row;
   align-content: space-between;
-  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
-  --bg-local: var(--background-light);
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+  --bg-local: rgba(61, 41, 53, 0.7);
+  background-color: var(--bg-local);
   border: 2px solid var(--primary-dark);
   border-radius: 8px;
   min-width: 300px;
   width: 100%;
-  height: 135px;
+  height: 115px;
   & > .details {
-    padding-top: 20px;
+    padding-top: 15px;
     padding-left: 30px;
     padding-right: 30px;
-    padding-bottom: 20px;
+    padding-bottom: 8px;
     flex: 0 0 75%;
     display: flex;
     flex-direction: column;
@@ -34,6 +35,13 @@
       margin: 0;
       color: var(--text);
       width: 100%;
+      display: -webkit-box;
+      --lines-number: 2;
+      line-clamp: var(--lines-number);
+      -webkit-line-clamp: var(--lines-number);
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
   & > .right {

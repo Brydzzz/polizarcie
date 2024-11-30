@@ -1,4 +1,5 @@
 import { DishType, Gender, Prisma } from "@prisma/client";
+import slugify from "slugify";
 import { prisma } from "../utils/prisma";
 
 async function initData() {
@@ -85,6 +86,7 @@ async function initData() {
     create: {
       id: "1",
       name: "Marszałkowski bar mleczny",
+      slug: slugify("Marszałkowski bar mleczny", { lower: true }),
       addressId: "1",
       description: "smakuwa",
       openingTimeMon: "2137-01-01T08:00:00.000Z",
@@ -112,6 +114,7 @@ async function initData() {
     create: {
       id: "2",
       name: "Kebab dubai",
+      slug: slugify("Kebab dubai", { lower: true }),
       addressId: "2",
       description: "prawdziwy kebab piecze dwa razy",
       openingTimeMon: "2137-01-01T08:00:00.000Z",
@@ -135,6 +138,7 @@ async function initData() {
     create: {
       id: "3",
       name: "Kebab king",
+      slug: slugify("Kebab King", { lower: true }),
       addressId: "3",
       description: "prawdziwy kebab piecze dwa razy",
       openingTimeMon: "2137-01-01T08:00:00.000Z",
@@ -161,6 +165,7 @@ async function initData() {
     create: {
       id: "4",
       name: "Moza Kebab",
+      slug: slugify("Moza Kebab", { lower: true }),
       addressId: "4",
       description: "prawdziwy kebab piecze dwa razy",
       openingTimeMon: "2137-01-01T08:00:00.000Z",
@@ -187,6 +192,7 @@ async function initData() {
     create: {
       id: "5",
       name: "Amman Kebab",
+      slug: slugify("Amman Kebab", { lower: true }),
       addressId: "5",
       description: "prawdziwy kebab piecze dwa razy",
       openingTimeMon: "2137-01-01T08:00:00.000Z",
@@ -250,7 +256,7 @@ async function initData() {
     {
       id: "1",
       name: "Kebab średni",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(23),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -258,7 +264,7 @@ async function initData() {
     {
       id: "2",
       name: "Kebab mały",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(20),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -266,7 +272,7 @@ async function initData() {
     {
       id: "3",
       name: "Kebab duży",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(26),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -274,7 +280,7 @@ async function initData() {
     {
       id: "4",
       name: "Talerz kebab",
-      description: "Baranina/wołowina, sórówkai i frytki razem na talerzu",
+      description: "Baranina/wołowina, surówka i frytki razem na talerzu",
       price: new Prisma.Decimal(30),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -282,7 +288,7 @@ async function initData() {
     {
       id: "5",
       name: "Fryto kebab",
-      description: "Baranina/wołowina, sórówka i, frytki, w picie",
+      description: "Baranina/wołowina, surówka i, frytki, w picie",
       price: new Prisma.Decimal(25),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -305,7 +311,7 @@ async function initData() {
     },
     {
       id: "8",
-      name: "Sórówka",
+      name: "Surówka",
       description: "Z kapusty",
       price: new Prisma.Decimal(6),
       restaurantId: "5",

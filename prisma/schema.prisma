@@ -58,6 +58,7 @@ model UserMedia {
 model Restaurant {
     id             String                   @id @default(cuid())
     name           String                   @unique
+    slug           String                   @unique
     address        Address?                 @relation(fields: [addressId], references: [id])
     addressId      String?                  @unique
     description    String
