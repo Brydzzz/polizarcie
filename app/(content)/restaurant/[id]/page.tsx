@@ -7,6 +7,7 @@ import {
 } from "@/components/button/button.types";
 import StarInput from "@/components/inputs/star-input.component";
 import MapView from "@/components/map-view.component";
+import { parseTime } from "@/utils/date-time";
 import { fetchRestaurantById } from "@/utils/db/restaurants";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
@@ -124,15 +125,7 @@ const RestaurantPage = () => {
                     <p>
                       <strong>{hour.day}:</strong>
                       &nbsp;
-                      {new Date(hour.opening || "").toLocaleTimeString("pl", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}{" "}
-                      -
-                      {new Date(hour.closing || "").toLocaleTimeString("pl", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {parseTime(hour.opening)}-{parseTime(hour.closing)}
                     </p>
                   </div>
                 </li>
