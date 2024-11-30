@@ -51,3 +51,19 @@ export async function fetchRestaurantById(id: string) {
 
   return JSON.stringify(data);
 }
+
+export async function fetchRestaurantBySlug(slug: string) {
+  const data = await prisma.restaurant.findUnique({
+    where: {
+      slug: slug,
+    },
+    include: {
+      address: true,
+    },
+  });
+  if (!data) {
+    throw new Error(`Restaurant with slug ${slug} not found`);
+  }
+
+  return JSON.stringify(data);
+}
