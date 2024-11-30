@@ -32,7 +32,8 @@ const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
 const TEST_DISH: Partial<Dish>[] = [
   {
     name: "Kebab średni",
-    description: "Baranina/Kurczak, surówka, pita, sosy",
+    description:
+      "Baranina/Kurczak, surówka, pita, sosy strasznie długo opis realnie nigdy nie widzialem dluzszego opisu niz ten ktory to jest mega dziwne ze one jest taki dlugo jakby mogl przestac to byloby super",
     price: new Prisma.Decimal(23),
   },
 ];
