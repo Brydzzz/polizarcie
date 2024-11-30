@@ -83,6 +83,7 @@ model Dish {
     createdDate  DateTime     @default(now())
     updatedDate  DateTime     @updatedAt @db.Date
     hidden       Boolean      @default(false)
+    type         DishType     @default(OTHER)
 }
 
 model Address {
@@ -196,4 +197,13 @@ enum Gender {
 
 enum MediaType {
     FACEBOOK
+}
+
+enum DishType {
+    STARTER
+    SOUP
+    MAIN_DISH
+    DESSERT
+    OTHER
+    DRINK
 }
