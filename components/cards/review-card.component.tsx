@@ -38,7 +38,14 @@ const REVIEW_PARTS: ReviewParts = {
     ),
   },
   dish: {
-    header: () => <></>,
+    header: (data, subject, onClickSubject) => (
+      <>
+        <span className={styles.title} onClick={onClickSubject}>
+          {subject?.name}
+        </span>
+        <StarInput value={data.stars} max={5} starSize={"18pt"} disabled />
+      </>
+    ),
   },
 };
 
@@ -48,7 +55,7 @@ const ReviewCard = async <Type extends keyof ReviewType>({
   onClickAuthor,
   onClickSubject,
 }: Props<Type>) => {
-  const { authorId, content, createdDate, stars } = data;
+  const { authorId, content, createdDate } = data;
   const author = await getUserById(authorId);
   const factory = REVIEW_FACTORY[type];
   const subject = await factory.getSubject(data);

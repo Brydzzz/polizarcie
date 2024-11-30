@@ -10,7 +10,7 @@ import MapView from "@/components/map-view.component";
 import { parseTime } from "@/utils/date-time";
 import { getAddressById } from "@/utils/db/addresses";
 import { getRestaurantById } from "@/utils/db/restaurants";
-import { getStringified } from "@/utils/misc";
+import { transferWithJSON } from "@/utils/misc.client";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -32,10 +32,9 @@ const RestaurantPage = () => {
           setLoading(false);
           return;
         }
-        const addressJson = await getStringified(getAddressById, [
+        const address = await transferWithJSON(getAddressById, [
           restaurant.addressId,
         ]);
-        const address = JSON.parse(addressJson);
         setRestaurant({ ...restaurant, address: { ...address } });
         setLoading(false);
       } catch (err: unknown) {

@@ -29,7 +29,7 @@ type ReviewFactory = {
       id: ReviewType[Key]["subject"]["id"]
     ) => Promise<ReviewType[Key]["data"][]>;
     getSubject: (
-      data: ReviewType[Key]["data"]
+      by: ReviewType[Key]["data"] | ReviewType[Key]["subject"]["id"]
     ) => Promise<ReviewType[Key]["subject"] | null>;
     create: (
       data: ReviewType[Key]["data"]
@@ -46,14 +46,16 @@ type ReviewFactory = {
 export const REVIEW_FACTORY: ReviewFactory = {
   restaurant: {
     getBySubjectId: getRestaurantReviewsByRestaurantId,
-    getSubject: async (data) => await getRestaurantById(data.restaurantId),
+    getSubject: async (by) =>
+      await getRestaurantById(typeof by === "string" ? by : by.restaurantId),
     create: createRestaurantReview,
     edit: updateRestaurantReview,
     delete: deleteRestaurantReview,
   },
   dish: {
     getBySubjectId: getDishReviewsByDishId,
-    getSubject: async (data) => await getDishById(data.dishId),
+    getSubject: async (by) =>
+      await getDishById(typeof by === "string" ? by : by.dishId),
     create: createDishReview,
     edit: updateDishReview,
     delete: deleteDishReview,

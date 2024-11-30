@@ -27,7 +27,6 @@ export async function createRestaurantReview(data: RestaurantReview) {
   if (user == null) return null;
   return await prisma.restaurantReview.create({
     data: {
-      id: data.id,
       restaurantId: data.restaurantId,
       authorId: user.id,
       amountSpent: data.amountSpent,
@@ -43,7 +42,6 @@ export async function createDishReview(data: DishReview) {
   if (user == null) return null;
   return await prisma.dishReview.create({
     data: {
-      id: data.id,
       dishId: data.dishId,
       authorId: user.id,
       content: data.content,

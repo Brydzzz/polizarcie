@@ -7,7 +7,7 @@ const Page = async () => {
       style={{ marginTop: "100px", paddingBottom: "100px" }}
     >
       <div className="centralized-y" style={{ width: "600px" }}>
-        <ReviewList type="restaurant" subjectId="1" />
+        <ReviewList type="restaurant" subjectId="5" />
       </div>
     </div>
   );
