@@ -20,6 +20,7 @@ model User {
     createdAt           DateTime                 @default(now())
     updatedAt           DateTime                 @updatedAt
     // Custom
+    roles               Role[]                   @default([USER])
     gender              Gender                   @default(NOT_SET)
     preferredGender     Gender                   @default(NOT_SET)
     meetingStatus       Boolean                  @default(false)
@@ -207,4 +208,10 @@ enum Gender {
 
 enum MediaType {
     FACEBOOK
+}
+
+enum Role {
+    USER
+    MODERATOR
+    ADMIN
 }
