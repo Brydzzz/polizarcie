@@ -1,4 +1,4 @@
-import { Gender, Prisma } from "@prisma/client";
+import { DishType, Gender, Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
 
 async function initData() {
@@ -253,6 +253,7 @@ async function initData() {
       description: "Baranina/wołowina, sórówka, pita",
       price: new Prisma.Decimal(23),
       restaurantId: "5",
+      type: DishType.MAIN_DISH,
     },
     {
       id: "2",
@@ -260,6 +261,7 @@ async function initData() {
       description: "Baranina/wołowina, sórówka, pita",
       price: new Prisma.Decimal(20),
       restaurantId: "5",
+      type: DishType.MAIN_DISH,
     },
     {
       id: "3",
@@ -267,6 +269,7 @@ async function initData() {
       description: "Baranina/wołowina, sórówka, pita",
       price: new Prisma.Decimal(26),
       restaurantId: "5",
+      type: DishType.MAIN_DISH,
     },
     {
       id: "4",
@@ -274,6 +277,7 @@ async function initData() {
       description: "Baranina/wołowina, sórówkai i frytki razem na talerzu",
       price: new Prisma.Decimal(30),
       restaurantId: "5",
+      type: DishType.MAIN_DISH,
     },
     {
       id: "5",
@@ -281,6 +285,55 @@ async function initData() {
       description: "Baranina/wołowina, sórówka i, frytki, w picie",
       price: new Prisma.Decimal(25),
       restaurantId: "5",
+      type: DishType.MAIN_DISH,
+    },
+    {
+      id: "6",
+      name: "Baklawa",
+      description: "Tradycyjne tureckie ciastko",
+      price: new Prisma.Decimal(7),
+      restaurantId: "5",
+      type: DishType.DESSERT,
+    },
+    {
+      id: "7",
+      name: "Frytki",
+      description: "Z keczupem",
+      price: new Prisma.Decimal(12),
+      restaurantId: "5",
+      type: DishType.STARTER,
+    },
+    {
+      id: "8",
+      name: "Sórówka",
+      description: "Z kapusty",
+      price: new Prisma.Decimal(6),
+      restaurantId: "5",
+      type: DishType.STARTER,
+    },
+    {
+      id: "9",
+      name: "Ciastko",
+      description: "Czekoladowe",
+      price: new Prisma.Decimal(4),
+      restaurantId: "5",
+      type: DishType.DESSERT,
+    },
+    {
+      id: "10",
+      name: "Coca-Cola",
+      description: "0.5l",
+      price: new Prisma.Decimal(6),
+      restaurantId: "5",
+      type: DishType.DRINK,
+    },
+    {
+      id: "11",
+      name: "Ajran",
+      description: "1l",
+      price: new Prisma.Decimal(7),
+      restaurantId: "5",
+      type: DishType.DRINK,
     },
   ];
   for (const dish of dishes) {
