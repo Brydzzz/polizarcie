@@ -95,6 +95,7 @@ model Dish {
     createdDate  DateTime     @default(now())
     updatedDate  DateTime     @updatedAt @db.Date
     hidden       Boolean      @default(false)
+    type         DishType     @default(OTHER)
 }
 
 model Address {
@@ -214,4 +215,14 @@ enum Role {
     USER
     MODERATOR
     ADMIN
+}
+
+enum DishType {
+    STARTER
+    SOUP
+    MAIN_DISH
+    DESSERT
+    OTHER
+    DRINK
+    SIDE
 }
