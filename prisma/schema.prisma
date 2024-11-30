@@ -9,98 +9,111 @@ datasource db {
 
 model User {
     // required by Next-Auth
-    id             String          @id @default(cuid())
-    name           String?
-    email          String          @unique
-    emailVerified  DateTime?
-    image          String?
-    accounts       Account[]
-    sessions       Session[]
-    Authenticator  Authenticator[]
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
+    id                  String             @id @default(cuid())
+    name                String?
+    email               String             @unique
+    emailVerified       DateTime?
+    image               String?
+    accounts            Account[]
+    sessions            Session[]
+    Authenticator       Authenticator[]
+    createdAt           DateTime           @default(now())
+    updatedAt           DateTime           @updatedAt
     // Custom
-    gender         String?
-    pref_gend      String?
-    meeting_status Boolean         @default(false)
-    media_link     String?
-    fav_rest_id_1  Int?
-    fav_rest_id_2  Int?
-    fav_rest_id_3  Int?
-    points         Int             @default(0)
-    fav_rest_1     Restaurant?     @relation("Fav_rest_1", fields: [fav_rest_id_1], references: [id], map: "fav_rest_1_FK")
-    fav_rest_2     Restaurant?     @relation("Fav_rest_2", fields: [fav_rest_id_2], references: [id], map: "fav_rest_2_FK")
-    fav_rest_3     Restaurant?     @relation("Fav_rest_3", fields: [fav_rest_id_3], references: [id], map: "fav_rest_3_FK")
-    Review         Review[]
-    sent_fw        Follow?         @relation("sent_fw")
-    reciewv        Follow?         @relation("to_who")
+    gender              Gender             @default(NOT_SET)
+    profferedGender     Gender             @default(NOT_SET)
+    meetingStatus       Boolean            @default(false)
+    points              Int                @default(0)
+    medias              UserMedia[]
+    favoriteRestaurants Restaurant[]
+    restaurantReviews   RestaurantReview[]
+    dishReviews         DishReview[]
+    follows             Follow[]           @relation(name: "followUsersFrom")
+    followedBy          Follow[]           @relation(name: "followUsersTo")
+}
+
+model UserMedia {
+    id     String    @id @default(cuid())
+    type   MediaType
+    link   String
+    user   User?     @relation(fields: [userId], references: [id])
+    userId String?
 }
 
 model Restaurant {
-    id               Int      @id @default(autoincrement())
-    name             String   @unique
-    address_id       Int?     @unique
-    description      String
-    top_dish_id      Int?     @unique
-    opening_hour_mon Int
-    closing_hour_mon Int
-    opening_hour_tue Int
-    closing_hour_tue Int
-    opening_hour_wen Int
-    closing_hour_wen Int
-    opening_hour_thu Int
-    closing_hour_thu Int
-    opening_hour_fri Int
-    closing_hour_fri Int
-    opening_hour_sat Int
-    closing_hour_sat Int
-    opening_hour_sun Int
-    closing_hour_sun Int
-    top_dish         Dish?    @relation("Top_dish", fields: [top_dish_id], references: [id])
-    favs1            User[]   @relation("Fav_rest_1")
-    favs2            User[]   @relation("Fav_rest_2")
-    favs3            User[]   @relation("Fav_rest_3")
-    menu             Dish[]   @relation("Menu")
-    address          Address? @relation(fields: [address_id], references: [id])
-    Review           Review[]
+    id             String             @id @default(cuid())
+    name           String             @unique
+    address        Address?           @relation(fields: [addressId], references: [id])
+    addressId      String?            @unique
+    description    String
+    openingHourMon DateTime           @db.Time()
+    closingHourMon DateTime           @db.Time()
+    openingHourTue DateTime           @db.Time()
+    closingHourTue DateTime           @db.Time()
+    openingHourWen DateTime           @db.Time()
+    closingHourWen DateTime           @db.Time()
+    openingHourThu DateTime           @db.Time()
+    closingHourThu DateTime           @db.Time()
+    openingHourFri DateTime           @db.Time()
+    closingHourFri DateTime           @db.Time()
+    openingHourSat DateTime           @db.Time()
+    closingHourSat DateTime           @db.Time()
+    openingHourSun DateTime           @db.Time()
+    closingHourSun DateTime           @db.Time()
+    reviews        RestaurantReview[]
+    menu           Dish[]
+    favoriteAmong  User[]
 }
 
 model Dish {
-    id            Int         @id @default(autoincrement())
-    name          String
-    description   String
-    price         Int
-    restaurant_id Int
-    restid        Restaurant  @relation("Menu", fields: [restaurant_id], references: [id])
-    top_dish_in   Restaurant? @relation("Top_dish")
+    id          String       @id @default(cuid())
+    name        String
+    description String
+    price       Decimal      @db.Money
+    totalStars  Int
+    owner       Restaurant   @relation(fields: [ownerId], references: [id])
+    ownerId     String
+    reviews     DishReview[]
 }
 
 model Address {
-    id          Int         @id @default(autoincrement())
-    name        String      @unique
-    X_coords    Decimal
-    Y_coords    Decimal
-    Restaurants Restaurant?
+    id         String      @id @default(cuid())
+    name       String
+    xCoords    Decimal
+    yCoords    Decimal
+    restaurant Restaurant?
 }
 
-model Review {
-    id               Int        @id @default(autoincrement())
-    content          String
-    restaurant_id    Int
-    points           Int
-    spent_per_person Int
-    date             DateTime
-    who_wrote        String
-    wrote            User       @relation(fields: [who_wrote], references: [id])
-    restaurant       Restaurant @relation(fields: [restaurant_id], references: [id])
+model RestaurantReview {
+    id           String     @id @default(cuid())
+    content      String
+    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+    restaurantId String
+    stars        Int
+    amountSpent  Decimal    @db.Money
+    date         DateTime   @db.Date
+    user         User       @relation(fields: [userId], references: [id])
+    userId       String
+}
+
+model DishReview {
+    id      String   @id @default(cuid())
+    content String
+    dish    Dish     @relation(fields: [dishId], references: [id])
+    dishId  String
+    stars   Int
+    date    DateTime @db.Date
+    user    User     @relation(fields: [userId], references: [id])
+    userId  String
 }
 
 model Follow {
-    id       Int    @id @default(autoincrement())
-    who_sent String @unique
-    to_who   String @unique
-    sent     User   @relation("sent_fw", fields: [who_sent], references: [id], map: "sent_fw_FK")
-    to       User   @relation("to_who", fields: [who_sent], references: [id], map: "to_who_FK")
+    id     String   @id @default(cuid())
+    from   User     @relation(name: "followUsersFrom", fields: [fromId], references: [id])
+    fromId String
+    to     User     @relation(name: "followUsersTo", fields: [toId], references: [id])
+    toId   String
+    date   DateTime @db.Timestamp()
 }
 
 // Required by Next-Auth
@@ -157,4 +170,15 @@ model Authenticator {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
+}
+
+enum Gender {
+    FEMALE
+    MALE
+    NOT_SET
+    NON_BINARY
+}
+
+enum MediaType {
+    FACEBOOK
 }
