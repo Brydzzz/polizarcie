@@ -2,6 +2,15 @@
 
 import { prisma } from "@/utils/prisma";
 
+export async function fetchRestaurantReviews(id: string) {
+  const reviews = await prisma.restaurantReview.findMany({
+    where: {
+      restaurantId: id,
+    },
+  });
+  return JSON.stringify(reviews);
+}
+
 export async function fetchAllRestaurants() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
