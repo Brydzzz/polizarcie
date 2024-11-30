@@ -8,8 +8,11 @@ import {
 import StarInput from "@/components/inputs/star-input.component";
 import MapView from "@/components/map-view.component";
 import { parseTime } from "@/utils/date-time";
-import { fetchRestaurantBySlug } from "@/utils/db/restaurants";
-import { Address, Restaurant } from "@prisma/client";
+import {
+  fetchRestaurantBySlug,
+  fetchRestaurantReviews,
+} from "@/utils/db/restaurants";
+import { Address, Restaurant, RestaurantReview } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
@@ -22,6 +25,8 @@ const RestaurantPage = () => {
   >();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<RestaurantReview[]>([]);
+  const [score, setScore] = useState<number>();
 
   useEffect(() => {
     const fetchRestaurant = async () => {
@@ -36,6 +41,37 @@ const RestaurantPage = () => {
     };
     fetchRestaurant();
   }, [slug]);
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const revs = await fetchRestaurantReviews(String(restaurant?.id));
+        const data = JSON.parse(revs);
+        setReviews(data);
+      } catch (err: unknown) {
+        setError((err as Error).message);
+      }
+    };
+    fetchReviews();
+  }, [restaurant]);
+
+  useEffect(() => {
+    const fetchScore = async () => {
+      try {
+        const totalScore = reviews.reduce(
+          (sum: number, rev: RestaurantReview) => sum + rev.stars,
+          0
+        );
+        if (reviews.length != 0) {
+          setScore(parseFloat((totalScore / reviews.length).toFixed(2)));
+        } else {
+          setScore(0);
+        }
+      } catch (err: unknown) {
+        setError((err as Error).message);
+      }
+    };
+    fetchScore();
+  }, [reviews]);
   if (error) return <div>Error: {error}</div>;
 
   if (loading)
@@ -105,9 +141,8 @@ const RestaurantPage = () => {
         </div>
         <div className={styles.column}>
           <div className={styles.rating}>
-            {/* TODO: get actual rating for restaurant */}
-            <StarInput value={4} max={5} disabled></StarInput>
-            <p>4,2</p>
+            <StarInput value={Number(score)} max={5} disabled></StarInput>
+            <p>{String(score)}</p>
           </div>
           <div className={styles.info}>
             <h3>Adres:</h3>
