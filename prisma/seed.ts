@@ -256,7 +256,7 @@ async function initData() {
     {
       id: "1",
       name: "Kebab średni",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(23),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -264,7 +264,7 @@ async function initData() {
     {
       id: "2",
       name: "Kebab mały",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(20),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -272,7 +272,7 @@ async function initData() {
     {
       id: "3",
       name: "Kebab duży",
-      description: "Baranina/wołowina, sórówka, pita",
+      description: "Baranina/wołowina, surówka, pita",
       price: new Prisma.Decimal(26),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -280,7 +280,7 @@ async function initData() {
     {
       id: "4",
       name: "Talerz kebab",
-      description: "Baranina/wołowina, sórówkai i frytki razem na talerzu",
+      description: "Baranina/wołowina, surówka i frytki razem na talerzu",
       price: new Prisma.Decimal(30),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -288,7 +288,7 @@ async function initData() {
     {
       id: "5",
       name: "Fryto kebab",
-      description: "Baranina/wołowina, sórówka i, frytki, w picie",
+      description: "Baranina/wołowina, surówka i, frytki, w picie",
       price: new Prisma.Decimal(25),
       restaurantId: "5",
       type: DishType.MAIN_DISH,
@@ -311,7 +311,7 @@ async function initData() {
     },
     {
       id: "8",
-      name: "Sórówka",
+      name: "Surówka",
       description: "Z kapusty",
       price: new Prisma.Decimal(6),
       restaurantId: "5",
