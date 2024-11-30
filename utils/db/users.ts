@@ -1,6 +1,8 @@
+"server only";
+
 import { prisma } from "@/utils/prisma";
 
-export async function fetchUserById(id: string) {
+export async function getUserById(id: string) {
   return await prisma.user.findFirst({
     where: {
       id: id,
@@ -8,7 +10,7 @@ export async function fetchUserById(id: string) {
   });
 }
 
-export async function fetchUserByEmail(email: string) {
+export async function getUserByEmail(email: string) {
   return await prisma.user.findFirst({
     where: {
       email: email,
