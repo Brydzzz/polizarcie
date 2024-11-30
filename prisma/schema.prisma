@@ -206,4 +206,5 @@ enum DishType {
     DESSERT
     OTHER
     DRINK
+    SIDE
 }
