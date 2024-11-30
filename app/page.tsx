@@ -12,37 +12,21 @@ export default async function Home() {
       <LandingHeader />
       <CenterSection width="600px" offsetX="-200px">
         <h1>Co to jest?</h1>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce luctus
-        blandit neque sit amet imperdiet. Aliquam vehicula nec justo ac
-        imperdiet. Vivamus elementum sit amet libero ut scelerisque. Phasellus
-        sit amet arcu quis nibh cursus vestibulum nec non velit. Phasellus eget
-        cursus mi, nec mattis eros. Proin eget consectetur nisi, nec rutrum
-        erat. In bibendum augue vitae odio convallis, in mattis ipsum pharetra.
-        Aenean aliquet in tellus ac tincidunt. Quisque sit amet risus malesuada
-        eros lacinia semper id volutpat risus. Aenean tristique libero massa, in
-        efficitur neque eleifend quis. Etiam porttitor mauris neque, mollis
-        mattis dolor lacinia sit amet. Phasellus molestie urna ut metus egestas,
-        vitae bibendum tortor tristique. Lorem ipsum dolor sit amet, consectetur
-        adipiscing elit. Nullam posuere pellentesque rhoncus. Sed faucibus metus
-        purus, a scelerisque mi tempus at. Duis ac porta nisl.
+        Poliżarcie to portal dla prawdziwych politechnicznych żarłoków. Jesteś
+        głodny, a przed tobą jeszcze 4 godziny labów? Długie okienko i nie wiesz
+        co ze sobą zrobić? Czy może po prostu chcesz zjeść coś fajnego ze
+        znajomymi ze studiów? Nie martw się, Poliżarcie to miejsce dla ciebie!
+        Możesz wyszukać interesujący cię lokal, sprawdzić gdzie się znajduje,
+        zerknąc na menu i ceny przeczytać recenzje albo nawet dodać własne.
+        Wszystko jest możliwe dzięki Poliżarciu!
       </CenterSection>
       <section className={styles.light}>
         <CenterSection width="600px" offsetX="200px">
-          <h1>Co to jest?</h1>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce luctus
-          blandit neque sit amet imperdiet. Aliquam vehicula nec justo ac
-          imperdiet. Vivamus elementum sit amet libero ut scelerisque. Phasellus
-          sit amet arcu quis nibh cursus vestibulum nec non velit. Phasellus
-          eget cursus mi, nec mattis eros. Proin eget consectetur nisi, nec
-          rutrum erat. In bibendum augue vitae odio convallis, in mattis ipsum
-          pharetra. Aenean aliquet in tellus ac tincidunt. Quisque sit amet
-          risus malesuada eros lacinia semper id volutpat risus. Aenean
-          tristique libero massa, in efficitur neque eleifend quis. Etiam
-          porttitor mauris neque, mollis mattis dolor lacinia sit amet.
-          Phasellus molestie urna ut metus egestas, vitae bibendum tortor
-          tristique. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Nullam posuere pellentesque rhoncus. Sed faucibus metus purus, a
-          scelerisque mi tempus at. Duis ac porta nisl.
+          <h1>Chcesz kogoś poznać?</h1>
+          Nie martw się! Poliżarcie wprowadza innowacyjny system łączenia
+          użytkowników na podstawie ich ulubionych restauracji. Dzięki temu
+          możesz miło spędzić przerwę z kimś nowym. A kto wie? Może wyniknie z
+          tego coś więcej...
         </CenterSection>
       </section>
     </main>
