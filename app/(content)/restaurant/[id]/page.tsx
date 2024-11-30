@@ -7,7 +7,7 @@ import {
 } from "@/components/button/button.types";
 import StarInput from "@/components/inputs/star-input.component";
 import MapView from "@/components/map-view.component";
-import { get_restaurant_by_id } from "@/utils/prisma/restaurants";
+import { fetchRestaurantById } from "@/utils/db/restaurants";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,7 +24,7 @@ const RestaurantPage = () => {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const data_str = await get_restaurant_by_id(Number(id));
+        const data_str = await fetchRestaurantById(id);
         const data = JSON.parse(data_str);
         setRestaurant(data);
         setLoading(false);
@@ -46,38 +46,38 @@ const RestaurantPage = () => {
   const hours = [
     {
       day: "Pon",
-      opening: restaurant?.opening_hour_mon,
-      closing: restaurant?.closing_hour_mon,
+      opening: restaurant?.openingTimeMon,
+      closing: restaurant?.closingTimeMon,
     },
     {
       day: "Wt",
-      opening: restaurant?.opening_hour_tue,
-      closing: restaurant?.closing_hour_tue,
+      opening: restaurant?.openingTimeTue,
+      closing: restaurant?.closingTimeTue,
     },
     {
       day: "Śr",
-      opening: restaurant?.opening_hour_wen,
-      closing: restaurant?.closing_hour_wen,
+      opening: restaurant?.openingTimeWen,
+      closing: restaurant?.closingTimeWen,
     },
     {
       day: "Czw",
-      opening: restaurant?.opening_hour_thu,
-      closing: restaurant?.closing_hour_thu,
+      opening: restaurant?.openingTimeThu,
+      closing: restaurant?.closingTimeThu,
     },
     {
       day: "Pt",
-      opening: restaurant?.opening_hour_fri,
-      closing: restaurant?.closing_hour_fri,
+      opening: restaurant?.openingTimeFri,
+      closing: restaurant?.closingTimeFri,
     },
     {
       day: "Sob",
-      opening: restaurant?.opening_hour_sat,
-      closing: restaurant?.closing_hour_sat,
+      opening: restaurant?.openingTimeSat,
+      closing: restaurant?.closingTimeSat,
     },
     {
       day: "Nd",
-      opening: restaurant?.opening_hour_sun,
-      closing: restaurant?.closing_hour_sun,
+      opening: restaurant?.openingTimeSun,
+      closing: restaurant?.closingTimeSun,
     },
   ];
 
@@ -94,8 +94,8 @@ const RestaurantPage = () => {
         <div className={styles.column}>
           <div className={styles.mapContainer}>
             <MapView
-              X_coord={Number(restaurant?.address?.X_coords)}
-              Y_coord={Number(restaurant?.address?.Y_coords)}
+              X_coord={Number(restaurant?.address?.xCoords)}
+              Y_coord={Number(restaurant?.address?.yCoords)}
             ></MapView>
           </div>
         </div>
@@ -123,7 +123,8 @@ const RestaurantPage = () => {
                       <strong>{hour.day}:</strong>
                     </p>
                     <p>
-                      {hour.opening}:00 - {hour.closing}:00
+                      {hour.opening?.getTime()}:00 - {hour.closing?.getTime()}
+                      :00
                     </p>
                   </div>
                 </li>

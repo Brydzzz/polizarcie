@@ -33,11 +33,14 @@ model User {
 }
 
 model UserMedia {
-    id     String    @id @default(cuid())
-    type   MediaType
-    link   String
-    user   User?     @relation(fields: [userId], references: [id])
-    userId String?
+    id          String    @id @default(cuid())
+    type        MediaType
+    link        String
+    user        User?     @relation(fields: [userId], references: [id])
+    userId      String?
+    createdDate DateTime  @default(now())
+    updatedDate DateTime  @updatedAt @db.Date
+    hidden      Boolean   @default(false)
 }
 
 model Restaurant {
@@ -46,42 +49,50 @@ model Restaurant {
     address        Address?           @relation(fields: [addressId], references: [id])
     addressId      String?            @unique
     description    String
-    openingHourMon DateTime           @db.Time()
-    closingHourMon DateTime           @db.Time()
-    openingHourTue DateTime           @db.Time()
-    closingHourTue DateTime           @db.Time()
-    openingHourWen DateTime           @db.Time()
-    closingHourWen DateTime           @db.Time()
-    openingHourThu DateTime           @db.Time()
-    closingHourThu DateTime           @db.Time()
-    openingHourFri DateTime           @db.Time()
-    closingHourFri DateTime           @db.Time()
-    openingHourSat DateTime           @db.Time()
-    closingHourSat DateTime           @db.Time()
-    openingHourSun DateTime           @db.Time()
-    closingHourSun DateTime           @db.Time()
+    createdDate    DateTime           @default(now())
+    updatedDate    DateTime           @updatedAt @db.Date
+    hidden         Boolean            @default(false)
+    openingTimeMon DateTime           @db.Time()
+    closingTimeMon DateTime           @db.Time()
+    openingTimeTue DateTime           @db.Time()
+    closingTimeTue DateTime           @db.Time()
+    openingTimeWen DateTime           @db.Time()
+    closingTimeWen DateTime           @db.Time()
+    openingTimeThu DateTime           @db.Time()
+    closingTimeThu DateTime           @db.Time()
+    openingTimeFri DateTime           @db.Time()
+    closingTimeFri DateTime           @db.Time()
+    openingTimeSat DateTime           @db.Time()
+    closingTimeSat DateTime           @db.Time()
+    openingTimeSun DateTime           @db.Time()
+    closingTimeSun DateTime           @db.Time()
     reviews        RestaurantReview[]
     menu           Dish[]
     favoriteAmong  User[]
 }
 
 model Dish {
-    id          String       @id @default(cuid())
-    name        String
-    description String
-    price       Decimal      @db.Money
-    totalStars  Int
-    owner       Restaurant   @relation(fields: [ownerId], references: [id])
-    ownerId     String
-    reviews     DishReview[]
+    id           String       @id @default(cuid())
+    name         String
+    description  String
+    price        Decimal      @db.Money
+    totalStars   Int          @default(0)
+    restaurant   Restaurant   @relation(fields: [restaurantId], references: [id])
+    restaurantId String
+    reviews      DishReview[]
+    createdDate  DateTime     @default(now())
+    updatedDate  DateTime     @updatedAt @db.Date
+    hidden       Boolean      @default(false)
 }
 
 model Address {
-    id         String      @id @default(cuid())
-    name       String
-    xCoords    Decimal
-    yCoords    Decimal
-    restaurant Restaurant?
+    id          String      @id @default(cuid())
+    name        String
+    xCoords     Decimal
+    yCoords     Decimal
+    restaurant  Restaurant?
+    createdDate DateTime    @default(now())
+    updatedDate DateTime    @updatedAt @db.Date
 }
 
 model RestaurantReview {
@@ -91,20 +102,24 @@ model RestaurantReview {
     restaurantId String
     stars        Int
     amountSpent  Decimal    @db.Money
-    date         DateTime   @db.Date
+    createdDate  DateTime   @default(now())
+    updatedDate  DateTime   @updatedAt @db.Date
     user         User       @relation(fields: [userId], references: [id])
     userId       String
+    hidden       Boolean    @default(false)
 }
 
 model DishReview {
-    id      String   @id @default(cuid())
-    content String
-    dish    Dish     @relation(fields: [dishId], references: [id])
-    dishId  String
-    stars   Int
-    date    DateTime @db.Date
-    user    User     @relation(fields: [userId], references: [id])
-    userId  String
+    id          String   @id @default(cuid())
+    content     String
+    dish        Dish     @relation(fields: [dishId], references: [id])
+    dishId      String
+    stars       Int
+    createdDate DateTime @default(now())
+    updatedDate DateTime @updatedAt @db.Date
+    user        User     @relation(fields: [userId], references: [id])
+    userId      String
+    hidden      Boolean  @default(false)
 }
 
 model Follow {
@@ -113,7 +128,7 @@ model Follow {
     fromId String
     to     User     @relation(name: "followUsersTo", fields: [toId], references: [id])
     toId   String
-    date   DateTime @db.Timestamp()
+    date   DateTime @default(now()) @db.Timestamp()
 }
 
 // Required by Next-Auth

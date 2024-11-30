@@ -1,7 +1,14 @@
 import DishCard from "@/components/cards/dish-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import ReviewCard from "@/components/cards/review-card.component";
-import { Address, Dish, Restaurant, Review, User } from "@prisma/client";
+import {
+  Address,
+  Dish,
+  Prisma,
+  Restaurant,
+  RestaurantReview,
+  User,
+} from "@prisma/client";
 
 const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
   {
@@ -26,24 +33,26 @@ const TEST_DISH: Partial<Dish>[] = [
   {
     name: "Kebab średni",
     description: "Baranina/Kurczak, surówka, pita, sosy",
-    price: 23,
+    price: new Prisma.Decimal(23),
   },
 ];
 
 const TEST_REV: Partial<
-  Review & { restaurant: Partial<Restaurant> } & { user: Partial<User> }
+  RestaurantReview & { restaurant: Partial<Restaurant> } & {
+    user: Partial<User>;
+  }
 >[] = [
   {
     content:
       "Bardzo dobry kebsik, aaaaa ale długa recenzja o moj boze ale ona jest dluga niech ktos ja powstrzyma",
-    points: 4,
-    spent_per_person: 23,
-    date: new Date("2024-11-23"),
+    stars: 4,
+    amountSpent: new Prisma.Decimal(23),
+    createdDate: new Date("2024-11-23"),
     restaurant: {
       name: "Kebab Dubai",
     },
     user: {
-      login: "@balbior",
+      name: "balbior",
     },
   },
 ];
