@@ -20,12 +20,16 @@ type Permissions = {
     dataType: Partial<RestaurantReview> | Partial<DishReview>;
     action: "view" | "viewHidden" | "create" | "edit" | "hide" | "delete";
   };
+  test: {
+    dataType: User;
+    action: "something";
+  };
 };
 
 const ifOwnReview = (
   user: User,
   review: Partial<RestaurantReview> | Partial<DishReview>
-) => review.userId != undefined && review.userId == user.id;
+) => review.authorId != undefined && review.authorId == user.id;
 
 const ROLES = {
   ADMIN: {
@@ -60,7 +64,7 @@ const ROLES = {
   },
 } as const satisfies RolesWithPermissions;
 
-export function hasPermission<Resource extends keyof Permissions>(
+export async function hasPermission<Resource extends keyof Permissions>(
   user: User,
   resource: Resource,
   action: Permissions[Resource]["action"],
@@ -86,5 +90,5 @@ export async function currentUserHasPermission<
 ) {
   const user = await getCurrentUser();
   if (user == null) return false;
-  return hasPermission(user, resource, action, data);
+  return await hasPermission(user, resource, action, data);
 }

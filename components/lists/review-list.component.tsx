@@ -1,16 +1,26 @@
-import { REVIEW_FUNCTIONS, ReviewType } from "@/utils/factories/reviews";
+import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
+import ReviewCard from "../cards/review-card.component";
 import styles from "./review-list.module.scss";
 
-type Props = {
-  type: keyof ReviewType;
-  forId: string;
+type Props<Type extends keyof ReviewType> = {
+  type: Type;
+  subjectId: ReviewType[Type]["subject"]["id"];
 };
 
-const ReviewList = async ({ type, forId }: Props) => {
-  const func = REVIEW_FUNCTIONS[type];
-  const reviews = await func.getByTypeId(forId);
+const ReviewList = async <Type extends keyof ReviewType>({
+  type,
+  subjectId,
+}: Props<Type>) => {
+  const factory = REVIEW_FACTORY[type];
+  const reviews = await factory.getBySubjectId(subjectId);
 
-  return <div className={styles.container}>Enter</div>;
+  return (
+    <div className={styles.container}>
+      {reviews.map((review) => (
+        <ReviewCard key={review.id} type={type} data={review} />
+      ))}
+    </div>
+  );
 };
 
 export default ReviewList;

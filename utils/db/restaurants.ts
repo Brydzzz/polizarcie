@@ -1,8 +1,9 @@
-"server only";
+"use server";
 
 import { prisma } from "@/utils/prisma";
+import { Restaurant } from "@prisma/client";
 
-export async function fetchAllRestaurants() {
+export async function getAllRestaurants() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
       address: {
@@ -15,7 +16,7 @@ export async function fetchAllRestaurants() {
   return restaurants;
 }
 
-export async function fetchRestaurantsLike(like: string) {
+export async function getRestaurantsLike(like: string) {
   const restaurants = await prisma.restaurant.findMany({
     include: {
       address: {
@@ -36,18 +37,11 @@ export async function fetchRestaurantsLike(like: string) {
   return restaurants;
 }
 
-export async function fetchRestaurantById(id: string) {
-  const data = await prisma.restaurant.findUnique({
+export async function getRestaurantById(id: Restaurant["id"]) {
+  const data = await prisma.restaurant.findFirst({
     where: {
       id: id,
     },
-    include: {
-      address: true,
-    },
   });
-  if (!data) {
-    throw new Error(`Restaurant with ID ${id} not found`);
-  }
-
-  return JSON.stringify(data);
+  return data;
 }

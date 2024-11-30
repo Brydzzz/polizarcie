@@ -8,7 +8,9 @@ import {
 import StarInput from "@/components/inputs/star-input.component";
 import MapView from "@/components/map-view.component";
 import { parseTime } from "@/utils/date-time";
-import { fetchRestaurantById } from "@/utils/db/restaurants";
+import { getAddressById } from "@/utils/db/addresses";
+import { getRestaurantById } from "@/utils/db/restaurants";
+import { getStringified } from "@/utils/misc";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,9 +27,16 @@ const RestaurantPage = () => {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const data_str = await fetchRestaurantById(id);
-        const data = JSON.parse(data_str);
-        setRestaurant(data);
+        const restaurant = await getRestaurantById(id);
+        if (restaurant == null || restaurant.addressId == null) {
+          setLoading(false);
+          return;
+        }
+        const addressJson = await getStringified(getAddressById, [
+          restaurant.addressId,
+        ]);
+        const address = JSON.parse(addressJson);
+        setRestaurant({ ...restaurant, address: { ...address } });
         setLoading(false);
       } catch (err: unknown) {
         setError((err as Error).message);

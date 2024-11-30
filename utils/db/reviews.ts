@@ -1,10 +1,11 @@
 "use server";
 
+import { getCurrentUser } from "@/actions/users";
 import { currentUserHasPermission } from "@/utils/permissions";
 import { prisma } from "@/utils/prisma";
-import { DishReview, RestaurantReview } from "@prisma/client";
+import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
 
-export async function getRestaurantReviewsByRestaurantId(id: string) {
+export async function getRestaurantReviewsByRestaurantId(id: Restaurant["id"]) {
   return await prisma.restaurantReview.findMany({
     where: {
       restaurantId: id,
@@ -12,7 +13,7 @@ export async function getRestaurantReviewsByRestaurantId(id: string) {
   });
 }
 
-export async function getDishReviewsByDishId(id: string) {
+export async function getDishReviewsByDishId(id: Dish["id"]) {
   return await prisma.dishReview.findMany({
     where: {
       dishId: id,
@@ -22,11 +23,13 @@ export async function getDishReviewsByDishId(id: string) {
 
 export async function createRestaurantReview(data: RestaurantReview) {
   if (!currentUserHasPermission("reviews", "create", data)) return null;
+  const user = await getCurrentUser();
+  if (user == null) return null;
   return await prisma.restaurantReview.create({
     data: {
       id: data.id,
       restaurantId: data.restaurantId,
-      userId: data.userId,
+      authorId: user.id,
       amountSpent: data.amountSpent,
       content: data.content,
       stars: data.stars,
@@ -36,11 +39,13 @@ export async function createRestaurantReview(data: RestaurantReview) {
 
 export async function createDishReview(data: DishReview) {
   if (!currentUserHasPermission("reviews", "create", data)) return null;
+  const user = await getCurrentUser();
+  if (user == null) return null;
   return await prisma.dishReview.create({
     data: {
       id: data.id,
       dishId: data.dishId,
-      userId: data.userId,
+      authorId: user.id,
       content: data.content,
       stars: data.stars,
     },
