@@ -8,14 +8,15 @@ import {
 import StarInput from "@/components/inputs/star-input.component";
 import MapView from "@/components/map-view.component";
 import { parseTime } from "@/utils/date-time";
-import { fetchRestaurantById } from "@/utils/db/restaurants";
+import { fetchRestaurantBySlug } from "@/utils/db/restaurants";
 import { Address, Restaurant } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 
 const RestaurantPage = () => {
-  const { id } = useParams<{ id: string }>();
+  console.log("Hello");
+  const { slug } = useParams<{ slug: string }>();
   const [restaurant, setRestaurant] = useState<
     Restaurant & { address: Partial<Address> | null }
   >();
@@ -25,7 +26,7 @@ const RestaurantPage = () => {
   useEffect(() => {
     const fetchRestaurant = async () => {
       try {
-        const data_str = await fetchRestaurantById(id);
+        const data_str = await fetchRestaurantBySlug(slug);
         const data = JSON.parse(data_str);
         setRestaurant(data);
         setLoading(false);
@@ -34,15 +35,15 @@ const RestaurantPage = () => {
       }
     };
     fetchRestaurant();
-  }, [id]);
+  }, [slug]);
+  if (error) return <div>Error: {error}</div>;
+
   if (loading)
     return (
       <div className={styles.loading}>
         <h1>Loading...</h1>
       </div>
     );
-
-  if (error) return <div>Error: {error}</div>;
 
   const hours = [
     {
