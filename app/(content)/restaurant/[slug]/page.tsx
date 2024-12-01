@@ -2,21 +2,21 @@ import Button from "@/components/button/button.component";
 import StarInput from "@/components/inputs/star-input.component";
 import ReviewList from "@/components/lists/review-list.component";
 import MapView from "@/components/map-view.component";
+import { getRestaurantBySlug } from "@/lib/db/restaurants";
+import { getRestaurantAvgStarsById } from "@/lib/db/reviews";
 import { parseTime } from "@/utils/date-time";
-import { getRestaurantBySlug } from "@/utils/db/restaurants";
-import { getRestaurantAvgStarsById } from "@/utils/db/reviews";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 const RestaurantPage = async ({ params }: Props) => {
-  const slug = params.slug;
+  const slug = (await params).slug;
   const restaurant = await getRestaurantBySlug(slug);
   if (!restaurant) notFound();
   const score = await getRestaurantAvgStarsById(restaurant.id);

@@ -1,6 +1,6 @@
 import LandingHeader from "@/components/headers/landing-header.component";
 import CenterSection from "@/components/sections/center-section.component";
-import { prisma } from "@/utils/prisma";
+import { prisma } from "@/prisma";
 import styles from "./page.module.scss";
 
 export default async function Home() {

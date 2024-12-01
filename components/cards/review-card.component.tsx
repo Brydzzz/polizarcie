@@ -1,6 +1,6 @@
 import { getCurrentUser } from "@/actions/users";
+import { getUserById } from "@/lib/db/users";
 import { parseDate } from "@/utils/date-time";
-import { getUserById } from "@/utils/db/users";
 import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
 import { MouseEventHandler, ReactNode } from "react";
 import StarInput from "../inputs/star-input.component";

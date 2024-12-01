@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@/auth";
-import { getUserByEmail } from "@/utils/db/users";
+import { getUserByEmail } from "@/lib/db/users";
 
 export async function getCurrentUser() {
   const session = await auth();

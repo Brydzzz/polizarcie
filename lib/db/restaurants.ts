@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/utils/prisma";
+import { prisma } from "@/prisma";
 import { Restaurant } from "@prisma/client";
 
 export async function getRestaurantReviews(id: string) {

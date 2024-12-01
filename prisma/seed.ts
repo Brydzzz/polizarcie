@@ -1,6 +1,6 @@
 import { DishType, Gender, Prisma } from "@prisma/client";
 import slugify from "slugify";
-import { prisma } from "../utils/prisma";
+import { prisma } from "../prisma";
 
 async function initData() {
   // TODO add some actual database initialization
