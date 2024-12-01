@@ -4,12 +4,12 @@ import MenuList from "@/components/lists/menu-list.component";
 import ReviewList from "@/components/lists/review-list.component";
 import MapView from "@/components/map-view.component";
 import MenuReviewSection from "@/components/sections/menu-review-section.component";
-import { parseTime } from "@/utils/date-time";
 import {
   getMenuByRestaurantId,
   getRestaurantBySlug,
-} from "@/utils/db/restaurants";
-import { getRestaurantAvgStarsById } from "@/utils/db/reviews";
+} from "@/lib/db/restaurants";
+import { getRestaurantAvgStarsById } from "@/lib/db/reviews";
+import { parseTime } from "@/utils/date-time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
