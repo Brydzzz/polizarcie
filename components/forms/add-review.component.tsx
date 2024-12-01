@@ -30,6 +30,7 @@ import StarInput from "../inputs/star-input.component";
 import styles from "./add-review.module.scss";
 
 type Props<Type extends keyof ReviewType> = {
+  id?: string;
   type: Type;
   subjectId: ReviewType[Type]["subject"]["id"];
 };
@@ -79,6 +80,7 @@ type Customs = {
 };
 
 const AddReview = <Type extends keyof ReviewType>({
+  id,
   type,
   subjectId,
 }: Props<Type>) => {
@@ -174,7 +176,7 @@ const AddReview = <Type extends keyof ReviewType>({
   };
 
   return (
-    <div className={styles.container}>
+    <div id={id} className={styles.container}>
       <h2>{subject?.name}</h2>
       <h3>Dodaj swoją opinię</h3>
       <form action={submit} className={styles.form}>
