@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/utils/prisma";
+import { prisma } from "@/prisma";
 import { User } from "@prisma/client";
 
 export async function getUserById(id: User["id"]) {

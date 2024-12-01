@@ -1,6 +1,6 @@
 "use server";
 
-import { prisma } from "@/utils/prisma";
+import { prisma } from "@/prisma";
 import { Dish } from "@prisma/client";
 
 export async function getDishById(id: Dish["id"]) {

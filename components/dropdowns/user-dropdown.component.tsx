@@ -1,18 +1,15 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectCurrentUser } from "@/lib/store/user/user.selector";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./user-dropdown.module.scss";
 
 const UserDropdown = () => {
-  const { data: session } = useSession();
-  const [signedIn, setSignedIn] = useState(false);
+  const user = useAppSelector(selectCurrentUser);
   const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setSignedIn(session?.user != null);
-  }, [session]);
 
   const toggleVisible = (toggle: boolean | undefined = undefined) => {
     setVisible(toggle || !visible);
@@ -27,9 +24,9 @@ const UserDropdown = () => {
         className={`${styles.dropdown} ${visible ? "" : styles.hidden}`}
         onClick={() => toggleVisible(false)}
       >
-        {signedIn ? (
+        {user ? (
           <>
-            <h2>{session?.user?.name}</h2>
+            <h2>{user.name}</h2>
             <span
               className={styles.item}
               onClick={() => signOut({ redirect: true, redirectTo: "/" })}
