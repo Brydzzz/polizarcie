@@ -57,8 +57,6 @@ const RestaurantPage = async ({ params }: Props) => {
     },
   ];
 
-  console.log(hours);
-
   return (
     <main className={styles.restaurantPage}>
       <div className={styles.header}>
