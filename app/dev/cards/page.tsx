@@ -42,7 +42,8 @@ const TEST_USER: Partial<User & { medias: Partial<UserMedia>[] }>[] = [
   {
     name: "Balbinka123",
     points: 100,
-    description: "Hej jestem balbinka jestem kotem lubie kocia karme",
+    description:
+      "Hej jestem balbinka jestem kotem lubie kocia karme, lubie tez strasznie długo opisy tak długie ze nie mozna tego wytrzymac takie dlugie opisy lubie najlepiej takie ktore zabieraja kilka linijek, 3 lub wiecej serio tym wiecej linijek tym jest fajniej. strasznie bym sobie rybke zjadla i mleczkiem popila, no i ja wtedy do niego mówie PANIE JA JESTEM KOTEM i on mi nie wierzyl nie wiec normalnie zamiałkałam mu i juz nie byl taki sprytny ten gosc co nie juz uwierzyl od razu ze jestem prawdzimy kotem",
     medias: [
       {
         link: "https://www.facebook.com/WindaNaWEiti",
