@@ -28,12 +28,12 @@ const MenuList = ({ data }: Props) => {
 
   return (
     <div className={styles.container}>
-      {dishTypeOrder.map((type) => {
+      {dishTypeOrder.map((type, index) => {
         const dishesWithType = data.filter((dish) => dish.type === type);
 
         if (dishesWithType.length === 0) return null;
         return (
-          <div key={type} className={styles.dishCategory}>
+          <div key={index} className={styles.dishCategory}>
             <p>{dishTypeDict.get(DishType[type])}</p>
             <div className={styles.dishList}>
               {dishesWithType.map((dish) => (

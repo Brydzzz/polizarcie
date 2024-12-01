@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 20px;
   border-radius: 20px;
 
   .dishCategory {
@@ -10,7 +9,7 @@
     flex-direction: column;
     justify-content: space-around;
     margin-bottom: 40px;
-    padding: 20px;
+    padding: 0px 20px;
     row-gap: 15px;
     & > p {
       font-family: "Gluten";

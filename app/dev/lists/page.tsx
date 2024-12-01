@@ -116,7 +116,10 @@ const TEST_MENU: Partial<Dish>[] = [
 ];
 const ListsPage = () => {
   return (
-    <div className="centralized-x" style={{ width: "900px", margin: "auto" }}>
+    <div
+      className="centralized-x"
+      style={{ width: "900px", margin: "auto", paddingTop: "50px" }}
+    >
       <MenuList data={TEST_MENU} />
     </div>
   );
