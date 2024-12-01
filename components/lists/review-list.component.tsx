@@ -17,7 +17,6 @@ const ReviewList = async <Type extends keyof ReviewType>({
 
   return (
     <div className={styles.container}>
-      <h1>Opinie:</h1>
       {reviews.length === 0 && (
         <p>Nikt nie wystawił jeszcze opinii, bądź pierwszy!</p>
       )}
