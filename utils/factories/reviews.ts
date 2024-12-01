@@ -7,10 +7,10 @@ import {
   getRestaurantReviewsByRestaurantId,
   updateDishReview,
   updateRestaurantReview,
-} from "@/utils/db/reviews";
+} from "@/lib/db/reviews";
 import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
-import { getDishById } from "../db/dishes";
-import { getRestaurantById } from "../db/restaurants";
+import { getDishById } from "../../lib/db/dishes";
+import { getRestaurantById } from "../../lib/db/restaurants";
 
 export type ReviewType = {
   restaurant: {

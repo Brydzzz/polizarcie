@@ -15,13 +15,13 @@ import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 const RestaurantPage = async ({ params }: Props) => {
-  const slug = params.slug;
+  const slug = (await params).slug;
   const restaurant = await getRestaurantBySlug(slug);
   if (!restaurant) notFound();
   const score = await getRestaurantAvgStarsById(restaurant.id);

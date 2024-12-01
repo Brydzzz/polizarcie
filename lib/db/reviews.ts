@@ -1,8 +1,8 @@
 "use server";
 
-import { getCurrentUser } from "@/actions/users";
-import { currentUserHasPermission } from "@/utils/permissions";
-import { prisma } from "@/utils/prisma";
+import { currentUserHasPermission } from "@/lib/permissions";
+import { prisma } from "@/prisma";
+import { getCurrentUser } from "@/utils/users";
 import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
 
 export async function getRestaurantReviewsByRestaurantId(id: Restaurant["id"]) {

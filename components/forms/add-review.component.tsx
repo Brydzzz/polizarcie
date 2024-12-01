@@ -1,6 +1,11 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
-import { getCurrentUser } from "@/actions/users";
+import { useAppSelector } from "@/lib/store/hooks";
+import {
+  selectCurrentUser,
+  selectUserLoading,
+} from "@/lib/store/user/user.selector";
 import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
 import { transferWithJSON } from "@/utils/misc.client";
 import {
@@ -9,7 +14,6 @@ import {
   Prisma,
   Restaurant,
   RestaurantReview,
-  User,
 } from "@prisma/client";
 import { redirect, useRouter } from "next/navigation";
 import {
@@ -155,19 +159,13 @@ const AddReview = <Type extends keyof ReviewType>({
   >();
   const store = CUSTOMS[type].store();
   const router = useRouter();
-  const [user, setUser] = useState<User | undefined>();
+  const currentUser = useAppSelector(selectCurrentUser);
+  const loading = useAppSelector(selectUserLoading);
 
   useEffect(() => {
     const exec = async () => {
       const result = await factory.getSubject(subjectId);
       setSubject(result || undefined);
-    };
-    exec();
-  }, []);
-  useEffect(() => {
-    const exec = async () => {
-      const result = await getCurrentUser();
-      setUser(result || undefined);
     };
     exec();
   }, []);
@@ -178,23 +176,22 @@ const AddReview = <Type extends keyof ReviewType>({
   };
 
   return (
-    <div id={id}>
-      <div className={styles.container}>
-        <h2>{subject?.name}</h2>
-        <h3>Dodaj swoją opinię</h3>
-        <form action={submit} className={styles.form}>
-          {CUSTOMS[type].inputs(store)}
-          <div className={styles.right}>
-            {user ? (
+    <div id={id} className={styles.container}>
+      <h2>{subject?.name}</h2>
+      <h3>Dodaj swoją opinię</h3>
+      <form action={submit} className={styles.form}>
+        {CUSTOMS[type].inputs(store)}
+        <div className={styles.right}>
+          {!loading &&
+            (currentUser ? (
               <Button type="submit">Prześlij</Button>
             ) : (
               <Button type="button" onClick={() => redirect("/auth/sign-in")}>
                 Zaloguj się aby przesłać
               </Button>
-            )}
-          </div>
-        </form>
-      </div>
+            ))}
+        </div>
+      </form>
     </div>
   );
 };
