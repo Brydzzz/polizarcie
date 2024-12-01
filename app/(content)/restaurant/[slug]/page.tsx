@@ -81,7 +81,7 @@ const RestaurantPage = async ({ params }: Props) => {
         <div className={styles.column}>
           <div className={styles.rating}>
             <StarInput
-              value={score._avg.stars || 0}
+              value={score._avg.stars ? Math.round(score._avg.stars) : 0}
               max={5}
               disabled
             ></StarInput>
