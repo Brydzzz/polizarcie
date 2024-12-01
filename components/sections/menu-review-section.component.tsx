@@ -2,7 +2,7 @@
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectRestaurantPageView } from "@/lib/store/layout-options/layout-options.selector";
 import { setRestaurantPageView } from "@/lib/store/layout-options/layout-options.slice";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import styles from "./menu-review-section.module.scss";
@@ -14,6 +14,12 @@ type Props = {
 const MenuReviewSection = ({ reviewList, menuList }: Props) => {
   const view = useAppSelector(selectRestaurantPageView);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch(setRestaurantPageView("menu"));
+    };
+  }, [dispatch]);
 
   return (
     <div className={styles.menuReviewSection}>
