@@ -59,13 +59,14 @@
           justify-content: flex-start;
           align-items: center;
           gap: 10px;
+          font-size: 18pt;
         }
 
         & > .info {
           display: flex;
           flex-direction: column;
 
-          & > h3 {
+          & > h2 {
             margin-bottom: 10px;
             margin-top: 10px;
           }
@@ -78,7 +79,7 @@
         & > .hours {
           margin-bottom: 20px;
 
-          & > h3 {
+          & > h2 {
             margin-bottom: 10px;
           }
           & > ul {

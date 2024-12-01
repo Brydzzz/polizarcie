@@ -90,27 +90,29 @@ const RestaurantPage = async ({ params }: Props) => {
               <StarInput
                 value={score._avg.stars ? Math.round(score._avg.stars) : 0}
                 max={5}
+                starSize="24pt"
                 disabled
               ></StarInput>
               <p>{roundedScore || 0}</p>
             </div>
             <div className={styles.info}>
-              <h3>Adres:</h3>
+              <h2>Adres:</h2>
               <p>{restaurant.address?.name}</p>
-              <h3>Opis:</h3>
+              <h2>Opis:</h2>
               <p>{restaurant.description}</p>
             </div>
           </div>
           <div className={styles.column}>
             <div className={styles.hours}>
-              <h3>Godziny Otwarcia:</h3>
+              <h2>Godziny Otwarcia:</h2>
               <ul>
                 {hours.map((hour, index) => (
                   <li key={index}>
                     <div className={styles.openHours}>
                       <p>
                         <strong>{hour.day}:</strong>
-                        &nbsp;
+                      </p>
+                      <p>
                         {parseTime(hour.opening)}-{parseTime(hour.closing)}
                       </p>
                     </div>
