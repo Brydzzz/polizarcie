@@ -1,7 +1,7 @@
-import { getCurrentUser } from "@/actions/users";
 import { getUserById } from "@/lib/db/users";
 import { parseDate } from "@/utils/date-time";
 import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
+import { getCurrentUser } from "@/utils/users";
 import { MouseEventHandler, ReactNode } from "react";
 import StarInput from "../inputs/star-input.component";
 import styles from "./review-card.module.scss";

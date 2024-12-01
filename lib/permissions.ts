@@ -1,6 +1,6 @@
 "use server";
 
-import { getCurrentUser } from "@/actions/users";
+import { getCurrentUser } from "@/utils/users";
 import { DishReview, RestaurantReview, Role, User } from "@prisma/client";
 
 type PermissionCheck<Key extends keyof Permissions> =
