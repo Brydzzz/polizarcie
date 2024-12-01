@@ -1,0 +1,16 @@
+.menuReviewSection {
+  width: 50%;
+
+  & > .changeSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+  }
+
+  & > .section {
+    margin-top: 60px;
+  }
+}
