@@ -1,6 +1,16 @@
 import DishCard from "@/components/cards/dish-card.component";
+import LinkCard from "@/components/cards/link-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
-import { Address, Dish, Prisma, Restaurant } from "@prisma/client";
+import UserCard from "@/components/cards/user-desc-card-component";
+import {
+  Address,
+  Dish,
+  MediaType,
+  Prisma,
+  Restaurant,
+  User,
+  UserMedia,
+} from "@prisma/client";
 
 const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
   {
@@ -18,6 +28,32 @@ const TEST_REST: Partial<Restaurant & { address: Partial<Address> }>[] = [
     },
     description:
       "Marszałkowski Bar Mleczny to klasyczna polska restauracja typu bar mleczny, która oferuje tradycyjne dania kuchni polskiej w przystępnych cenach.",
+  },
+];
+
+const TEST_LINK: Partial<UserMedia>[] = [
+  {
+    link: "https://www.facebook.com/WindaNaWEiti",
+    type: MediaType.FACEBOOK,
+  },
+];
+
+const TEST_USER: Partial<User & { medias: Partial<UserMedia>[] }>[] = [
+  {
+    name: "Balbinka123",
+    points: 100,
+    description:
+      "Hej jestem balbinka jestem kotem lubie kocia karme, lubie tez strasznie długo opisy tak długie ze nie mozna tego wytrzymac takie dlugie opisy lubie najlepiej takie ktore zabieraja kilka linijek, 3 lub wiecej serio tym wiecej linijek tym jest fajniej. strasznie bym sobie rybke zjadla i mleczkiem popila, no i ja wtedy do niego mówie PANIE JA JESTEM KOTEM i on mi nie wierzyl nie wiec normalnie zamiałkałam mu i juz nie byl taki sprytny ten gosc co nie juz uwierzyl od razu ze jestem prawdzimy kotem",
+    medias: [
+      {
+        link: "https://www.facebook.com/WindaNaWEiti",
+        type: MediaType.FACEBOOK,
+      },
+      {
+        link: "https://www.instagram.com/weiti.fc/",
+        type: MediaType.INSTAGRAM,
+      },
+    ],
   },
 ];
 
@@ -42,6 +78,12 @@ const CardPage = () => {
         ))}
         {TEST_DISH.map((dish, i) => (
           <DishCard key={i} data={dish}></DishCard>
+        ))}
+        {TEST_USER.map((usr, i) => (
+          <UserCard key={i} data={usr}></UserCard>
+        ))}
+        {TEST_LINK.map((lin, i) => (
+          <LinkCard key={i} data={lin}></LinkCard>
         ))}
       </div>
     </div>
