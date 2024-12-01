@@ -15,7 +15,8 @@ import {
   Restaurant,
   RestaurantReview,
 } from "@prisma/client";
-import { redirect, useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   Dispatch,
   ReactNode,
@@ -186,7 +187,7 @@ const AddReview = <Type extends keyof ReviewType>({
             (currentUser ? (
               <Button type="submit">Prześlij</Button>
             ) : (
-              <Button type="button" onClick={() => redirect("/auth/sign-in")}>
+              <Button type="button" onClick={() => signIn()}>
                 Zaloguj się aby przesłać
               </Button>
             ))}
