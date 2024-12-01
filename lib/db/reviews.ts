@@ -3,42 +3,71 @@
 import { currentUserHasPermission } from "@/lib/permissions";
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
+import {
+  Dish,
+  DishReview,
+  Restaurant,
+  RestaurantReview,
+  User,
+} from "@prisma/client";
 
-export async function getRestaurantReviewsByRestaurantId(id: Restaurant["id"]) {
+export type RestaurantReviewCreator = Pick<
+  RestaurantReview,
+  "amountSpent" | "content" | "subjectId" | "stars"
+>;
+export type RestaurantReviewFull = RestaurantReview & {
+  subject: Restaurant;
+  author: User;
+};
+export type DishReviewCreator = Pick<
+  DishReview,
+  "content" | "subjectId" | "stars"
+>;
+export type DishReviewFull = DishReview & { subject: Dish; author: User };
+
+export async function getRestaurantReviewsByRestaurantId(
+  id: Restaurant["id"],
+  take: number,
+  skip?: number
+): Promise<RestaurantReviewFull[]> {
   return await prisma.restaurantReview.findMany({
     where: {
-      restaurantId: id,
+      subjectId: id,
     },
+    include: {
+      author: true,
+      subject: true,
+    },
+    take: take,
+    skip: skip,
   });
 }
 
-export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
-  return await prisma.restaurantReview.aggregate({
-    _avg: {
-      stars: true,
-    },
-    where: {
-      restaurantId: id,
-    },
-  });
-}
-
-export async function getDishReviewsByDishId(id: Dish["id"]) {
+export async function getDishReviewsByDishId(
+  id: Dish["id"],
+  take: number,
+  skip?: number
+): Promise<DishReviewFull[]> {
   return await prisma.dishReview.findMany({
     where: {
-      dishId: id,
+      subjectId: id,
     },
+    include: {
+      author: true,
+      subject: true,
+    },
+    take: take,
+    skip: skip,
   });
 }
 
-export async function createRestaurantReview(data: RestaurantReview) {
+export async function createRestaurantReview(data: RestaurantReviewCreator) {
   if (!currentUserHasPermission("reviews", "create", data)) return null;
   const user = await getCurrentUser();
   if (user == null) return null;
   return await prisma.restaurantReview.create({
     data: {
-      restaurantId: data.restaurantId,
+      subjectId: data.subjectId,
       authorId: user.id,
       amountSpent: data.amountSpent,
       content: data.content,
@@ -47,13 +76,13 @@ export async function createRestaurantReview(data: RestaurantReview) {
   });
 }
 
-export async function createDishReview(data: DishReview) {
+export async function createDishReview(data: DishReviewCreator) {
   if (!currentUserHasPermission("reviews", "create", data)) return null;
   const user = await getCurrentUser();
   if (user == null) return null;
   return await prisma.dishReview.create({
     data: {
-      dishId: data.dishId,
+      subjectId: data.subjectId,
       authorId: user.id,
       content: data.content,
       stars: data.stars,
@@ -94,4 +123,15 @@ export async function deleteRestaurantReview(id: string) {
 export async function deleteDishReview(id: string) {
   if (!currentUserHasPermission("reviews", "delete", { id: id })) return null;
   return await prisma.dishReview.delete({ where: { id: id } });
+}
+
+export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
+  return await prisma.restaurantReview.aggregate({
+    _avg: {
+      stars: true,
+    },
+    where: {
+      subjectId: id,
+    },
+  });
 }

@@ -3,15 +3,6 @@
 import { prisma } from "@/prisma";
 import { Restaurant } from "@prisma/client";
 
-export async function getRestaurantReviews(id: string) {
-  const reviews = await prisma.restaurantReview.findMany({
-    where: {
-      restaurantId: id,
-    },
-  });
-  return JSON.stringify(reviews);
-}
-
 export async function getAllRestaurants() {
   const restaurants = await prisma.restaurant.findMany({
     include: {
@@ -73,7 +64,8 @@ export async function getMenuByRestaurantId(id: string) {
     select: {
       name: true,
       description: true,
-      price: true,
+      priceZl: true,
+      priceGr: true,
       type: true,
     },
     where: {

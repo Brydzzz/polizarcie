@@ -89,7 +89,8 @@ model Dish {
     id           String       @id @default(cuid())
     name         String
     description  String
-    price        Decimal      @db.Money
+    priceZl      Int
+    priceGr      Int
     totalStars   Int          @default(0)
     restaurant   Restaurant   @relation(fields: [restaurantId], references: [id])
     restaurantId String
@@ -111,24 +112,24 @@ model Address {
 }
 
 model RestaurantReview {
-    id           String     @id @default(cuid())
-    content      String
-    restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-    restaurantId String
-    stars        Int
-    amountSpent  Decimal    @db.Money
-    createdDate  DateTime   @default(now())
-    updatedDate  DateTime   @updatedAt @db.Date
-    author       User       @relation(fields: [authorId], references: [id])
-    authorId     String
-    hidden       Boolean    @default(false)
+    id          String     @id @default(cuid())
+    content     String
+    subject     Restaurant @relation(fields: [subjectId], references: [id])
+    subjectId   String
+    stars       Int
+    amountSpent Int
+    createdDate DateTime   @default(now())
+    updatedDate DateTime   @updatedAt @db.Date
+    author      User       @relation(fields: [authorId], references: [id])
+    authorId    String
+    hidden      Boolean    @default(false)
 }
 
 model DishReview {
     id          String   @id @default(cuid())
     content     String
-    dish        Dish     @relation(fields: [dishId], references: [id])
-    dishId      String
+    subject     Dish     @relation(fields: [subjectId], references: [id])
+    subjectId   String
     stars       Int
     createdDate DateTime @default(now())
     updatedDate DateTime @updatedAt @db.Date

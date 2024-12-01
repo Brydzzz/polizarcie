@@ -5,7 +5,7 @@ type Props = {
 };
 
 const DishCard = ({ data }: Props) => {
-  const { name, description, price } = data;
+  const { name, description, priceZl, priceGr } = data;
   return (
     <div className={styles.container}>
       <div className={styles.details}>
@@ -13,7 +13,7 @@ const DishCard = ({ data }: Props) => {
         <p className={styles.description}>{description}</p>
       </div>
       <div className={styles.right}>
-        <p className={styles.price}>{`${price} zł`}</p>
+        <p className={styles.price}>{`${priceZl}.${priceGr} zł`}</p>
       </div>
     </div>
   );
