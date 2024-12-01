@@ -6,7 +6,10 @@ import {
   selectCurrentUser,
   selectUserLoading,
 } from "@/lib/store/user/user.selector";
-import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
+import {
+  REVIEW_FUNCTIONS_FACTORY,
+  ReviewType,
+} from "@/utils/factories/reviews";
 import { transferWithJSON } from "@/utils/misc.client";
 import {
   Dish,
@@ -154,7 +157,7 @@ const AddReview = <Type extends keyof ReviewType>({
     },
   };
 
-  const factory = REVIEW_FACTORY[type];
+  const factory = REVIEW_FUNCTIONS_FACTORY[type];
   const [subject, setSubject] = useState<
     ReviewType[Type]["subject"] | undefined
   >();

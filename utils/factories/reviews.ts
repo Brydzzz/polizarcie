@@ -12,14 +12,6 @@ import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
 
-type GenericReview = {
-  id: string;
-  authorId: string;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
 export type ReviewType = {
   restaurant: {
     subject: Restaurant;
@@ -31,7 +23,7 @@ export type ReviewType = {
   };
 };
 
-type ReviewFactory = {
+type ReviewFunctions = {
   [Key in keyof ReviewType]: {
     getBySubjectId: (
       id: ReviewType[Key]["subject"]["id"]
@@ -51,7 +43,7 @@ type ReviewFactory = {
   };
 };
 
-export const REVIEW_FACTORY: ReviewFactory = {
+export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
   restaurant: {
     getBySubjectId: getRestaurantReviewsByRestaurantId,
     getSubject: async (by) =>

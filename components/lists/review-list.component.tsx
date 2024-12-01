@@ -1,4 +1,7 @@
-import { REVIEW_FACTORY, ReviewType } from "@/utils/factories/reviews";
+import {
+  REVIEW_FUNCTIONS_FACTORY,
+  ReviewType,
+} from "@/utils/factories/reviews";
 import ReviewCard from "../cards/review-card.component";
 import AddReview from "../forms/add-review.component";
 import styles from "./review-list.module.scss";
@@ -12,7 +15,7 @@ const ReviewList = async <Type extends keyof ReviewType>({
   type,
   subjectId,
 }: Props<Type>) => {
-  const factory = REVIEW_FACTORY[type];
+  const factory = REVIEW_FUNCTIONS_FACTORY[type];
   const reviews = await factory.getBySubjectId(subjectId);
 
   return (
