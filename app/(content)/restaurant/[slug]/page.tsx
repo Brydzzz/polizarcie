@@ -69,6 +69,12 @@ const RestaurantPage = async ({ params }: Props) => {
   return (
     <main className={styles.restaurantPage}>
       <div className={styles.header}>
+        <Link href="/browse">
+          <i
+            className="fa-solid fa-arrow-left"
+            style={{ color: "var(--primary-light)", fontSize: "40pt" }}
+          ></i>
+        </Link>
         <p>{restaurant.name}</p>
         {/* TODO: heart input for adding to favorite restaurants */}
         <span>
