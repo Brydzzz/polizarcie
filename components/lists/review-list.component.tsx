@@ -24,7 +24,7 @@ const ReviewList = async <Type extends keyof ReviewType>({
       {reviews.map((review) => (
         <ReviewCard key={review.id} type={type} data={review} />
       ))}
-      <AddReview type={type} subjectId={subjectId} />
+      <AddReview id="AddReviewSection" type={type} subjectId={subjectId} />
     </div>
   );
 };

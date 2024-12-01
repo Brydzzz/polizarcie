@@ -1,9 +1,11 @@
+import Button from "@/components/button/button.component";
 import StarInput from "@/components/inputs/star-input.component";
 import ReviewList from "@/components/lists/review-list.component";
 import MapView from "@/components/map-view.component";
 import { parseTime } from "@/utils/date-time";
 import { getRestaurantBySlug } from "@/utils/db/restaurants";
 import { getRestaurantAvgStarsById } from "@/utils/db/reviews";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 
@@ -109,6 +111,11 @@ const RestaurantPage = async ({ params }: Props) => {
               ))}
             </ul>
           </div>
+          <Link href="#AddReviewSection" scroll={true}>
+            <Button>
+              <i className="fa-solid fa-pen-to-square"></i>&nbsp; Napisz Opinię
+            </Button>
+          </Link>
         </div>
       </div>
       {restaurant.id && (
