@@ -18,6 +18,7 @@ const RestaurantPage = async ({ params }: Props) => {
   const restaurant = await getRestaurantBySlug(slug);
   if (!restaurant) notFound();
   const score = await getRestaurantAvgStarsById(restaurant.id);
+  const roundedScore = score._avg.stars?.toFixed(2);
 
   const hours = [
     {
@@ -82,7 +83,7 @@ const RestaurantPage = async ({ params }: Props) => {
               max={5}
               disabled
             ></StarInput>
-            <p>{score._avg.stars || 0}</p>
+            <p>{roundedScore || 0}</p>
           </div>
           <div className={styles.info}>
             <h3>Adres:</h3>
