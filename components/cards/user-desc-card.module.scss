@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  --bg-local: rgba(61, 41, 53, 0.7);
+  border: 1px solid var(--secondary-dark);
+  border-radius: 8px;
+  background-color: var(--bg-local);
+  min-width: 300px;
+  width: 100%;
+  height: 250px;
+  & > .details {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    & > .name {
+      padding: 5 20 0 10;
+      font-size: 15pt;
+      color: var(--text);
+    }
+    & > .description {
+      padding: 5 20 0 10;
+      margin-top: 20;
+    }
+    & > .medias {
+      padding: 10 20 50 5;
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
+}

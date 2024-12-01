@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  background-color: var(--bg-local);
+  min-width: 40px;
+  height: 100%;
+  align-items: center;
+  & > .type {
+    font-size: 15pt;
+    color: var(--primary-light);
+    padding: 0 10 0 10;
+  }
+  & > .link {
+  }
+}
