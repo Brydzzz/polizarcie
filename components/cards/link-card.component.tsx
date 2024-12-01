@@ -18,7 +18,9 @@ const LinkCard = ({ data }: Props) => {
   return (
     <div className={styles.container}>
       <p className={styles.type}>{MediaTypeDict[String(type)]}</p>
-      <a href={link}>{String(type).toLowerCase()}</a>
+      <a className={styles.link} href={link}>
+        {String(type).toLowerCase()}
+      </a>
     </div>
   );
 };
