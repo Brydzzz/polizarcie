@@ -131,15 +131,17 @@ const RestaurantPage = async ({ params }: Props) => {
             </Link>
           </div>
         </div>
-        <MenuReviewSection
-          menuList={<MenuList data={menu}></MenuList>}
-          reviewList={
-            <ReviewList
-              type="restaurant"
-              subjectId={restaurant.id}
-            ></ReviewList>
-          }
-        ></MenuReviewSection>
+        <div>
+          <MenuReviewSection
+            menuList={<MenuList data={menu}></MenuList>}
+            reviewList={
+              <ReviewList
+                type="restaurant"
+                subjectId={restaurant.id}
+              ></ReviewList>
+            }
+          ></MenuReviewSection>
+        </div>
       </div>
     </main>
   );
