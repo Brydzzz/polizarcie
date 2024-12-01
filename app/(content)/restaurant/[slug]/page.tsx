@@ -1,4 +1,3 @@
-import Button from "@/components/button/button.component";
 import StarInput from "@/components/inputs/star-input.component";
 import MenuList from "@/components/lists/menu-list.component";
 import ReviewList from "@/components/lists/review-list.component";
@@ -13,6 +12,7 @@ import { parseTime } from "@/utils/date-time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
+import WriteReviewButton from "./write-review-button";
 
 type Props = {
   params: Promise<{
@@ -119,10 +119,7 @@ const RestaurantPage = async ({ params }: Props) => {
               </ul>
             </div>
             <Link href="#AddReviewSection" scroll={true}>
-              <Button>
-                <i className="fa-solid fa-pen-to-square"></i>&nbsp; Napisz
-                Opinię
-              </Button>
+              <WriteReviewButton />
             </Link>
           </div>
         </div>

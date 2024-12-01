@@ -1,5 +1,8 @@
 "use client";
-import { ReactNode, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { selectRestaurantPageView } from "@/lib/store/layout-options/layout-options.selector";
+import { setRestaurantPageView } from "@/lib/store/layout-options/layout-options.slice";
+import { ReactNode } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import styles from "./menu-review-section.module.scss";
@@ -9,27 +12,30 @@ type Props = {
 };
 
 const MenuReviewSection = ({ reviewList, menuList }: Props) => {
-  const [showMenu, setShowMenu] = useState(true);
+  const view = useAppSelector(selectRestaurantPageView);
+  const dispatch = useAppDispatch();
 
   return (
     <div className={styles.menuReviewSection}>
       <div className={styles.changeSection}>
         <Button
-          style={showMenu ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
+          style={view === "menu" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
           size={ButtonSize.LARGE}
-          onClick={() => setShowMenu(true)}
+          onClick={() => dispatch(setRestaurantPageView("menu"))}
         >
           Menu
         </Button>
         <Button
-          style={!showMenu ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
+          style={view === "reviews" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
           size={ButtonSize.LARGE}
-          onClick={() => setShowMenu(false)}
+          onClick={() => dispatch(setRestaurantPageView("reviews"))}
         >
           Opinie
         </Button>
       </div>
-      <div className={styles.section}>{showMenu ? menuList : reviewList}</div>
+      <div className={styles.section}>
+        {view === "menu" ? menuList : reviewList}
+      </div>
     </div>
   );
 };
