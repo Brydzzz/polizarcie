@@ -28,6 +28,7 @@ const MenuList = ({ data }: Props) => {
 
   return (
     <div className={styles.container}>
+      {data.length === 0 && <p className={styles.unavailable}>Przepraszamy, menu nie jest dostępne :(</p>}
       {dishTypeOrder.map((type, index) => {
         const dishesWithType = data.filter((dish) => dish.type === type);
 
@@ -36,8 +37,8 @@ const MenuList = ({ data }: Props) => {
           <div key={index} className={styles.dishCategory}>
             <p>{dishTypeDict.get(DishType[type])}</p>
             <div className={styles.dishList}>
-              {dishesWithType.map((dish) => (
-                <DishCard key={dish.id} data={dish}></DishCard>
+              {dishesWithType.map((dish, index) => (
+                <DishCard key={index} data={dish}></DishCard>
               ))}
             </div>
           </div>
