@@ -1,24 +1,18 @@
 "use client";
 
-import useFreeReviewCreator from "@/hooks/use-free-review-creator";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import {
-  setDishReviewCreator,
-  setRestaurantReviewCreator,
-  updateReviewsUpdate,
-} from "@/lib/store/reviews/reviews.slice";
-import { AppDispatch } from "@/lib/store/store";
+import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
 } from "@/lib/store/user/user.selector";
 import {
   REVIEW_FUNCTIONS_FACTORY,
+  ReviewStore,
   ReviewType,
 } from "@/utils/factories/reviews";
 import { transferWithJSON } from "@/utils/misc.client";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
 import TextArea from "../inputs/generic-textarea.component";
@@ -34,79 +28,51 @@ type Props<Type extends keyof ReviewType> = {
 
 type Fields = {
   [Key in keyof ReviewType]: {
-    inputs: (
-      creator: ReviewType[Key]["creatorData"],
-      dispatch: AppDispatch
-    ) => ReactNode;
+    inputs: (store: ReviewStore<Key>) => ReactNode;
   };
 };
 
 const FIELDS: Fields = {
   restaurant: {
-    inputs: (creator, dispatch) => (
+    inputs: (store) => (
       <>
         <div className={styles.left}>
           Ocena: &nbsp;
           <StarInput
             max={5}
-            value={creator.stars}
-            onChange={(v) =>
-              dispatch(setRestaurantReviewCreator({ ...creator, stars: v }))
-            }
+            value={store.getState("stars")}
+            onChange={(v) => store.setState("stars", v)}
           />
         </div>
         <SliderInput
           label="Cena na osobę"
           limit={{ min: 0, max: 100 }}
-          value={creator.amountSpent}
-          onChange={(v) =>
-            dispatch(
-              setRestaurantReviewCreator({
-                ...creator,
-                amountSpent: v,
-              })
-            )
-          }
+          value={store.getState("amountSpent")}
+          onChange={(v) => store.setState("amountSpent", v)}
         />
         <TextArea
           label="Opis"
-          value={creator.content}
-          onChange={(e) =>
-            dispatch(
-              setRestaurantReviewCreator({
-                ...creator,
-                content: e.target.value,
-              })
-            )
-          }
+          value={store.getState("content")}
+          onChange={(e) => store.setState("content", e.target.value)}
         />
       </>
     ),
   },
   dish: {
-    inputs: (creator, dispatch) => (
+    inputs: (store) => (
       <>
         <div className={styles.left}>
           Ocena: &nbsp;
           <StarInput
             max={5}
-            value={creator.stars}
-            onChange={(v) =>
-              dispatch(setDishReviewCreator({ ...creator, stars: v }))
-            }
+            value={store.getState("stars")}
+            onChange={(v) => store.setState("stars", v)}
           />
         </div>
         <TextArea
           label="Opis"
-          value={creator.content}
-          onChange={(e) =>
-            dispatch(
-              setDishReviewCreator({
-                ...creator,
-                content: e.target.value,
-              })
-            )
-          }
+          value={store.getState("content")}
+          onChange={(e) => store.setState("content", e.target.value)}
         />
       </>
     ),
@@ -119,15 +85,13 @@ const AddReview = <Type extends keyof ReviewType>({
   subjectId,
 }: Props<Type>) => {
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
-  const router = useRouter();
   const dispatch = useAppDispatch();
-  const creator = useAppSelector(funcs.selectCreator);
   const [subject, setSubject] = useState<
     ReviewType[Type]["subject"] | undefined
   >();
   const currentUser = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
-  const { freeForced, forceFree } = useFreeReviewCreator(type);
+  const store = new ReviewStore(type);
 
   useEffect(() => {
     const exec = async () => {
@@ -137,16 +101,11 @@ const AddReview = <Type extends keyof ReviewType>({
     exec();
   }, []);
 
-  useEffect(() => {
-    funcs.resetCreator();
-  }, [freeForced]);
-
   const submit = async () => {
     await transferWithJSON(funcs.create, [
-      { ...creator, subjectId: subjectId },
+      { ...store.getCreator(), subjectId: subjectId },
     ]);
     dispatch(updateReviewsUpdate());
-    funcs.resetCreator();
   };
 
   return (
@@ -154,7 +113,7 @@ const AddReview = <Type extends keyof ReviewType>({
       <h2>{subject?.name}</h2>
       <h3>Dodaj swoją opinię</h3>
       <form action={submit} className={styles.form}>
-        {FIELDS[type].inputs(creator, dispatch)}
+        {FIELDS[type].inputs(store)}
         <div className={styles.right}>
           {!loading &&
             (currentUser ? (

@@ -1,8 +1,7 @@
 "use server";
 
-import { currentUserHasPermission } from "@/lib/permissions";
 import { prisma } from "@/prisma";
-import { getCurrentUser } from "@/utils/users";
+import { currentUserHasPermission, getCurrentUser } from "@/utils/users";
 import {
   Dish,
   DishReview,
@@ -10,6 +9,7 @@ import {
   RestaurantReview,
   User,
 } from "@prisma/client";
+import { hasPermission } from "../permissions";
 
 export type RestaurantReviewCreator = Pick<
   RestaurantReview,
@@ -25,12 +25,53 @@ export type DishReviewCreator = Pick<
 >;
 export type DishReviewFull = DishReview & { subject: Dish; author: User };
 
+export async function getRestaurantReviewById(
+  id: RestaurantReview["id"]
+): Promise<RestaurantReviewFull | null> {
+  const result = await prisma.restaurantReview.findFirst({
+    where: {
+      id: id,
+    },
+    include: {
+      author: true,
+      subject: true,
+    },
+  });
+  return !result
+    ? result
+    : !result.hidden ||
+      (await currentUserHasPermission("reviews", "viewHidden", { id: id }))
+    ? result
+    : null;
+}
+
+export async function getDishReviewById(
+  id: DishReview["id"]
+): Promise<DishReviewFull | null> {
+  const result = await prisma.dishReview.findFirst({
+    where: {
+      id: id,
+    },
+    include: {
+      author: true,
+      subject: true,
+    },
+  });
+  return !result
+    ? result
+    : !result.hidden ||
+      (await currentUserHasPermission("reviews", "viewHidden", { id: id }))
+    ? result
+    : null;
+}
+
 export async function getRestaurantReviewsByRestaurantId(
   id: Restaurant["id"],
   take: number,
   skip?: number
 ): Promise<RestaurantReviewFull[]> {
-  return await prisma.restaurantReview.findMany({
+  const currentUser = (await getCurrentUser()) || undefined;
+  const result = await prisma.restaurantReview.findMany({
     where: {
       subjectId: id,
     },
@@ -41,6 +82,9 @@ export async function getRestaurantReviewsByRestaurantId(
     take: take,
     skip: skip,
   });
+  return result.filter(
+    (e) => !e.hidden || hasPermission(currentUser, "reviews", "viewHidden", e)
+  );
 }
 
 export async function getDishReviewsByDishId(
@@ -48,7 +92,8 @@ export async function getDishReviewsByDishId(
   take: number,
   skip?: number
 ): Promise<DishReviewFull[]> {
-  return await prisma.dishReview.findMany({
+  const currentUser = (await getCurrentUser()) || undefined;
+  const result = await prisma.dishReview.findMany({
     where: {
       subjectId: id,
     },
@@ -59,6 +104,9 @@ export async function getDishReviewsByDishId(
     take: take,
     skip: skip,
   });
+  return result.filter(
+    (e) => !e.hidden || hasPermission(currentUser, "reviews", "viewHidden", e)
+  );
 }
 
 export async function createRestaurantReview(data: RestaurantReviewCreator) {
@@ -132,6 +180,36 @@ export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
     },
     where: {
       subjectId: id,
+    },
+  });
+}
+
+export async function hideRestaurantReview(
+  id: RestaurantReview["id"],
+  hide: boolean
+): Promise<RestaurantReview | null> {
+  if (!currentUserHasPermission("reviews", "hide", { id: id })) return null;
+  return await prisma.restaurantReview.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hidden: hide,
+    },
+  });
+}
+
+export async function hideDishReview(
+  id: Dish["id"],
+  hide: boolean
+): Promise<DishReview | null> {
+  if (!currentUserHasPermission("reviews", "hide", { id: id })) return null;
+  return await prisma.dishReview.update({
+    where: {
+      id: id,
+    },
+    data: {
+      hidden: hide,
     },
   });
 }

@@ -5,24 +5,19 @@ import {
   deleteRestaurantReview,
   DishReviewCreator,
   DishReviewFull,
+  getDishReviewById,
   getDishReviewsByDishId,
+  getRestaurantReviewById,
   getRestaurantReviewsByRestaurantId,
+  hideDishReview,
+  hideRestaurantReview,
   RestaurantReviewCreator,
   RestaurantReviewFull,
   updateDishReview,
   updateRestaurantReview,
 } from "@/lib/db/reviews";
-import {
-  selectDishReviewCreator,
-  selectRestaurantReviewCreator,
-} from "@/lib/store/reviews/reviews.selector";
-import {
-  resetDishReviewCreator,
-  resetRestaurantReviewCreator,
-} from "@/lib/store/reviews/reviews.slice";
-import { RootState } from "@/lib/store/store";
 import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
-import { ActionCreatorWithoutPayload } from "@reduxjs/toolkit";
+import { Dispatch, SetStateAction, useState } from "react";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
 
@@ -43,6 +38,9 @@ export type ReviewType = {
 
 type ReviewFunctions = {
   [Key in keyof ReviewType]: {
+    getById: (
+      id: ReviewType[Key]["data"]["id"]
+    ) => Promise<ReviewType[Key]["fullData"] | null>;
     getBySubjectId: (
       id: ReviewType[Key]["subject"]["id"],
       take: number,
@@ -60,28 +58,99 @@ type ReviewFunctions = {
     delete: (
       id: ReviewType[Key]["data"]["id"]
     ) => Promise<ReviewType[Key]["data"] | null>;
-    selectCreator: (state: RootState) => ReviewType[Key]["creatorData"];
-    resetCreator: ActionCreatorWithoutPayload;
+    hide: (
+      id: ReviewType[Key]["data"]["id"],
+      hide: boolean
+    ) => Promise<ReviewType[Key]["data"] | null>;
   };
 };
 
 export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
   restaurant: {
+    getById: getRestaurantReviewById,
     getBySubjectId: getRestaurantReviewsByRestaurantId,
     getSubject: async (id) => await getRestaurantById(id),
     create: createRestaurantReview,
     edit: updateRestaurantReview,
     delete: deleteRestaurantReview,
-    selectCreator: selectRestaurantReviewCreator,
-    resetCreator: resetRestaurantReviewCreator,
+    hide: hideRestaurantReview,
   },
   dish: {
+    getById: getDishReviewById,
     getBySubjectId: getDishReviewsByDishId,
     getSubject: async (id) => await getDishById(id),
     create: createDishReview,
     edit: updateDishReview,
     delete: deleteDishReview,
-    selectCreator: selectDishReviewCreator,
-    resetCreator: resetDishReviewCreator,
+    hide: hideDishReview,
   },
 };
+
+const storeDefaults: {
+  [Type in keyof ReviewType]: {
+    [Key in keyof ReviewType[Type]["creatorData"]]: ReviewType[Type]["creatorData"][Key];
+  };
+} = {
+  restaurant: {
+    subjectId: "",
+    stars: 0,
+    amountSpent: 0,
+    content: "",
+  },
+  dish: {
+    subjectId: "",
+    stars: 0,
+    content: "",
+  },
+};
+
+export class ReviewStore<Type extends keyof ReviewType> {
+  private type: Type;
+  private dict: {
+    [Key in keyof ReviewType[Type]["creatorData"]]: [
+      ReviewType[Type]["creatorData"][Key],
+      Dispatch<SetStateAction<ReviewType[Type]["creatorData"][Key]>>
+    ];
+  };
+
+  constructor(type: Type) {
+    this.type = type;
+    this.dict = Object.entries(storeDefaults[this.type])
+      .map(([key, value]) => {
+        const keyHelper = key as keyof ReviewType[Type]["creatorData"];
+        return {
+          [key]:
+            useState<ReviewType[Type]["creatorData"][typeof keyHelper]>(value),
+        };
+      })
+      .reduce((acc, v) => ({ ...acc, ...v }), {}) as typeof this.dict;
+  }
+
+  getKeys(): (keyof ReviewType[Type]["creatorData"])[] {
+    return Object.keys(
+      storeDefaults[this.type]
+    ) as (keyof ReviewType[Type]["creatorData"])[];
+  }
+
+  getState<Key extends keyof ReviewType[Type]["creatorData"]>(
+    key: Key
+  ): ReviewType[Type]["creatorData"][Key] {
+    return this.dict[key][0];
+  }
+
+  setState<Key extends keyof ReviewType[Type]["creatorData"]>(
+    key: Key,
+    value: ReviewType[Type]["creatorData"][Key]
+  ) {
+    this.dict[key][1](value);
+  }
+
+  getCreator(): ReviewType[Type]["creatorData"] {
+    return Object.entries(this.dict)
+      .map((e) => ({ [e[0]]: e[1][0] }))
+      .reduce(
+        (acc, v) => ({ ...acc, ...v }),
+        {}
+      ) as ReviewType[Type]["creatorData"];
+  }
+}
