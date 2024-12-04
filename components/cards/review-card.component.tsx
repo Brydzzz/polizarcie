@@ -130,7 +130,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const [data, setData] = useState(dataI);
   const [loading, setLoading] = useState(false);
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
-  const { author, createdDate } = data;
+  const { author, createdDate, updatedDate } = data;
   const [mode, setMode] = useState<Mode>("view");
   const currentUser = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
@@ -214,7 +214,17 @@ const ReviewCard = <Type extends keyof ReviewType>({
           {REVIEW_PARTS[type].header(data, mode)}
         </div>
         <div className={styles.stack}>
-          <span className={styles.date}>{parseDate(createdDate)}</span>
+          <span className={styles.date}>
+            {parseDate(createdDate)}
+            {createdDate !== updatedDate && (
+              <>
+                <br />
+                <span className={styles.updated}>
+                  zmodyfikowano:&nbsp;{parseDate(updatedDate)}
+                </span>
+              </>
+            )}
+          </span>
           <Link
             href={`#`}
             className={`${styles.user} ${

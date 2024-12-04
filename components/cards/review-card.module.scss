@@ -43,6 +43,11 @@
       .date {
         font-size: 14pt;
         text-align: right;
+
+        .updated {
+          color: var(--disabled);
+          font-size: 12pt;
+        }
       }
       .user {
         font-size: 14pt;
