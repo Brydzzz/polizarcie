@@ -4,6 +4,11 @@
   justify-content: flex-start;
   border-radius: 20px;
 
+  & > p {
+    font-size: 16pt;
+    color: var(--secondary);
+    text-align: center;
+  }
   .dishCategory {
     display: flex;
     flex-direction: column;
