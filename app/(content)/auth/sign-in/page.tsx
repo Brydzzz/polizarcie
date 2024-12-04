@@ -1,12 +1,13 @@
-import { auth, providerMap } from "@/auth";
+import { providerMap } from "@/auth";
 import EmailSignIn from "@/components/auth/email-sign-in.component";
 import ProviderButton from "@/components/auth/provider-button.component";
+import { getCurrentUser } from "@/utils/users";
 import { redirect } from "next/navigation";
 import styles from "./page.module.scss";
 
 const SignIn = async () => {
-  const session = await auth();
-  if (session?.user) {
+  const user = await getCurrentUser();
+  if (user) {
     redirect("/");
   }
 
