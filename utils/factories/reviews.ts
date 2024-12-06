@@ -1,21 +1,25 @@
 import {
   createDishReview,
-  createRestaurantReview,
   deleteDishReview,
-  deleteRestaurantReview,
   DishReviewCreator,
   DishReviewFull,
   getDishReviewById,
+  getDishReviewsByAuthorId,
   getDishReviewsByDishId,
-  getRestaurantReviewById,
-  getRestaurantReviewsByRestaurantId,
   hideDishReview,
+  updateDishReview,
+} from "@/lib/db/reviews/dish-reviews";
+import {
+  createRestaurantReview,
+  deleteRestaurantReview,
+  getRestaurantReviewById,
+  getRestaurantReviewsByAuthorId,
+  getRestaurantReviewsByRestaurantId,
   hideRestaurantReview,
   RestaurantReviewCreator,
   RestaurantReviewFull,
-  updateDishReview,
   updateRestaurantReview,
-} from "@/lib/db/reviews";
+} from "@/lib/db/reviews/restaurant-reviews";
 import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
 import { Dispatch, SetStateAction, useState } from "react";
 import { getDishById } from "../../lib/db/dishes";
@@ -23,11 +27,11 @@ import { getRestaurantById } from "../../lib/db/restaurants";
 
 // type GenericReview = {
 //   id: string;
-//   authorId: string;
 //   subjectId: string;
-//   content: string;
+//   authorId: string;
 //   createdAt: Date;
 //   updatedAt: Date;
+//   hidden: Boolean;
 // };
 
 export type ReviewType = {
@@ -55,6 +59,11 @@ type ReviewFunctions = {
       take: number,
       skip?: number
     ) => Promise<ReviewType[Key]["fullData"][]>;
+    getByAuthorId: (
+      id: ReviewType[Key]["data"]["authorId"],
+      take: number,
+      skip?: number
+    ) => Promise<ReviewType[Key]["fullData"][]>;
     getSubject: (
       id: ReviewType[Key]["subject"]["id"]
     ) => Promise<ReviewType[Key]["subject"] | null>;
@@ -78,6 +87,7 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
   restaurant: {
     getById: getRestaurantReviewById,
     getBySubjectId: getRestaurantReviewsByRestaurantId,
+    getByAuthorId: getRestaurantReviewsByAuthorId,
     getSubject: async (id) => await getRestaurantById(id),
     create: createRestaurantReview,
     edit: updateRestaurantReview,
@@ -87,6 +97,7 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
   dish: {
     getById: getDishReviewById,
     getBySubjectId: getDishReviewsByDishId,
+    getByAuthorId: getDishReviewsByAuthorId,
     getSubject: async (id) => await getDishById(id),
     create: createDishReview,
     edit: updateDishReview,

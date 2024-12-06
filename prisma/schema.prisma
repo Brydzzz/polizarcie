@@ -32,6 +32,7 @@ model User {
     dishReviews         DishReview[]
     follows             Follow[]                 @relation(name: "followUsersFrom")
     followedBy          Follow[]                 @relation(name: "followUsersTo")
+    reviewLikes         ReviewLike[]
 }
 
 model UserFavoriteRestaurant {
@@ -112,30 +113,45 @@ model Address {
 }
 
 model RestaurantReview {
+    // Required fields
     id          String     @id @default(cuid())
-    content     String
     subject     Restaurant @relation(fields: [subjectId], references: [id])
     subjectId   String
-    stars       Int
-    amountSpent Int
-    createdDate DateTime   @default(now())
-    updatedDate DateTime   @updatedAt
     author      User       @relation(fields: [authorId], references: [id])
     authorId    String
+    createdDate DateTime   @default(now())
+    updatedDate DateTime   @updatedAt
     hidden      Boolean    @default(false)
+    // Custom for review
+    content     String
+    stars       Int
+    amountSpent Int
 }
 
 model DishReview {
+    // Required fields
     id          String   @id @default(cuid())
-    content     String
     subject     Dish     @relation(fields: [subjectId], references: [id])
     subjectId   String
-    stars       Int
-    createdDate DateTime @default(now())
-    updatedDate DateTime @updatedAt
     author      User     @relation(fields: [authorId], references: [id])
     authorId    String
+    createdDate DateTime @default(now())
+    updatedDate DateTime @updatedAt
     hidden      Boolean  @default(false)
+    // Custom for review
+    content     String
+    stars       Int
+}
+
+model ReviewLike {
+    like        Boolean
+    reviewId    String
+    author      User     @relation(fields: [authorId], references: [id])
+    authorId    String
+    createdDate DateTime @default(now())
+    updatedDate DateTime @updatedAt
+
+    @@id([authorId, reviewId])
 }
 
 model Follow {
