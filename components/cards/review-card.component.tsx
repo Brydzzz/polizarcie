@@ -132,27 +132,12 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
   const { author, createdDate, updatedDate } = data;
   const [mode, setMode] = useState<Mode>("view");
-  const currentUser = useAppSelector(selectCurrentUser);
+  const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const store = new ReviewStore(type);
-  const { has: canEdit } = useHasPermission(
-    currentUser,
-    "reviews",
-    "edit",
-    data
-  );
-  const { has: canDelete } = useHasPermission(
-    currentUser,
-    "reviews",
-    "delete",
-    data
-  );
-  const { has: canHide } = useHasPermission(
-    currentUser,
-    "reviews",
-    "hide",
-    data
-  );
+  const { has: canEdit } = useHasPermission(user, "reviews", "edit", data);
+  const { has: canDelete } = useHasPermission(user, "reviews", "delete", data);
+  const { has: canHide } = useHasPermission(user, "reviews", "hide", data);
 
   const updateData = async () => {
     setLoading(true);
@@ -180,7 +165,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
       ...store.getCreator(),
       subjectId: data.subjectId,
     };
-    setData(newData); // positive editing
+    setData(newData); // optimistic editing
     setMode("view");
     await funcs.edit(newData);
     await updateData();
@@ -228,7 +213,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
           <Link
             href={`#`}
             className={`${styles.user} ${
-              currentUser?.id === author.id ? styles.highlighted : ""
+              user?.id === author.id ? styles.highlighted : ""
             }`}
           >
             {author.name}

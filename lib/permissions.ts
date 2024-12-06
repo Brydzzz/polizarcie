@@ -17,10 +17,6 @@ export type Permissions = {
     dataType: Partial<RestaurantReview> | Partial<DishReview>;
     action: "view" | "viewHidden" | "create" | "edit" | "hide" | "delete";
   };
-  test: {
-    dataType: User;
-    action: "something";
-  };
 };
 
 const ifOwnReview = (

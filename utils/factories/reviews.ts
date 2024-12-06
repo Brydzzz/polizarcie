@@ -21,6 +21,15 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
 
+// type GenericReview = {
+//   id: string;
+//   authorId: string;
+//   subjectId: string;
+//   content: string;
+//   createdAt: Date;
+//   updatedAt: Date;
+// };
+
 export type ReviewType = {
   restaurant: {
     subject: Restaurant;

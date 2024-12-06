@@ -6,7 +6,6 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { transferWithJSON } from "@/utils/misc.client";
 import { useEffect, useState } from "react";
 import ReviewCard from "../cards/review-card.component";
 import AddReview from "../forms/add-review.component";
@@ -29,10 +28,7 @@ const ReviewList = <Type extends keyof ReviewType>({
 
   useEffect(() => {
     const exec = async () => {
-      const result = await transferWithJSON(funcs.getBySubjectId, [
-        subjectId,
-        10,
-      ]);
+      const result = await funcs.getBySubjectId(subjectId, 10);
       setReviews(result || undefined);
     };
     exec();
