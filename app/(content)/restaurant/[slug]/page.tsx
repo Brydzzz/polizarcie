@@ -7,7 +7,7 @@ import {
   getMenuByRestaurantId,
   getRestaurantBySlug,
 } from "@/lib/db/restaurants";
-import { getRestaurantAvgStarsById } from "@/lib/db/reviews";
+import { getRestaurantAvgStarsById } from "@/lib/db/reviews/restaurant-reviews";
 import { parseTime } from "@/utils/date-time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -136,6 +136,7 @@ const RestaurantPage = async ({ params }: Props) => {
             menuList={<MenuList data={menu}></MenuList>}
             reviewList={
               <ReviewList
+                mode="subject"
                 type="restaurant"
                 subjectId={restaurant.id}
               ></ReviewList>

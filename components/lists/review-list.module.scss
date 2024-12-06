@@ -12,3 +12,12 @@
     margin-bottom: 20px;
   }
 }
+
+.changeSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 20px;
+}
