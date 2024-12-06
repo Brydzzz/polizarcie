@@ -1,6 +1,10 @@
 "use client";
 
 import useHasPermission from "@/hooks/use-has-permission";
+import {
+  addOrReplaceLikeForReview,
+  getLikesSumByReviewId,
+} from "@/lib/db/likes";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
@@ -11,7 +15,7 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
@@ -128,6 +132,10 @@ const ReviewCard = <Type extends keyof ReviewType>({
   data: dataI,
 }: Props<Type>) => {
   const [data, setData] = useState(dataI);
+  const [likes, setLikes] = useState<{ likes: number; dislikes: number }>({
+    likes: 0,
+    dislikes: 0,
+  });
   const [loading, setLoading] = useState(false);
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
   const { author, createdDate, updatedDate } = data;
@@ -138,6 +146,20 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const { has: canEdit } = useHasPermission(user, "reviews", "edit", data);
   const { has: canDelete } = useHasPermission(user, "reviews", "delete", data);
   const { has: canHide } = useHasPermission(user, "reviews", "hide", data);
+  const { has: canLike } = useHasPermission(user, "reviews", "like", data);
+
+  const updateLikes = async () => {
+    setLikes(
+      (await getLikesSumByReviewId(data.id)) || {
+        likes: 0,
+        dislikes: 0,
+      }
+    );
+  };
+
+  useEffect(() => {
+    updateLikes();
+  }, []);
 
   const updateData = async () => {
     setLoading(true);
@@ -189,6 +211,18 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setData({ ...data, hidden: false });
     await funcs.hide(data.id, false);
     await updateData();
+    setLoading(false);
+  };
+  const likeReview = async () => {
+    setLoading(true);
+    await addOrReplaceLikeForReview(data.id, true);
+    await updateLikes();
+    setLoading(false);
+  };
+  const dislikeReview = async () => {
+    setLoading(true);
+    await addOrReplaceLikeForReview(data.id, false);
+    await updateLikes();
     setLoading(false);
   };
 
@@ -266,6 +300,21 @@ const ReviewCard = <Type extends keyof ReviewType>({
             ></i>
           </>
         )}
+        <div className={styles.expander}></div>
+        <span>
+          <i
+            onClick={likeReview}
+            className={`fa-solid fa-thumbs-up ${styles.positive}`}
+          ></i>
+          {likes.likes}
+        </span>
+        <span>
+          <i
+            onClick={dislikeReview}
+            className={`fa-solid fa-thumbs-down ${styles.negative}`}
+          ></i>
+          {likes.dislikes}
+        </span>
       </div>
       {loading && (
         <div className={styles.loading}>

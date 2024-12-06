@@ -27,11 +27,11 @@ import { getRestaurantById } from "../../lib/db/restaurants";
 
 // type GenericReview = {
 //   id: string;
-//   authorId: string;
 //   subjectId: string;
-//   content: string;
+//   authorId: string;
 //   createdAt: Date;
 //   updatedAt: Date;
+//   hidden: Boolean;
 // };
 
 export type ReviewType = {

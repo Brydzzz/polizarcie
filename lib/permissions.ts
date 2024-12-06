@@ -15,7 +15,14 @@ type RolesWithPermissions = {
 export type Permissions = {
   reviews: {
     dataType: Partial<RestaurantReview> | Partial<DishReview>;
-    action: "view" | "viewHidden" | "create" | "edit" | "hide" | "delete";
+    action:
+      | "view"
+      | "viewHidden"
+      | "create"
+      | "edit"
+      | "hide"
+      | "delete"
+      | "like";
   };
 };
 
@@ -33,6 +40,7 @@ const ROLES = {
       edit: true,
       hide: true,
       delete: true,
+      like: true,
     },
   },
   MODERATOR: {
@@ -43,6 +51,7 @@ const ROLES = {
       edit: ifOwnReview,
       hide: true,
       delete: ifOwnReview,
+      like: true,
     },
   },
   USER: {
@@ -53,6 +62,7 @@ const ROLES = {
       edit: ifOwnReview,
       hide: ifOwnReview,
       delete: ifOwnReview,
+      like: true,
     },
   },
 } as const satisfies RolesWithPermissions;

@@ -97,11 +97,22 @@
   .buttons {
     width: 100%;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
     gap: 10px;
 
-    & > i {
+    .expander {
+      width: 100%;
+    }
+
+    span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
+
+    i {
       font-size: 16pt;
       display: flex;
       justify-content: center;
