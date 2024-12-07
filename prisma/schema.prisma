@@ -28,18 +28,17 @@ model User {
     points              Int                      @default(0)
     medias              UserMedia[]
     favoriteRestaurants UserFavoriteRestaurant[]
-    restaurantReviews   RestaurantReview[]
-    dishReviews         DishReview[]
     follows             Follow[]                 @relation(name: "followUsersFrom")
     followedBy          Follow[]                 @relation(name: "followUsersTo")
     reviewLikes         ReviewLike[]
+    BaseReview          BaseReview[]
 }
 
 model UserFavoriteRestaurant {
     id              String     @id @default(cuid())
-    user            User?      @relation(fields: [userId], references: [id])
-    userId          String?
-    restaurant      Restaurant @relation(fields: [restaurantId], references: [id])
+    user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId          String
+    restaurant      Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
     restaurantId    String
     rankingPosition Int
     createdDate     DateTime   @default(now())
@@ -50,8 +49,8 @@ model UserMedia {
     id          String    @id @default(cuid())
     type        MediaType
     link        String
-    user        User?     @relation(fields: [userId], references: [id])
-    userId      String?
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId      String
     createdDate DateTime  @default(now())
     updatedDate DateTime  @updatedAt
     hidden      Boolean   @default(false)
@@ -93,7 +92,7 @@ model Dish {
     priceZl      Int
     priceGr      Int
     totalStars   Int          @default(0)
-    restaurant   Restaurant   @relation(fields: [restaurantId], references: [id])
+    restaurant   Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
     restaurantId String
     reviews      DishReview[]
     createdDate  DateTime     @default(now())
@@ -112,16 +111,30 @@ model Address {
     updatedDate DateTime    @updatedAt
 }
 
-model RestaurantReview {
-    // Required fields
-    id          String     @id @default(cuid())
-    subject     Restaurant @relation(fields: [subjectId], references: [id])
-    subjectId   String
-    author      User       @relation(fields: [authorId], references: [id])
+model BaseReview {
+    id          String       @id @default(cuid())
+    author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId    String
-    createdDate DateTime   @default(now())
+    createdDate DateTime     @default(now())
+    hidden      Boolean      @default(false)
+    likes       Int          @default(0)
+    dislikes    Int          @default(0)
+    likeObjects ReviewLike[]
+
+    // Possible dependents
+    restaurantReview           RestaurantReview?
+    restaurantReviewBaseDataId String?
+    dishReview                 DishReview?
+    dishReviewBaseDataId       String?
+}
+
+model RestaurantReview {
+    // Required to work as review
+    id          String     @id
+    baseData    BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
     updatedDate DateTime   @updatedAt
-    hidden      Boolean    @default(false)
+    subject     Restaurant @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+    subjectId   String
     // Custom for review
     content     String
     stars       Int
@@ -129,15 +142,12 @@ model RestaurantReview {
 }
 
 model DishReview {
-    // Required fields
-    id          String   @id @default(cuid())
-    subject     Dish     @relation(fields: [subjectId], references: [id])
+    // Required to work as review
+    id          String     @id
+    baseData    BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
+    updatedDate DateTime   @updatedAt
+    subject     Dish       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
     subjectId   String
-    author      User     @relation(fields: [authorId], references: [id])
-    authorId    String
-    createdDate DateTime @default(now())
-    updatedDate DateTime @updatedAt
-    hidden      Boolean  @default(false)
     // Custom for review
     content     String
     stars       Int
@@ -145,20 +155,21 @@ model DishReview {
 
 model ReviewLike {
     like        Boolean
+    review      BaseReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
     reviewId    String
-    author      User     @relation(fields: [authorId], references: [id])
+    author      User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId    String
-    createdDate DateTime @default(now())
-    updatedDate DateTime @updatedAt
+    createdDate DateTime   @default(now())
+    updatedDate DateTime   @updatedAt
 
     @@id([authorId, reviewId])
 }
 
 model Follow {
     id     String   @id @default(cuid())
-    from   User     @relation(name: "followUsersFrom", fields: [fromId], references: [id])
+    from   User     @relation(name: "followUsersFrom", fields: [fromId], references: [id], onDelete: Cascade)
     fromId String
-    to     User     @relation(name: "followUsersTo", fields: [toId], references: [id])
+    to     User     @relation(name: "followUsersTo", fields: [toId], references: [id], onDelete: Cascade)
     toId   String
     date   DateTime @default(now()) @db.Timestamp()
 }

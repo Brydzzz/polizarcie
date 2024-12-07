@@ -4,12 +4,22 @@ import { hasPermission } from "@/lib/permissions";
 import { prisma } from "@/prisma";
 import { currentUserHasPermission, getCurrentUser } from "@/utils/users";
 import { Dish, DishReview, User } from "@prisma/client";
+import { BaseReviewFull, getBaseReviewById } from "./base-reviews";
 
 export type DishReviewCreator = Pick<
   DishReview,
   "content" | "subjectId" | "stars"
 >;
-export type DishReviewFull = DishReview & { subject: Dish; author: User };
+export type DishReviewFull = DishReview & BaseReviewFull & { subject: Dish };
+
+const FULL_INCLUDE_PRESET = {
+  baseData: {
+    include: {
+      author: true,
+    },
+  },
+  subject: true,
+};
 
 export async function getDishReviewById(
   id: DishReview["id"]
@@ -18,15 +28,12 @@ export async function getDishReviewById(
     where: {
       id: id,
     },
-    include: {
-      author: true,
-      subject: true,
-    },
+    include: FULL_INCLUDE_PRESET,
   });
   return !result
     ? result
-    : !result.hidden ||
-      (await currentUserHasPermission("reviews", "viewHidden", { id: id }))
+    : !result.baseData.hidden ||
+      (await currentUserHasPermission("reviews", "viewHidden", result.baseData))
     ? result
     : null;
 }
@@ -36,20 +43,87 @@ export async function getDishReviewsByDishId(
   take: number,
   skip?: number
 ): Promise<DishReviewFull[]> {
+  let result: DishReviewFull[] = [];
+  let toTake = take;
+  let toSkip = skip || 0;
   const currentUser = (await getCurrentUser()) || undefined;
-  const result = await prisma.dishReview.findMany({
-    where: {
-      subjectId: id,
-    },
-    include: {
-      author: true,
-      subject: true,
-    },
-    take: take,
-    skip: skip,
-  });
+  if (currentUser) {
+    const amountOwn = (
+      await prisma.dishReview.aggregate({
+        where: {
+          baseData: {
+            authorId: currentUser.id,
+          },
+        },
+        _count: {
+          id: true,
+        },
+      })
+    )._count.id;
+    if (amountOwn > toSkip) {
+      const own = await prisma.dishReview.findMany({
+        where: {
+          subjectId: id,
+          baseData: {
+            authorId: currentUser.id,
+          },
+        },
+        include: FULL_INCLUDE_PRESET,
+        take: toTake,
+        skip: toSkip,
+        orderBy: [
+          {
+            baseData: {
+              hidden: "asc",
+            },
+          },
+          {
+            baseData: {
+              createdDate: "desc",
+            },
+          },
+        ],
+      });
+      result = result.concat(own);
+      toTake -= own.length;
+      toSkip = 0;
+    } else {
+      toSkip -= amountOwn;
+    }
+  }
+  toSkip = Math.max(0, toSkip);
+  if (toTake > 0) {
+    const notOwn = await prisma.dishReview.findMany({
+      where: {
+        subjectId: id,
+        baseData: {
+          NOT: {
+            authorId: currentUser?.id || "",
+          },
+        },
+      },
+      include: FULL_INCLUDE_PRESET,
+      take: toTake,
+      skip: toSkip,
+      orderBy: [
+        {
+          baseData: {
+            hidden: "asc",
+          },
+        },
+        {
+          baseData: {
+            likes: "desc",
+          },
+        },
+      ],
+    });
+    result = result.concat(notOwn);
+  }
   return result.filter(
-    (e) => !e.hidden || hasPermission(currentUser, "reviews", "viewHidden", e)
+    (e) =>
+      !e.baseData.hidden ||
+      hasPermission(currentUser, "reviews", "viewHidden", e.baseData)
   );
 }
 
@@ -61,61 +135,60 @@ export async function getDishReviewsByAuthorId(
   const currentUser = (await getCurrentUser()) || undefined;
   const result = await prisma.dishReview.findMany({
     where: {
-      authorId: id,
+      baseData: {
+        authorId: id,
+      },
     },
-    include: {
-      author: true,
-      subject: true,
-    },
+    include: FULL_INCLUDE_PRESET,
     take: take,
     skip: skip,
+    orderBy: [
+      {
+        baseData: {
+          hidden: "asc",
+        },
+      },
+      {
+        baseData: {
+          likes: "desc",
+        },
+      },
+    ],
   });
   return result.filter(
-    (e) => !e.hidden || hasPermission(currentUser, "reviews", "viewHidden", e)
+    (e) =>
+      !e.baseData.hidden ||
+      hasPermission(currentUser, "reviews", "viewHidden", e.baseData)
   );
 }
 
 export async function createDishReview(data: DishReviewCreator) {
-  if (!currentUserHasPermission("reviews", "create", data)) return null;
+  if (!currentUserHasPermission("reviews", "create")) return null;
   const user = await getCurrentUser();
   if (user == null) return null;
-  return await prisma.dishReview.create({
+  return await prisma.baseReview.create({
     data: {
-      subjectId: data.subjectId,
       authorId: user.id,
-      content: data.content,
-      stars: data.stars,
+      dishReview: {
+        create: {
+          subjectId: data.subjectId,
+          content: data.content,
+          stars: data.stars,
+        },
+      },
     },
   });
 }
 
 export async function updateDishReview(data: DishReview) {
-  if (!currentUserHasPermission("reviews", "edit", data)) return null;
+  const authorId = (await getBaseReviewById(data.id))?.authorId || undefined;
+  if (!currentUserHasPermission("reviews", "edit", { authorId: authorId }))
+    return null;
   return await prisma.dishReview.update({
     where: { id: data.id },
     data: {
       content: data.content,
       stars: data.stars,
-    },
-  });
-}
-
-export async function deleteDishReview(id: string) {
-  if (!currentUserHasPermission("reviews", "delete", { id: id })) return null;
-  return await prisma.dishReview.delete({ where: { id: id } });
-}
-
-export async function hideDishReview(
-  id: Dish["id"],
-  hide: boolean
-): Promise<DishReview | null> {
-  if (!currentUserHasPermission("reviews", "hide", { id: id })) return null;
-  return await prisma.dishReview.update({
-    where: {
-      id: id,
-    },
-    data: {
-      hidden: hide,
     },
   });
 }

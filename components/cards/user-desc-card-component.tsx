@@ -15,7 +15,7 @@ const UserCard = ({ data }: Props) => {
         <p className={styles.description}>{description}</p>
         {/* TODO fix the error below*/}
         <ol className={styles.medias}>
-          {medias.map((link, type) => (
+          {medias?.map((link, type) => (
             <LinkCard key={type} data={link}></LinkCard>
           ))}
         </ol>

@@ -1,4 +1,4 @@
-import { DishReview, RestaurantReview, Role, User } from "@prisma/client";
+import { BaseReview, Role, User } from "@prisma/client";
 
 type PermissionCheck<Key extends keyof Permissions> =
   | boolean
@@ -14,7 +14,7 @@ type RolesWithPermissions = {
 
 export type Permissions = {
   reviews: {
-    dataType: Partial<RestaurantReview> | Partial<DishReview>;
+    dataType: Partial<BaseReview>;
     action:
       | "view"
       | "viewHidden"
@@ -26,10 +26,11 @@ export type Permissions = {
   };
 };
 
-const ifOwnReview = (
-  user: User,
-  review: Partial<RestaurantReview> | Partial<DishReview>
-) => review.authorId != undefined && review.authorId == user.id;
+const ifOwnReview = (user: User, review: Partial<BaseReview>) =>
+  review.authorId != undefined && review.authorId == user.id;
+
+const ifNotOwnReview = (user: User, review: Partial<BaseReview>) =>
+  !ifOwnReview(user, review);
 
 const ROLES = {
   ADMIN: {
@@ -51,7 +52,7 @@ const ROLES = {
       edit: ifOwnReview,
       hide: true,
       delete: ifOwnReview,
-      like: true,
+      like: ifNotOwnReview,
     },
   },
   USER: {
@@ -62,7 +63,7 @@ const ROLES = {
       edit: ifOwnReview,
       hide: ifOwnReview,
       delete: ifOwnReview,
-      like: true,
+      like: ifNotOwnReview,
     },
   },
 } as const satisfies RolesWithPermissions;

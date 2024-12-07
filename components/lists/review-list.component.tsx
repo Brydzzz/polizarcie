@@ -12,18 +12,29 @@ import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import ReviewCard from "../cards/review-card.component";
 import AddReview from "../forms/add-review.component";
+import Loader from "../misc/loader.component";
 import styles from "./review-list.module.scss";
 
-type SubjectsProps<Type extends keyof ReviewType> = {
-  type: Type;
-  subjectId: ReviewType[Type]["subject"]["id"];
+type ListMode = {
+  author: AuthorsProps;
+  subject: ModeListProps<keyof ReviewType>;
 };
 
-const SubjectsReviewList = <Type extends keyof ReviewType>({
+type ModeListProps<Type extends keyof ReviewType> = {
+  mode: keyof ListMode;
+  type: Type;
+  modeSpecificId: ReviewType[Type]["subject"]["id"];
+};
+
+const ModeReviewList = <Type extends keyof ReviewType>({
+  mode,
   type,
-  subjectId,
-}: SubjectsProps<Type>) => {
+  modeSpecificId,
+}: ModeListProps<Type>) => {
+  const amountPerFetch = 10;
+  const [morePossible, setMorePossible] = useState(true);
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
+  const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<
     ReviewType[Type]["fullData"][] | undefined
   >();
@@ -31,59 +42,79 @@ const SubjectsReviewList = <Type extends keyof ReviewType>({
 
   useEffect(() => {
     const exec = async () => {
-      const result = await funcs.getBySubjectId(subjectId, 10);
-      setReviews(result || undefined);
+      setLoading(true);
+      if (mode === "subject") {
+        const result = await funcs.getBySubjectId(
+          modeSpecificId,
+          amountPerFetch
+        );
+        if (result.length < amountPerFetch) setMorePossible(false);
+        setReviews(result);
+      } else {
+        const result = await funcs.getByAuthorId(
+          modeSpecificId,
+          amountPerFetch
+        );
+        if (result.length < amountPerFetch) setMorePossible(false);
+        setReviews(result);
+      }
+      setLoading(false);
     };
     exec();
   }, [update]);
+
+  const loadMore = () => {
+    const exec = async () => {
+      setLoading(true);
+      if (mode === "subject") {
+        const result = await funcs.getBySubjectId(
+          modeSpecificId,
+          amountPerFetch,
+          reviews?.length
+        );
+        if (result.length < amountPerFetch) setMorePossible(false);
+        setReviews(reviews?.concat(result));
+      } else {
+        const result = await funcs.getByAuthorId(
+          modeSpecificId,
+          amountPerFetch,
+          reviews?.length
+        );
+        if (result.length < amountPerFetch) setMorePossible(false);
+        setReviews(reviews?.concat(result));
+      }
+      setLoading(false);
+    };
+    exec();
+  };
 
   return (
     <div className={styles.container}>
       {reviews?.length === 0 && (
-        <p>Nikt nie wystawił jeszcze opinii, bądź pierwszy!</p>
+        <p>
+          {mode === "subject"
+            ? "Nikt nie wystawił jeszcze opinii, bądź pierwszy!"
+            : "Brak opinii w tej kategorii,"}
+        </p>
       )}
       {reviews?.map((review) => (
         <ReviewCard key={review.id} type={type} data={review} />
       ))}
-      <AddReview id="AddReviewSection" type={type} subjectId={subjectId} />
+      {loading ? (
+        <Loader />
+      ) : (
+        morePossible && <Button onClick={loadMore}>Załaduj więcej</Button>
+      )}
+      {mode === "subject" && (
+        <AddReview
+          id="AddReviewSection"
+          type={type}
+          subjectId={modeSpecificId}
+        />
+      )}
     </div>
   );
 };
-
-type AuthorsProps<Type extends keyof ReviewType> = {
-  type: Type;
-  authorId: User["id"];
-};
-
-const AuthorsReviewList = <Type extends keyof ReviewType>({
-  type,
-  authorId,
-}: AuthorsProps<Type>) => {
-  const funcs = REVIEW_FUNCTIONS_FACTORY[type];
-  const [reviews, setReviews] = useState<
-    ReviewType[Type]["fullData"][] | undefined
-  >();
-  const update = useAppSelector(selectReviewsUpdate);
-
-  useEffect(() => {
-    const exec = async () => {
-      const result = await funcs.getByAuthorId(authorId, 10);
-      setReviews(result || undefined);
-    };
-    exec();
-  }, [update]);
-
-  return (
-    <div className={styles.container}>
-      {reviews?.length === 0 && <p>Brak opinii z tej kategorii</p>}
-      {reviews?.map((review) => (
-        <ReviewCard key={review.id} type={type} data={review} />
-      ))}
-    </div>
-  );
-};
-
-type AuthorAllProps = { authorId: User["id"] };
 
 // TODO maybe remove this and do it better
 const TYPE_TRANSLATION: {
@@ -93,7 +124,9 @@ const TYPE_TRANSLATION: {
   dish: "Dania",
 };
 
-const AuthorsAllReviewList = ({ authorId }: AuthorAllProps) => {
+type AuthorsProps = { authorId: User["id"] };
+
+const AuthorsReviewList = ({ authorId }: AuthorsProps) => {
   const [view, setView] = useState<keyof ReviewType>("restaurant");
 
   const changeView = (value: keyof ReviewType) => {
@@ -124,23 +157,25 @@ const AuthorsAllReviewList = ({ authorId }: AuthorAllProps) => {
         .map((key) => {
           const keyHelper = key as keyof ReviewType;
           return (
-            <AuthorsReviewList key={key} type={keyHelper} authorId={authorId} />
+            <ModeReviewList
+              key={key}
+              mode="author"
+              type={keyHelper}
+              modeSpecificId={authorId}
+            />
           );
         })}
     </div>
   );
 };
 
-type ListMode = {
-  author: AuthorAllProps;
-  subject: SubjectsProps<keyof ReviewType>;
-};
-
 const LIST_NODE: {
   [Key in keyof ListMode]: (props: ListMode[Key]) => ReactNode;
 } = {
-  author: AuthorsAllReviewList,
-  subject: SubjectsReviewList,
+  author: AuthorsReviewList,
+  subject: <Type extends keyof ReviewType>(
+    props: Omit<ModeListProps<Type>, "mode">
+  ) => ModeReviewList<Type>({ ...props, mode: "subject" }),
 };
 
 type Props<Mode extends keyof ListMode> = { mode: Mode } & ListMode[Mode];
