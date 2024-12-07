@@ -12,6 +12,7 @@ import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import ReviewCard from "../cards/review-card.component";
 import AddReview from "../forms/add-review.component";
+import Loader from "../misc/loader.component";
 import styles from "./review-list.module.scss";
 
 type SubjectsProps<Type extends keyof ReviewType> = {
@@ -23,7 +24,11 @@ const SubjectsReviewList = <Type extends keyof ReviewType>({
   type,
   subjectId,
 }: SubjectsProps<Type>) => {
+  const amountPerFetch = 10;
+  const [amount, setAmount] = useState(amountPerFetch);
+  const [morePossible, setMorePossible] = useState(true);
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
+  const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<
     ReviewType[Type]["fullData"][] | undefined
   >();
@@ -31,8 +36,11 @@ const SubjectsReviewList = <Type extends keyof ReviewType>({
 
   useEffect(() => {
     const exec = async () => {
-      const result = await funcs.getBySubjectId(subjectId, 10);
+      setLoading(true);
+      const result = await funcs.getBySubjectId(subjectId, amountPerFetch);
+      if (result.length < amountPerFetch) setMorePossible(false);
       setReviews(result || undefined);
+      setLoading(false);
     };
     exec();
   }, [update]);
@@ -45,6 +53,7 @@ const SubjectsReviewList = <Type extends keyof ReviewType>({
       {reviews?.map((review) => (
         <ReviewCard key={review.id} type={type} data={review} />
       ))}
+      {loading ? <Loader /> : morePossible && <Button>Załaduj więcej</Button>}
       <AddReview id="AddReviewSection" type={type} subjectId={subjectId} />
     </div>
   );

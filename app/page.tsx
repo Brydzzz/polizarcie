@@ -1,12 +1,8 @@
 import LandingHeader from "@/components/headers/landing-header.component";
 import CenterSection from "@/components/sections/center-section.component";
-import { prisma } from "@/prisma";
 import styles from "./page.module.scss";
 
 export default async function Home() {
-  const users = await prisma.user.findMany();
-  console.log(users);
-
   return (
     <main className={styles.container}>
       <LandingHeader />

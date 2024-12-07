@@ -1,10 +1,7 @@
 "use client";
 
 import useHasPermission from "@/hooks/use-has-permission";
-import {
-  addOrReplaceLikeForReview,
-  getLikesSumByReviewId,
-} from "@/lib/db/likes";
+import { addOrReplaceLikeForReview } from "@/lib/db/reviews/review-likes";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
@@ -15,7 +12,7 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import Link from "next/link";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
@@ -132,13 +129,10 @@ const ReviewCard = <Type extends keyof ReviewType>({
   data: dataI,
 }: Props<Type>) => {
   const [data, setData] = useState(dataI);
-  const [likes, setLikes] = useState<{ likes: number; dislikes: number }>({
-    likes: 0,
-    dislikes: 0,
-  });
   const [loading, setLoading] = useState(false);
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
-  const { author, createdDate, updatedDate } = data;
+  const { author, createdDate, likes, dislikes, hidden } = data.baseData;
+  const updatedDate = data.updatedDate;
   const [mode, setMode] = useState<Mode>("view");
   const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
@@ -147,19 +141,6 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const { has: canDelete } = useHasPermission(user, "reviews", "delete", data);
   const { has: canHide } = useHasPermission(user, "reviews", "hide", data);
   const { has: canLike } = useHasPermission(user, "reviews", "like", data);
-
-  const updateLikes = async () => {
-    setLikes(
-      (await getLikesSumByReviewId(data.id)) || {
-        likes: 0,
-        dislikes: 0,
-      }
-    );
-  };
-
-  useEffect(() => {
-    updateLikes();
-  }, []);
 
   const updateData = async () => {
     setLoading(true);
@@ -216,18 +197,18 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const likeReview = async () => {
     setLoading(true);
     await addOrReplaceLikeForReview(data.id, true);
-    await updateLikes();
+    await updateData();
     setLoading(false);
   };
   const dislikeReview = async () => {
     setLoading(true);
     await addOrReplaceLikeForReview(data.id, false);
-    await updateLikes();
+    await updateData();
     setLoading(false);
   };
 
   return (
-    <div className={`${styles.container} ${data.hidden ? styles.hidden : ""}`}>
+    <div className={`${styles.container} ${hidden ? styles.hidden : ""}`}>
       <div className={styles.spaceBetween}>
         <div className={styles.stack}>
           {REVIEW_PARTS[type].header(data, mode)}
@@ -235,7 +216,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
         <div className={styles.stack}>
           <span className={styles.date}>
             {parseDate(createdDate)}
-            {createdDate !== updatedDate && (
+            {updatedDate.getTime() !== createdDate.getTime() && (
               <>
                 <br />
                 <span className={styles.updated}>
@@ -268,7 +249,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
             )}
             {canHide && (
               <>
-                {data.hidden ? (
+                {hidden ? (
                   <i
                     className={`fa-solid fa-eye ${styles.negative}`}
                     onClick={unhideReview}
@@ -306,14 +287,14 @@ const ReviewCard = <Type extends keyof ReviewType>({
             onClick={likeReview}
             className={`fa-solid fa-thumbs-up ${styles.positive}`}
           ></i>
-          {likes.likes}
+          {likes}
         </span>
         <span>
           <i
             onClick={dislikeReview}
             className={`fa-solid fa-thumbs-down ${styles.negative}`}
           ></i>
-          {likes.dislikes}
+          {dislikes}
         </span>
       </div>
       {loading && (

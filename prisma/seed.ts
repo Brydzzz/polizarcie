@@ -215,43 +215,6 @@ async function initData() {
     },
   });
 
-  const restaurantReviews = [
-    {
-      id: "1",
-      content: "Wybitny kebab",
-      subjectId: "5",
-      stars: 5,
-      amountSpent: 23,
-      createdDate: new Date("2024-11-25"),
-      authorId: "dummy-user-1",
-    },
-    {
-      id: "2",
-      content: "Nawet nienajgorszy",
-      subjectId: "5",
-      stars: 4,
-      amountSpent: 26,
-      createdDate: new Date("2024-10-19"),
-      authorId: "dummy-user-2",
-    },
-    {
-      id: "3",
-      content: "Obrzydliwy! Już nigdy tam nie zjem!",
-      subjectId: "5",
-      stars: 1,
-      amountSpent: 20,
-      createdDate: new Date("2024-10-31"),
-      authorId: "dummy-user-3",
-    },
-  ];
-  for (const review of restaurantReviews) {
-    await prisma.restaurantReview.upsert({
-      where: { id: review.id },
-      update: review,
-      create: review,
-    });
-  }
-
   const dishes = [
     {
       id: "1",

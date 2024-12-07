@@ -1,26 +1,29 @@
+import { deleteReview, hideReview } from "@/lib/db/reviews/base-reviews";
 import {
   createDishReview,
-  deleteDishReview,
   DishReviewCreator,
   DishReviewFull,
   getDishReviewById,
   getDishReviewsByAuthorId,
   getDishReviewsByDishId,
-  hideDishReview,
   updateDishReview,
 } from "@/lib/db/reviews/dish-reviews";
 import {
   createRestaurantReview,
-  deleteRestaurantReview,
   getRestaurantReviewById,
   getRestaurantReviewsByAuthorId,
   getRestaurantReviewsByRestaurantId,
-  hideRestaurantReview,
   RestaurantReviewCreator,
   RestaurantReviewFull,
   updateRestaurantReview,
 } from "@/lib/db/reviews/restaurant-reviews";
-import { Dish, DishReview, Restaurant, RestaurantReview } from "@prisma/client";
+import {
+  BaseReview,
+  Dish,
+  DishReview,
+  Restaurant,
+  RestaurantReview,
+} from "@prisma/client";
 import { Dispatch, SetStateAction, useState } from "react";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
@@ -60,7 +63,7 @@ type ReviewFunctions = {
       skip?: number
     ) => Promise<ReviewType[Key]["fullData"][]>;
     getByAuthorId: (
-      id: ReviewType[Key]["data"]["authorId"],
+      id: BaseReview["authorId"],
       take: number,
       skip?: number
     ) => Promise<ReviewType[Key]["fullData"][]>;
@@ -69,17 +72,15 @@ type ReviewFunctions = {
     ) => Promise<ReviewType[Key]["subject"] | null>;
     create: (
       data: ReviewType[Key]["creatorData"]
-    ) => Promise<ReviewType[Key]["data"] | null>;
+    ) => Promise<BaseReview | null>;
     edit: (
       data: ReviewType[Key]["data"]
     ) => Promise<ReviewType[Key]["data"] | null>;
-    delete: (
-      id: ReviewType[Key]["data"]["id"]
-    ) => Promise<ReviewType[Key]["data"] | null>;
+    delete: (id: ReviewType[Key]["data"]["id"]) => Promise<BaseReview | null>;
     hide: (
       id: ReviewType[Key]["data"]["id"],
       hide: boolean
-    ) => Promise<ReviewType[Key]["data"] | null>;
+    ) => Promise<BaseReview | null>;
   };
 };
 
@@ -91,8 +92,8 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
     getSubject: async (id) => await getRestaurantById(id),
     create: createRestaurantReview,
     edit: updateRestaurantReview,
-    delete: deleteRestaurantReview,
-    hide: hideRestaurantReview,
+    delete: deleteReview,
+    hide: hideReview,
   },
   dish: {
     getById: getDishReviewById,
@@ -101,8 +102,8 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
     getSubject: async (id) => await getDishById(id),
     create: createDishReview,
     edit: updateDishReview,
-    delete: deleteDishReview,
-    hide: hideDishReview,
+    delete: deleteReview,
+    hide: hideReview,
   },
 };
 
