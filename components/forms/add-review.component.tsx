@@ -106,6 +106,10 @@ const AddReview = <Type extends keyof ReviewType>({
       { ...store.getCreator(), subjectId: subjectId },
     ]);
     dispatch(updateReviewsUpdate());
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   return (

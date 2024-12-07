@@ -137,10 +137,24 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
   const store = new ReviewStore(type);
-  const { has: canEdit } = useHasPermission(user, "reviews", "edit", data);
-  const { has: canDelete } = useHasPermission(user, "reviews", "delete", data);
-  const { has: canHide } = useHasPermission(user, "reviews", "hide", data);
-  const { has: canLike } = useHasPermission(user, "reviews", "like", data);
+  const { has: canEdit } = useHasPermission(
+    user,
+    "reviews",
+    "edit",
+    data.baseData
+  );
+  const { has: canDelete } = useHasPermission(
+    user,
+    "reviews",
+    "delete",
+    data.baseData
+  );
+  const { has: canHide } = useHasPermission(
+    user,
+    "reviews",
+    "hide",
+    data.baseData
+  );
 
   const updateData = async () => {
     setLoading(true);

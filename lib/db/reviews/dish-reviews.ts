@@ -43,15 +43,83 @@ export async function getDishReviewsByDishId(
   take: number,
   skip?: number
 ): Promise<DishReviewFull[]> {
+  let result: DishReviewFull[] = [];
+  let toTake = take;
+  let toSkip = skip || 0;
   const currentUser = (await getCurrentUser()) || undefined;
-  const result = await prisma.dishReview.findMany({
-    where: {
-      subjectId: id,
-    },
-    include: FULL_INCLUDE_PRESET,
-    take: take,
-    skip: skip,
-  });
+  if (currentUser) {
+    const amountOwn = (
+      await prisma.dishReview.aggregate({
+        where: {
+          baseData: {
+            authorId: currentUser.id,
+          },
+        },
+        _count: {
+          id: true,
+        },
+      })
+    )._count.id;
+    if (amountOwn > toSkip) {
+      const own = await prisma.dishReview.findMany({
+        where: {
+          subjectId: id,
+          baseData: {
+            authorId: currentUser.id,
+          },
+        },
+        include: FULL_INCLUDE_PRESET,
+        take: toTake,
+        skip: toSkip,
+        orderBy: [
+          {
+            baseData: {
+              hidden: "asc",
+            },
+          },
+          {
+            baseData: {
+              createdDate: "desc",
+            },
+          },
+        ],
+      });
+      result = result.concat(own);
+      toTake -= own.length;
+      toSkip = 0;
+    } else {
+      toSkip -= amountOwn;
+    }
+  }
+  toSkip = Math.max(0, toSkip);
+  if (toTake > 0) {
+    const notOwn = await prisma.dishReview.findMany({
+      where: {
+        subjectId: id,
+        baseData: {
+          NOT: {
+            authorId: currentUser?.id || "",
+          },
+        },
+      },
+      include: FULL_INCLUDE_PRESET,
+      take: toTake,
+      skip: toSkip,
+      orderBy: [
+        {
+          baseData: {
+            hidden: "asc",
+          },
+        },
+        {
+          baseData: {
+            likes: "desc",
+          },
+        },
+      ],
+    });
+    result = result.concat(notOwn);
+  }
   return result.filter(
     (e) =>
       !e.baseData.hidden ||
@@ -74,6 +142,18 @@ export async function getDishReviewsByAuthorId(
     include: FULL_INCLUDE_PRESET,
     take: take,
     skip: skip,
+    orderBy: [
+      {
+        baseData: {
+          hidden: "asc",
+        },
+      },
+      {
+        baseData: {
+          likes: "desc",
+        },
+      },
+    ],
   });
   return result.filter(
     (e) =>
