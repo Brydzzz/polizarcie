@@ -17,7 +17,9 @@ import styles from "./review-list.module.scss";
 
 type ListMode = {
   author: AuthorsProps;
-  subject: ModeListProps<keyof ReviewType>;
+  subject: Omit<ModeListProps<keyof ReviewType>, "mode" | "modeSpecificId"> & {
+    subjectId: string;
+  };
 };
 
 type ModeListProps<Type extends keyof ReviewType> = {
@@ -174,8 +176,15 @@ const LIST_NODE: {
 } = {
   author: AuthorsReviewList,
   subject: <Type extends keyof ReviewType>(
-    props: Omit<ModeListProps<Type>, "mode">
-  ) => ModeReviewList<Type>({ ...props, mode: "subject" }),
+    props: Omit<ModeListProps<Type>, "mode" | "modeSpecificId"> & {
+      subjectId: string;
+    }
+  ) =>
+    ModeReviewList<Type>({
+      ...props,
+      mode: "subject",
+      modeSpecificId: props.subjectId,
+    }),
 };
 
 type Props<Mode extends keyof ListMode> = { mode: Mode } & ListMode[Mode];
