@@ -1,0 +1,81 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  font-size: 14pt;
+  --size: 250px;
+  width: var(--size);
+  height: 50px;
+  border-radius: 10px;
+  transition: all 0.3s;
+  animation: enter 0.5s forwards cubic-bezier(0.17, 0.67, 0.31, 1.58);
+  overflow: hidden;
+  transform: translate(0, 0);
+
+  &.success {
+    background-color: var(--success);
+  }
+  &.error {
+    background-color: var(--error);
+  }
+  &.information {
+    background-color: var(--info);
+  }
+  &.warning {
+    color: var(--background);
+    background-color: var(--warning);
+  }
+
+  &.exit {
+    animation: exit 0.3s forwards ease-in;
+  }
+
+  & > i {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16pt;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .lifeBar {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 10px;
+    background-color: var(--text);
+
+    &.full {
+      width: 100%;
+      background-color: #0005;
+    }
+  }
+}
+
+@keyframes enter {
+  0% {
+    transform: translate(calc(var(--size) + 50px), 0);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes exit {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(calc(var(--size) + 50px), 0);
+  }
+}

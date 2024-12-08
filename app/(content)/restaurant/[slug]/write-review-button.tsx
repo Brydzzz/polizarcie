@@ -2,7 +2,7 @@
 
 import Button from "@/components/button/button.component";
 import { useAppDispatch } from "@/lib/store/hooks";
-import { setRestaurantPageView } from "@/lib/store/layout-options/layout-options.slice";
+import { setRestaurantPageView } from "@/lib/store/ui/ui.slice";
 
 const WriteReviewButton = () => {
   const dispatch = useAppDispatch();

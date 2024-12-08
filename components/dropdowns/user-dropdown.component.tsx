@@ -29,7 +29,7 @@ const UserDropdown = () => {
             <h2>{user.name}</h2>
             <span
               className={styles.item}
-              onClick={() => signOut({ redirect: true, redirectTo: "/" })}
+              onClick={() => signOut({ redirect: true, redirectTo: "/browse" })}
             >
               <i className="fa-solid fa-right-from-bracket"></i>
               &nbsp; &nbsp; Wyloguj się

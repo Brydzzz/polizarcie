@@ -1,14 +1,15 @@
 "use client";
 
+import useReviewStore from "@/hooks/use-review-store";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
 } from "@/lib/store/user/user.selector";
 import {
   REVIEW_FUNCTIONS_FACTORY,
-  ReviewStore,
   ReviewType,
 } from "@/utils/factories/reviews";
 import { transferWithJSON } from "@/utils/misc.client";
@@ -28,7 +29,7 @@ type Props<Type extends keyof ReviewType> = {
 
 type Fields = {
   [Key in keyof ReviewType]: {
-    inputs: (store: ReviewStore<Key>) => ReactNode;
+    inputs: (store: ReturnType<typeof useReviewStore<Key>>) => ReactNode;
   };
 };
 
@@ -91,7 +92,7 @@ const AddReview = <Type extends keyof ReviewType>({
   >();
   const currentUser = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
-  const store = new ReviewStore(type);
+  const store = useReviewStore(type);
 
   useEffect(() => {
     const exec = async () => {
@@ -106,6 +107,7 @@ const AddReview = <Type extends keyof ReviewType>({
       { ...store.getCreator(), subjectId: subjectId },
     ]);
     dispatch(updateReviewsUpdate());
+    dispatch(addSnackbar({ name: "Dodano opinię", type: "success" }));
     window.scrollTo({
       top: 0,
       behavior: "smooth",

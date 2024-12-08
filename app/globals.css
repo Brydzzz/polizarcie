@@ -19,10 +19,15 @@
   --positive: #d7f75b;
   --negative: #c33149;
   --edit: #547aa5;
+  --info: #547aa5;
   --error: #c33149;
+  --success: #386c0b;
+  --warning: #f8e16c;
 
   --github-color: #2b3137;
   --google-color: #174ea6;
+
+  --bounce-bezier: cubic-bezier(0.17, 0.67, 0.31, 1.58);
 }
 
 html,

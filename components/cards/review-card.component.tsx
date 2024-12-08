@@ -1,6 +1,8 @@
 "use client";
 
 import useHasPermission from "@/hooks/use-has-permission";
+import useReviewStore from "@/hooks/use-review-store";
+import { deleteReview, hideReview } from "@/lib/db/reviews/base-reviews";
 import { addOrReplaceLikeForReview } from "@/lib/db/reviews/review-likes";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
@@ -8,7 +10,6 @@ import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { parseDate } from "@/utils/date-time";
 import {
   REVIEW_FUNCTIONS_FACTORY,
-  ReviewStore,
   ReviewType,
 } from "@/utils/factories/reviews";
 import Link from "next/link";
@@ -32,7 +33,7 @@ type ReviewParts = {
     content: (
       data: ReviewType[Key]["fullData"],
       mode: Mode,
-      store: ReviewStore<Key>
+      store: ReturnType<typeof useReviewStore<Key>>
     ) => ReactNode;
   };
 };
@@ -136,7 +137,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const [mode, setMode] = useState<Mode>("view");
   const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
-  const store = new ReviewStore(type);
+  const store = useReviewStore(type);
   const { has: canEdit } = useHasPermission(
     user,
     "reviews",
@@ -166,16 +167,16 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setData(result);
     setLoading(false);
   };
-  const startEditing = () => {
+  const handleStartEditing = () => {
     store.getKeys().forEach((key) => {
       store.setState(key, data[key]);
     });
     setMode("edit");
   };
-  const cancelEditing = () => {
+  const handleCancelEditing = () => {
     setMode("view");
   };
-  const confirmEditing = async () => {
+  const handleConfirmEditing = async () => {
     setLoading(true);
     const newData = {
       ...data,
@@ -188,33 +189,33 @@ const ReviewCard = <Type extends keyof ReviewType>({
     await updateData();
     setLoading(false);
   };
-  const deleteReview = async () => {
+  const handleDeleteReview = async () => {
     setLoading(true);
-    await funcs.delete(data.id);
+    await deleteReview(data.id);
     dispatch(updateReviewsUpdate());
     setLoading(false);
   };
-  const hideReview = async () => {
+  const handleHideReview = async () => {
     setLoading(true);
     setData({ ...data, hidden: true });
-    await funcs.hide(data.id, true);
+    await hideReview(data.id, true);
     await updateData();
     setLoading(false);
   };
-  const unhideReview = async () => {
+  const handleUnhideReview = async () => {
     setLoading(true);
     setData({ ...data, hidden: false });
-    await funcs.hide(data.id, false);
+    await hideReview(data.id, false);
     await updateData();
     setLoading(false);
   };
-  const likeReview = async () => {
+  const handleLikeReview = async () => {
     setLoading(true);
     await addOrReplaceLikeForReview(data.id, true);
     await updateData();
     setLoading(false);
   };
-  const dislikeReview = async () => {
+  const handleDislikeReview = async () => {
     setLoading(true);
     await addOrReplaceLikeForReview(data.id, false);
     await updateData();
@@ -258,7 +259,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
             {canEdit && (
               <i
                 className={`fa-solid fa-pen-to-square ${styles.edit}`}
-                onClick={startEditing}
+                onClick={handleStartEditing}
               ></i>
             )}
             {canHide && (
@@ -266,12 +267,12 @@ const ReviewCard = <Type extends keyof ReviewType>({
                 {hidden ? (
                   <i
                     className={`fa-solid fa-eye ${styles.negative}`}
-                    onClick={unhideReview}
+                    onClick={handleUnhideReview}
                   ></i>
                 ) : (
                   <i
                     className={`fa-solid fa-eye-slash ${styles.negative}`}
-                    onClick={hideReview}
+                    onClick={handleHideReview}
                   ></i>
                 )}
               </>
@@ -279,7 +280,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
             {canDelete && (
               <i
                 className={`fa-solid fa-trash ${styles.negative}`}
-                onClick={deleteReview}
+                onClick={handleDeleteReview}
               ></i>
             )}
           </>
@@ -287,25 +288,25 @@ const ReviewCard = <Type extends keyof ReviewType>({
           <>
             <i
               className={`fa-solid fa-xmark ${styles.negative}`}
-              onClick={cancelEditing}
+              onClick={handleCancelEditing}
             ></i>
             <i
               className={`fa-solid fa-check ${styles.positive}`}
-              onClick={confirmEditing}
+              onClick={handleConfirmEditing}
             ></i>
           </>
         )}
         <div className={styles.expander}></div>
         <span>
           <i
-            onClick={likeReview}
+            onClick={handleLikeReview}
             className={`fa-solid fa-thumbs-up ${styles.positive}`}
           ></i>
           {likes}
         </span>
         <span>
           <i
-            onClick={dislikeReview}
+            onClick={handleDislikeReview}
             className={`fa-solid fa-thumbs-down ${styles.negative}`}
           ></i>
           {dislikes}

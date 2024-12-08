@@ -2,6 +2,7 @@
 
 import { getUserByEmail } from "@/lib/db/users";
 import { AppStore, makeStore } from "@/lib/store/store";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import {
   setCurrentUser,
   setCurrentUserLoading,
@@ -34,10 +35,17 @@ const StoreProvider = ({ children }: Props) => {
         return;
       }
       if (session.data?.user?.email) {
+        storeRef.current?.dispatch(
+          addSnackbar({ name: "Zalogowano", type: "success" })
+        );
         const result = await transferWithJSON(getUserByEmail, [
           session.data.user.email,
         ]);
         storeRef.current?.dispatch(setCurrentUser(result || undefined));
+      } else {
+        storeRef.current?.dispatch(
+          addSnackbar({ name: "Wylogowano", type: "warning" })
+        );
       }
       storeRef.current?.dispatch(setCurrentUserLoading(false));
     };

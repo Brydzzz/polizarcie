@@ -14,7 +14,7 @@ import { rootReducer } from "./root-reducer";
 const persistConfig = {
   key: "root",
   storage: localStorage,
-  whitelist: ["layoutOptions"],
+  whitelist: ["ui"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

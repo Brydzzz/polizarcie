@@ -1,14 +1,19 @@
 import { createSelector } from "reselect";
 import { RootState } from "../store";
 
-const selectLayoutOptionsReducer = (state: RootState) => state.layoutOptions;
+const selectUiReducer = (state: RootState) => state.ui;
 
 export const selectRestaurantPageOptions = createSelector(
-  [selectLayoutOptionsReducer],
-  (layoutOptionReducer) => layoutOptionReducer.restaurantPage
+  [selectUiReducer],
+  (uiReducer) => uiReducer.restaurantPage
 );
 
 export const selectRestaurantPageView = createSelector(
   [selectRestaurantPageOptions],
   (restaurantPageOptions) => restaurantPageOptions.view
+);
+
+export const selectSnackbars = createSelector(
+  [selectUiReducer],
+  (uiReducer) => uiReducer.snackbars
 );

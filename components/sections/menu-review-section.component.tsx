@@ -1,7 +1,7 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { selectRestaurantPageView } from "@/lib/store/layout-options/layout-options.selector";
-import { setRestaurantPageView } from "@/lib/store/layout-options/layout-options.slice";
+import { selectRestaurantPageView } from "@/lib/store/ui/ui.selector";
+import { setRestaurantPageView } from "@/lib/store/ui/ui.slice";
 import { ReactNode, useEffect, useRef } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";

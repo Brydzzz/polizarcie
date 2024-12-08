@@ -1,0 +1,9 @@
+.container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  gap: 10px;
+}
