@@ -17,7 +17,7 @@ const SnackbarsTestPage = () => {
   const add = () => {
     const i = Math.floor(Math.random() * 4);
     const type = Object.keys(types)[i] as SnackbarData["type"];
-    dispatch(addSnackbar({ name: type, type: type }));
+    dispatch(addSnackbar({ message: type, type: type }));
   };
 
   return (

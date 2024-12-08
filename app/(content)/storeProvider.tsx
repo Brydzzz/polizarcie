@@ -36,7 +36,7 @@ const StoreProvider = ({ children }: Props) => {
       }
       if (session.data?.user?.email) {
         storeRef.current?.dispatch(
-          addSnackbar({ name: "Zalogowano", type: "success" })
+          addSnackbar({ message: "Zalogowano", type: "success" })
         );
         const result = await transferWithJSON(getUserByEmail, [
           session.data.user.email,
@@ -44,7 +44,7 @@ const StoreProvider = ({ children }: Props) => {
         storeRef.current?.dispatch(setCurrentUser(result || undefined));
       } else {
         storeRef.current?.dispatch(
-          addSnackbar({ name: "Wylogowano", type: "warning" })
+          addSnackbar({ message: "Wylogowano", type: "warning" })
         );
       }
       storeRef.current?.dispatch(setCurrentUserLoading(false));

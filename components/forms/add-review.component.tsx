@@ -107,7 +107,7 @@ const AddReview = <Type extends keyof ReviewType>({
       { ...store.getCreator(), subjectId: subjectId },
     ]);
     dispatch(updateReviewsUpdate());
-    dispatch(addSnackbar({ name: "Dodano opinię", type: "success" }));
+    dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
     window.scrollTo({
       top: 0,
       behavior: "smooth",

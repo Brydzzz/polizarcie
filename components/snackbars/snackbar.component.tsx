@@ -5,7 +5,7 @@ import { removeSnackbar, SnackbarData } from "@/lib/store/ui/ui.slice";
 import { useEffect, useState } from "react";
 import styles from "./snackbar.module.scss";
 
-const Snackbar = ({ id, name, timeout, type }: SnackbarData) => {
+const Snackbar = ({ id, message, timeout, type }: SnackbarData) => {
   const dispatch = useAppDispatch();
   const [life, setLife] = useState(100);
   const [exit, setExit] = useState(false);
@@ -34,7 +34,7 @@ const Snackbar = ({ id, name, timeout, type }: SnackbarData) => {
         styles[type]
       }`}
     >
-      {name}
+      {message}
       <i onClick={kill} className="fa-solid fa-xmark"></i>
       <div className={`${styles.lifeBar} ${styles.full}`}></div>
       <div style={{ width: `${life}%` }} className={styles.lifeBar}></div>

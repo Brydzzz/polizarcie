@@ -4,7 +4,7 @@ import { DispatchAction } from "../store";
 
 export type SnackbarData = {
   id: string;
-  name: string;
+  message: string;
   timeout: number;
   type: "success" | "error" | "warning" | "information";
 };
@@ -35,7 +35,7 @@ export const UiSlice = createSlice({
       action: DispatchAction<Partial<Omit<SnackbarData, "id">>>
     ) {
       state.snackbars.push({
-        name: "",
+        message: "",
         type: "information",
         timeout: 3000,
         ...action.payload,
