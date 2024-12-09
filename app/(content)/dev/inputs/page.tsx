@@ -12,11 +12,13 @@ import RangeInput from "@/components/inputs/range-input.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import SliderInput from "@/components/inputs/slider-input.component";
 import StarInput from "@/components/inputs/star-input.component";
+import HeartInput from "@/components/inputs/heart-input.component";
 import { useState } from "react";
 
 const FiltersPage = () => {
   const [range, setRange] = useState({ min: 15, max: 65 });
   const [stars, setStars] = useState(3);
+  const [heart, setHeart] = useState(false);
   const [slider, setSlider] = useState(3);
   const [text1, setText1] = useState("test");
   const [text2, setText2] = useState("");
@@ -63,7 +65,7 @@ const FiltersPage = () => {
           label="Hasło"
           value={text4}
           onChange={(e) => setText4(e.target.value)}
-          // disabled
+        // disabled
         />
         <Input
           type="date"
@@ -167,6 +169,7 @@ const FiltersPage = () => {
           size={InputSize.LARGE}
           filters
         />
+        <HeartInput liked={false} onChange={setHeart} />
       </div>
     </div>
   );

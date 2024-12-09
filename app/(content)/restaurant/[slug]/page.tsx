@@ -1,4 +1,5 @@
 import StarInput from "@/components/inputs/star-input.component";
+import HeartInput from "@/components/inputs/heart-input.component";
 import MenuList from "@/components/lists/menu-list.component";
 import ReviewList from "@/components/lists/review-list.component";
 import MapView from "@/components/map-view.component";
@@ -13,7 +14,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 import WriteReviewButton from "./write-review-button";
-
+import RestaurantLiked from "./restaurant-liked";
 type Props = {
   params: Promise<{
     slug: string;
@@ -27,6 +28,7 @@ const RestaurantPage = async ({ params }: Props) => {
   const score = await getRestaurantAvgStarsById(restaurant.id);
   const menu = await getMenuByRestaurantId(restaurant.id);
   const roundedScore = score._avg.stars?.toFixed(2);
+  const likedRest = false;
 
   const hours = [
     {
@@ -76,9 +78,8 @@ const RestaurantPage = async ({ params }: Props) => {
           ></i>
         </Link>
         <p>{restaurant.name}</p>
-        {/* TODO: heart input for adding to favorite restaurants */}
         <span>
-          <i className="fa-regular fa-heart fa-2x"></i>
+          <RestaurantLiked restId={restaurant.id} />
         </span>
       </div>
       <div className={styles.content}>
