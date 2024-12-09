@@ -11,6 +11,16 @@ export async function getUserById(id: User["id"]) {
   });
 }
 
+export async function addToLiked(userId: User['id'], restId: Restaurant['id']) {
+  return await prisma.userFavoriteRestaurant.create({
+    data: {
+      userId: userId,
+      restaurantId: restId,
+      rankingPosition: 10
+    }
+  })
+}
+
 export async function checkIfRestLikedByUser(userId: User['id'], restId: Restaurant['id']) {
   return (await prisma.userFavoriteRestaurant.findFirst({
     where: {

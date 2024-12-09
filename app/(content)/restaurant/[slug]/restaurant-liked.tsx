@@ -5,7 +5,7 @@ import { checkIfRestLikedByUser } from "@/lib/db/users"
 import { useAppSelector } from "@/lib/store/hooks"
 import { selectCurrentUser } from "@/lib/store/user/user.selector"
 import { useEffect, useState } from "react"
-
+import { addToLiked } from "@/lib/db/users"
 type Props = {
     restId: string;
 }
@@ -29,8 +29,17 @@ const RestaurantLiked = ({
         update();
         console.log(liked)
     }, [user])
+    useEffect(() => {
+        const update = async () => {
+            if (!user) {
+                return false;
+            }
+            addToLiked(user?.id, restId)
+        };
+        update();
+    }, [liked])
     return (
-        <HeartInput liked={liked} heartSize="30pt" disabled />
+        <HeartInput liked={liked} heartSize="30pt" onChange={setLiked} />
     );
 };
 
