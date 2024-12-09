@@ -11,23 +11,39 @@ export async function getUserById(id: User["id"]) {
   });
 }
 
-export async function addToLiked(userId: User['id'], restId: Restaurant['id']) {
+export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
   return await prisma.userFavoriteRestaurant.create({
     data: {
       userId: userId,
       restaurantId: restId,
-      rankingPosition: 10
-    }
-  })
+      rankingPosition: 10,
+    },
+  });
 }
 
-export async function checkIfRestLikedByUser(userId: User['id'], restId: Restaurant['id']) {
-  return (await prisma.userFavoriteRestaurant.findFirst({
+export async function removeLike(userId: User["id"], restId: Restaurant["id"]) {
+  return await prisma.userFavoriteRestaurant.delete({
     where: {
-      userId: userId,
-      restaurantId: restId
-    }
-  })) != null
+      userId_restaurantId: {
+        userId: userId,
+        restaurantId: restId,
+      },
+    },
+  });
+}
+
+export async function checkIfRestLikedByUser(
+  userId: User["id"],
+  restId: Restaurant["id"]
+) {
+  return (
+    (await prisma.userFavoriteRestaurant.findFirst({
+      where: {
+        userId: userId,
+        restaurantId: restId,
+      },
+    })) != null
+  );
 }
 
 export async function getUserByEmail(email: User["email"]) {

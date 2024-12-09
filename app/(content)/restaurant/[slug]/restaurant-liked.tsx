@@ -1,7 +1,7 @@
 "use client";
 
 import HeartInput from "@/components/inputs/heart-input.component";
-import { addToLiked, checkIfRestLikedByUser } from "@/lib/db/users";
+import { addToLiked, checkIfRestLikedByUser, removeLike } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { useEffect, useState } from "react";
@@ -14,12 +14,10 @@ const RestaurantLiked = ({ restId }: Props) => {
   const user = useAppSelector(selectCurrentUser);
   useEffect(() => {
     const update = async () => {
-      console.log(user);
       if (!user) {
         return false;
       }
       const data = await checkIfRestLikedByUser(user.id, restId);
-      console.log(data);
       setLiked(data);
       return data;
     };
@@ -30,9 +28,13 @@ const RestaurantLiked = ({ restId }: Props) => {
       if (!user) {
         return false;
       }
+      const check = await checkIfRestLikedByUser(user.id, restId);
       console.log(liked);
-      if (!liked) {
+      console.log(check);
+      if (liked && !check) {
         addToLiked(user?.id, restId);
+      } else if (!liked && check) {
+        removeLike(user?.id, restId);
       }
     };
     update();
