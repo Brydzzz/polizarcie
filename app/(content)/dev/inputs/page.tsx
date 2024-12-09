@@ -4,6 +4,7 @@ import Checkbox from "@/components/inputs/checkbox.component";
 import Input from "@/components/inputs/generic-input.component";
 import SelectBox from "@/components/inputs/generic-select.component";
 import TextArea from "@/components/inputs/generic-textarea.component";
+import HeartInput from "@/components/inputs/heart-input.component";
 import ImageInput from "@/components/inputs/image-input.component";
 import { InputSize, InputStyle } from "@/components/inputs/input.types";
 import Multiselect from "@/components/inputs/multiselect.component";
@@ -12,7 +13,6 @@ import RangeInput from "@/components/inputs/range-input.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import SliderInput from "@/components/inputs/slider-input.component";
 import StarInput from "@/components/inputs/star-input.component";
-import HeartInput from "@/components/inputs/heart-input.component";
 import { useState } from "react";
 
 const FiltersPage = () => {
@@ -65,7 +65,7 @@ const FiltersPage = () => {
           label="Hasło"
           value={text4}
           onChange={(e) => setText4(e.target.value)}
-        // disabled
+          // disabled
         />
         <Input
           type="date"
@@ -169,7 +169,7 @@ const FiltersPage = () => {
           size={InputSize.LARGE}
           filters
         />
-        <HeartInput liked={false} onChange={setHeart} />
+        <HeartInput liked={heart} onChange={setHeart} />
       </div>
     </div>
   );
