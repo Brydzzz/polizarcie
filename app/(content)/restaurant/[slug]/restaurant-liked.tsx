@@ -29,8 +29,6 @@ const RestaurantLiked = ({ restId }: Props) => {
         return false;
       }
       const check = await checkIfRestLikedByUser(user.id, restId);
-      console.log(liked);
-      console.log(check);
       if (liked && !check) {
         addToLiked(user?.id, restId);
       } else if (!liked && check) {
