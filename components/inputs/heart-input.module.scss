@@ -1,0 +1,24 @@
+.container {
+    height: 45px;
+    font-size: 18pt;
+    color: var(--primary);
+
+    .heart {
+        &:hover {
+            cursor: pointer
+        }
+    }
+
+    .invisible {
+        display: none;
+    }
+
+    &.disabled {
+        .heart {
+            &:hover {
+                cursor: initial;
+            }
+        }
+    }
+
+}
