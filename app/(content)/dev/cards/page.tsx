@@ -1,14 +1,15 @@
 import DishCard from "@/components/cards/dish-card.component";
 import LinkCard from "@/components/cards/link-card.component";
+import MatchCard from "@/components/cards/match-card-component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import UserCard from "@/components/cards/user-desc-card-component";
 import {
   Address,
   Dish,
   MediaType,
-  Prisma,
   Restaurant,
   User,
+  UserFavoriteRestaurant,
   UserMedia,
 } from "@prisma/client";
 
@@ -57,12 +58,48 @@ const TEST_USER: Partial<User & { medias: Partial<UserMedia>[] }>[] = [
   },
 ];
 
+const TEST_USER2: Partial<
+  User & {
+    favouriteRestaurants: (Partial<UserFavoriteRestaurant> & {
+      restaurant: Partial<Restaurant>;
+    })[];
+  }
+>[] = [
+  {
+    name: "Balbinka123",
+    points: 100,
+    description:
+      "Hej jestem balbinka jestem kotem lubie kocia karme, lubie tez strasznie długo opisy tak długie ze nie mozna tego wytrzymac takie dlugie opisy lubie najlepiej takie ktore zabieraja kilka linijek, 3 lub wiecej serio tym wiecej linijek tym jest fajniej. strasznie bym sobie rybke zjadla i mleczkiem popila, no i ja wtedy do niego mówie PANIE JA JESTEM KOTEM i on mi nie wierzyl nie wiec normalnie zamiałkałam mu i juz nie byl taki sprytny ten gosc co nie juz uwierzyl od razu ze jestem prawdzimy kotem",
+    favouriteRestaurants: [
+      {
+        restaurant: {
+          name: "kebab king",
+        },
+        rankingPosition: 1,
+      },
+      {
+        restaurant: {
+          name: "kebab dubai",
+        },
+        rankingPosition: 2,
+      },
+      {
+        restaurant: {
+          name: "amman kebab",
+        },
+        rankingPosition: 3,
+      },
+    ],
+  },
+];
+
 const TEST_DISH: Partial<Dish>[] = [
   {
     name: "Kebab średni",
     description:
       "Baranina/Kurczak, surówka, pita, sosy strasznie długo opis realnie nigdy nie widzialem dluzszego opisu niz ten ktory to jest mega dziwne ze one jest taki dlugo jakby mogl przestac to byloby super",
-    price: new Prisma.Decimal(23),
+    priceZl: 23,
+    priceGr: 0,
   },
 ];
 
@@ -80,7 +117,13 @@ const CardPage = () => {
           <DishCard key={i} data={dish}></DishCard>
         ))}
         {TEST_USER.map((usr, i) => (
-          <UserCard key={i} data={usr}></UserCard>
+          <UserCard key={i} data={usr} socials={true}></UserCard>
+        ))}
+        {TEST_USER.map((usr, i) => (
+          <UserCard key={i} data={usr} socials={false}></UserCard>
+        ))}
+        {TEST_USER2.map((usr2, i) => (
+          <MatchCard key={i} data={usr2}></MatchCard>
         ))}
         {TEST_LINK.map((lin, i) => (
           <LinkCard key={i} data={lin}></LinkCard>

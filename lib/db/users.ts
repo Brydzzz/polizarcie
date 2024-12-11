@@ -46,6 +46,19 @@ export async function checkIfRestLikedByUser(
   );
 }
 
+export async function getTopLikedRests(userId: User["id"]) {
+  return await prisma.restaurant.findMany({
+    include: {
+      favoriteAmong: {
+        where: {
+          userId: userId,
+          rankingPosition: { in: [1, 2, 3] },
+        },
+      },
+    },
+  });
+}
+
 export async function getUserByEmail(email: User["email"]) {
   return await prisma.user.findFirst({
     where: {
