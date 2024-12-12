@@ -21,6 +21,23 @@ export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
   });
 }
 
+export async function getUnmatchedUser(userId: User["id"]) {
+  return await prisma.user.findFirst({
+    where: {
+      AND: [
+        {
+          userOneMatch: {
+            every: {
+              userOneId: { not: userId },
+              userTwoId: { not: userId },
+            },
+          },
+        },
+      ],
+    },
+  });
+}
+
 export async function removeLike(userId: User["id"], restId: Restaurant["id"]) {
   return await prisma.userFavoriteRestaurant.delete({
     where: {

@@ -32,6 +32,9 @@ model User {
     followedBy          Follow[]                 @relation(name: "followUsersTo")
     reviewLikes         ReviewLike[]
     BaseReview          BaseReview[]
+
+    userOneMatch Match[] @relation(name: "matchUserOne")
+    userTwoMatch Match[] @relation(name: "matchUserTwo")
 }
 
 model UserFavoriteRestaurant {
@@ -174,6 +177,16 @@ model Follow {
     to     User     @relation(name: "followUsersTo", fields: [toId], references: [id], onDelete: Cascade)
     toId   String
     date   DateTime @default(now()) @db.Timestamp()
+}
+
+model Match {
+    userOneId String
+    userTwoId String
+    userOne   User    @relation(name: "matchUserOne", fields: [userOneId], references: [id], onDelete: Cascade)
+    userTwo   User    @relation(name: "matchUserTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+    value     Boolean
+
+    @@id([userOneId, userTwoId])
 }
 
 // Required by Next-Auth
