@@ -12,13 +12,26 @@ const MatchCard = async ({ data }: Props) => {
   const { name, description, id } = data;
   if (!data) return;
   const likedRests = await getTopLikedRests(String(id));
+  console.log(likedRests);
   return (
     <div className={styles.container}>
       <div className={styles.photoBox}>
         <div className={styles.photo}></div>
       </div>
       <div className={styles.details}>
-        <UserCard data={data} socials={false}></UserCard>
+        <div className={styles.films}>
+          <p> Lubię jeść: </p>
+          <ul>
+            {likedRests.map((rest, idx) => (
+              <p>
+                {idx + 1}. {rest.name}
+              </p>
+            ))}
+          </ul>
+        </div>
+        <div className={styles.desc}>
+          <UserCard data={data} socials={false}></UserCard>
+        </div>
       </div>
     </div>
   );

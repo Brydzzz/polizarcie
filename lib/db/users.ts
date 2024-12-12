@@ -48,13 +48,16 @@ export async function checkIfRestLikedByUser(
 
 export async function getTopLikedRests(userId: User["id"]) {
   return await prisma.restaurant.findMany({
-    include: {
+    where: {
       favoriteAmong: {
-        where: {
+        some: {
           userId: userId,
           rankingPosition: { in: [1, 2, 3] },
         },
       },
+    },
+    include: {
+      favoriteAmong: true,
     },
   });
 }
