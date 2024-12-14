@@ -1,5 +1,5 @@
 "use client";
-import MatchCard from "@/components/cards/match-card-component";
+import UserCard from "@/components/cards/user-desc-card-component";
 import { getUnmatchedUser } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
@@ -11,14 +11,6 @@ const MatchPage = () => {
   console.log(user);
   const [next, goNext] = useState<Boolean>(false);
   const [user1, setUser1] = useState<User | null>(null);
-  const [hasFetched, setHasFetched] = useState(false);
-
-  useEffect(() => {
-    const firstFetch = async () => {
-      if (user && !hasFetched) setHasFetched(true);
-    };
-    firstFetch();
-  }, [user]);
 
   const fetchUnmatchedUser = async () => {
     if (!user) return;
@@ -36,11 +28,11 @@ const MatchPage = () => {
   useEffect(() => {
     fetchUnmatchedUser();
     console.log(user1);
-  }, [hasFetched]);
+  }, [user]);
 
   return (
     <main className={styles.container}>
-      {user1 ? <MatchCard data={user1} /> : null}
+      {user1 ? <UserCard data={user1} socials={false} /> : null}
     </main>
   );
 };
