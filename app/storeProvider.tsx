@@ -37,8 +37,6 @@ const StoreProvider = ({ children }: Props) => {
       if (session.status === "loading") {
         return;
       }
-      console.log(previousSessionStatus);
-
       if (session.status === "authenticated" && session.data?.user?.email) {
         if (
           !previousSessionStatus ||

@@ -15,7 +15,7 @@ const genBadWordsList = () => {
   return [...plData, ...enData];
 };
 
-const genProfanityGuard = () => {
+export const getProfanityGuard = () => {
   try {
     if (!globalThis.badWordsList) globalThis.badWordsList = genBadWordsList();
     const censor = (input: string) => {
@@ -48,5 +48,3 @@ const genProfanityGuard = () => {
     return { censor };
   }
 };
-
-export const profanityGuard = genProfanityGuard();

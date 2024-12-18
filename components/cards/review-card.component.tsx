@@ -161,7 +161,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setLoading(true);
     const result = await funcs.getById(data.id);
     if (!result) {
-      console.log("Something went very wrong");
+      console.log("Updated review could not be found in the db");
       return;
     }
     setData(result);
