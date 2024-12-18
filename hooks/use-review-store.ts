@@ -10,13 +10,13 @@ const storeDefaults: {
 } = {
   restaurant: {
     subjectId: "",
-    stars: 0,
+    stars: 3,
     amountSpent: 0,
     content: "",
   },
   dish: {
     subjectId: "",
-    stars: 0,
+    stars: 3,
     content: "",
   },
 };

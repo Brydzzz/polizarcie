@@ -1,5 +1,9 @@
 import { readFileSync } from "fs";
 
+declare global {
+  var badWordsList: string[] | undefined;
+}
+
 const genBadWordsList = () => {
   console.log("regenerating bad words list");
   const plData = readFileSync("assets/BadWords/pl.txt", "utf-8")
@@ -13,19 +17,23 @@ const genBadWordsList = () => {
 
 const genProfanityGuard = () => {
   try {
+    if (!globalThis.badWordsList) globalThis.badWordsList = genBadWordsList();
     const censor = (input: string) => {
       if (!input) {
         return input;
       }
-      const badWordsList = genBadWordsList();
       const segmenter = new Intl.Segmenter([], { granularity: "word" });
       const segmentedText = segmenter.segment(input);
       return Array.from(segmentedText)
         .map((segment) => {
           const word = segment.segment;
           if (!segment.isWordLike) return word;
-          return badWordsList.some((badWord) =>
-            new RegExp(`^${word.replace(/\P{L}/gu, "")}$`, "giu").test(badWord)
+          const wordExp = new RegExp(
+            `^${segment.segment.replace(/[^0-9\p{L}]/gu, "")}$`,
+            "giu"
+          );
+          return globalThis.badWordsList?.some((badWord) =>
+            wordExp.test(badWord)
           )
             ? word.replace(/./g, "*")
             : word;
