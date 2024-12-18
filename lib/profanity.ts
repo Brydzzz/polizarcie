@@ -8,7 +8,7 @@ const genBadWordsList = () => {
   console.log("regenerating bad words list");
   const plData = readFileSync("assets/BadWords/pl.txt", "utf-8")
     .toString()
-    .split("\n");
+    .split("\r\n");
   const enData = readFileSync("assets/BadWords/en.txt", "utf-8")
     .toString()
     .split("\r\n");
