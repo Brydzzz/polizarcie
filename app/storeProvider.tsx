@@ -8,7 +8,7 @@ import {
   setCurrentUser,
   setCurrentUserLoading,
 } from "@/lib/store/user/user.slice";
-import { transferWithJSON } from "@/utils/misc.client";
+import { transferWithJSON } from "@/utils/misc";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";

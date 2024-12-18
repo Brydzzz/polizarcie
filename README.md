@@ -20,14 +20,14 @@ cd polizarcie # wchodzimy do projektu
 npm install
 ```
 
-- Następnie konfigurujemy bazę danych. W tym celu na początku instalujemy PostgreSQL. Instrukcje instalacyjne: [link](https://www.postgresql.org/download/). Po zakończeniu instalacji i skonfigurowania sobie jakiegoś administratora domyślnego na serwerze (zazwyczaj o nazwie postgres) przechodzimy dalej.
+- Następnie konfigurujemy bazę danych. W tym celu na początku instalujemy **PostgreSQL**. Instrukcje instalacyjne: [link](https://www.postgresql.org/download/). Po zakończeniu instalacji i skonfigurowania sobie jakiegoś administratora domyślnego na serwerze (zazwyczaj o nazwie postgres) przechodzimy dalej.
 - W pliku `.env` w katalogu głównym (pliku najprawdopodobniej nie będzie ponieważ nie powinien on być pushowany, więc go tworzymy) dodajemy poniższą linijkę. Pola user, password i database podmieniamy oczywiście na te na naszym serwerze (możemy wpisać nazwę nieistniejącej bazy, zostanie wtedy utworzona)
 
 ```sh
 DATABASE_URL="postgresql://<user>:<password>@localhost:5432/<database>?schema=public"
 ```
 
-- Integracja bazy z prismą. Prisma udostępnia nam kilka narzędzi służących do jej szybkiej integracji z właściwą bazą danych. Ogólny schemat bazy zapisujemy w pliku `prisma/schema.prisma` natomiast pliki inicjalizujący bazę jakimiś domyślnymi danymi (tz. seed) znajduje się w `prisma/seed.ts`. Żeby zaaplikować zmiany w tych plikach (albo włączyć je na start) korzystamy z następujących poleceń:
+- Integracja bazy z prismą. **Prisma** udostępnia nam kilka narzędzi służących do jej szybkiej integracji z właściwą bazą danych. Ogólny schemat bazy zapisujemy w pliku `prisma/schema.prisma` natomiast pliki inicjalizujący bazę jakimiś domyślnymi danymi (tz. seed) znajduje się w `prisma/seed.ts`. Żeby zaaplikować zmiany w tych plikach (albo włączyć je na start) korzystamy z następujących poleceń:
 
 ```sh
 # instalujemy na naszym komputerze naprzędzie do szybkiego uruchamiania plików .ts
@@ -37,6 +37,52 @@ npm install -g ts-node
 npx prisma generate
 # migrujemy bazę zadeklarowaną w schema.prisma do faktycznej bazy danych
 npx prisma migrate dev
+```
+
+- Kolejnym krokiem jest instalacja i konfiguracja **Supabase**.
+  W tym celu musimy najpierw zainstalować **Docker**-a na naszym komputerze - link do poradnika instalacyjnego: [link](https://docs.docker.com/desktop/).
+  Następnie instalujemy Supabase zgodnie z instrukcjami zawartymi pod linkiem: [link](https://supabase.com/docs/guides/self-hosting/docker),
+  dokładniej interesuje nas poniższy fragment kodu:
+
+```sh
+# Instalujemy kod źródłowy
+# (Polecam wcześniej wejść do katalogu w którym chcemy to mieć)
+git clone --depth 1 https://github.com/supabase/supabase
+cd supabase/docker
+cp .env.example .env # Kopiujemy domyślne zmienne .env
+docker compose pull
+```
+
+```sh
+# Modyfikujemy poniższe linijki w pliku .env (tym supabase-a, nie naszym!)
+# Poniżej podałem jakieś przykładowe wartości, w produkcji będzie trzeba ustawić inne!
+POSTGRES_PASSWORD=postgres
+JWT_SECRET=VgA5vyudVnWkCDeko8V8nyaPaCQuw029uEt864Nh
+ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
+SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
+DASHBOARD_USERNAME=supabase
+DASHBOARD_PASSWORD=supabase
+```
+
+```sh
+# Uruchamiamy supabase (wszystko w <katalog supabase-a>/docker)
+# Będzie to trzeba uruchamiać przed każdym startem aplikacji
+docker compose up -d
+# W przypadku restartu supabase (np. po zmianie jego zmiennych .env) wpisujemy
+docker compose down -v
+rm -rf volumes/db/data/
+docker compose up -d
+```
+
+- Po uruchomieniu supabase-a wchodzimy sobie pod [http://localhost:8000/project/default/storage/buckets](http://localhost:8000/project/default/storage/buckets),
+  logujemy się (w przypadku powyżeszej konfiguracji supabase:supabase) i klikamy guzik "New bucket".
+  Nazywamy nasz nowy kubełek "polizarcie", zaznaczamy "Public bucket" i zapisujemy zmiany.
+  Ostatnim krokiem jest dopisanie do naszego projektowego pliku .env poniższych linijek:
+
+```sh
+NEXT_PUBLIC_SUPABASE_URL="http://localhost:8000"
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<nasz ANON_KEY>
+SUPABASE_SERVICE_KEY=<nasz SERVICE_ROLE_KEY>
 ```
 
 Jeżeli wszystko poszło zgodnie z planem nasz projekt powinien być w pełni skonfigurowany i gotowy do pracy. Aby go uruchomić wpisujemy:
