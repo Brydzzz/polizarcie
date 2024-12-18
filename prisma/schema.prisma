@@ -43,6 +43,8 @@ model UserFavoriteRestaurant {
     rankingPosition Int
     createdDate     DateTime   @default(now())
     updatedDate     DateTime   @updatedAt
+
+    @@unique([userId, restaurantId])
 }
 
 model UserMedia {

@@ -4,6 +4,7 @@ import Checkbox from "@/components/inputs/checkbox.component";
 import Input from "@/components/inputs/generic-input.component";
 import SelectBox from "@/components/inputs/generic-select.component";
 import TextArea from "@/components/inputs/generic-textarea.component";
+import HeartInput from "@/components/inputs/heart-input.component";
 import ImageInput from "@/components/inputs/image-input.component";
 import { InputSize, InputStyle } from "@/components/inputs/input.types";
 import Multiselect from "@/components/inputs/multiselect.component";
@@ -17,6 +18,7 @@ import { useState } from "react";
 const FiltersPage = () => {
   const [range, setRange] = useState({ min: 15, max: 65 });
   const [stars, setStars] = useState(3);
+  const [heart, setHeart] = useState(false);
   const [slider, setSlider] = useState(3);
   const [text1, setText1] = useState("test");
   const [text2, setText2] = useState("");
@@ -167,6 +169,7 @@ const FiltersPage = () => {
           size={InputSize.LARGE}
           filters
         />
+        <HeartInput liked={heart} onChange={setHeart} />
       </div>
     </div>
   );

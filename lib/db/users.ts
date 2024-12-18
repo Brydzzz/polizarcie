@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { User } from "@prisma/client";
+import { Restaurant, User } from "@prisma/client";
 
 export async function getUserById(id: User["id"]) {
   return await prisma.user.findFirst({
@@ -9,6 +9,41 @@ export async function getUserById(id: User["id"]) {
       id: id,
     },
   });
+}
+
+export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
+  return await prisma.userFavoriteRestaurant.create({
+    data: {
+      userId: userId,
+      restaurantId: restId,
+      rankingPosition: 10,
+    },
+  });
+}
+
+export async function removeLike(userId: User["id"], restId: Restaurant["id"]) {
+  return await prisma.userFavoriteRestaurant.delete({
+    where: {
+      userId_restaurantId: {
+        userId: userId,
+        restaurantId: restId,
+      },
+    },
+  });
+}
+
+export async function checkIfRestLikedByUser(
+  userId: User["id"],
+  restId: Restaurant["id"]
+) {
+  return (
+    (await prisma.userFavoriteRestaurant.findFirst({
+      where: {
+        userId: userId,
+        restaurantId: restId,
+      },
+    })) != null
+  );
 }
 
 export async function getUserByEmail(email: User["email"]) {
