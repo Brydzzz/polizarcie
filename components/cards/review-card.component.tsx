@@ -61,7 +61,7 @@ const REVIEW_PARTS: ReviewParts = {
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.content}</p>
+          <p className={styles.content}>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -102,7 +102,7 @@ const REVIEW_PARTS: ReviewParts = {
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.content}</p>
+          <p className={styles.content}>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>

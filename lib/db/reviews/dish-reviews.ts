@@ -1,6 +1,7 @@
 "use server";
 
 import { hasPermission } from "@/lib/permissions";
+import { profanityGuard } from "@/lib/profanity";
 import { prisma } from "@/prisma";
 import { currentUserHasPermission, getCurrentUser } from "@/utils/users";
 import { Dish, DishReview, User } from "@prisma/client";
@@ -166,6 +167,7 @@ export async function createDishReview(data: DishReviewCreator) {
   if (!currentUserHasPermission("reviews", "create")) return null;
   const user = await getCurrentUser();
   if (user == null) return null;
+  const censoredContent = profanityGuard.censor(data.content);
   return await prisma.baseReview.create({
     data: {
       authorId: user.id,
@@ -173,6 +175,7 @@ export async function createDishReview(data: DishReviewCreator) {
         create: {
           subjectId: data.subjectId,
           content: data.content,
+          censoredContent: censoredContent,
           stars: data.stars,
         },
       },
@@ -184,10 +187,12 @@ export async function updateDishReview(data: DishReview) {
   const authorId = (await getBaseReviewById(data.id))?.authorId || undefined;
   if (!currentUserHasPermission("reviews", "edit", { authorId: authorId }))
     return null;
+  const censoredContent = profanityGuard.censor(data.content);
   return await prisma.dishReview.update({
     where: { id: data.id },
     data: {
       content: data.content,
+      censoredContent: censoredContent,
       stars: data.stars,
     },
   });
