@@ -4,6 +4,23 @@
 
 Konspekt znajduje się w pliku: [konspekt.md](./konspekt.md)
 
+## Zintegrowane i użyte technologie:
+
+<div style="display: flex; gap: 50px; max-width: 500px; flex-wrap: wrap; justify-content: center;">
+  <img src="https://www.vectorlogo.zone/logos/nextjs/nextjs-icon.svg" alt="NextJS" />
+  <img src="https://www.vectorlogo.zone/logos/reactjs/reactjs-icon.svg" alt="React" />
+  <img src="https://www.vectorlogo.zone/logos/typescriptlang/typescriptlang-icon.svg" alt="TypeScript" />
+  <img src="https://www.vectorlogo.zone/logos/js_redux/js_redux-icon.svg" alt="Redux" />
+  <img src="https://raw.githubusercontent.com/gilbarbara/logos/refs/heads/main/logos/prisma.svg" height=60 alt="Prisma" />
+  <img src="https://raw.githubusercontent.com/walkxcode/dashboard-icons/refs/heads/main/svg/openstreetmap.svg" height=60 alt="OpenStreetMap" />
+  <img src="https://authjs.dev/img/etc/logo-sm.webp" height=60 alt="AuthJS" />
+  <img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" alt="Supabase" />
+  <img src="https://www.vectorlogo.zone/logos/sass-lang/sass-lang-icon.svg" alt="Sass" />
+  <img src="https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg" alt="PostgreSQL" />
+  <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-icon.svg" alt="NodeJS" />
+  <img src="https://raw.githubusercontent.com/walkxcode/dashboard-icons/refs/heads/main/svg/coolify.svg" height=60 alt="Coolify" />
+</div>
+
 ## Konfiguracja lokalnego serwera u siebie:
 
 - Trzeba sobie zainstalować **NodeJS** wraz z **npm**.
