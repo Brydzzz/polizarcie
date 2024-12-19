@@ -2,17 +2,17 @@
 
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
-import { getRestaurantsLike } from "@/lib/db/restaurants";
-import { Restaurant } from "@prisma/client";
+import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
+import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 
 const SearchPage = () => {
-  const [rests, updateRestaurants] = useState<Restaurant[]>([]);
+  const [rests, updateRestaurants] = useState<RestaurantFull[]>([]);
   const [input, setInput] = useState("");
   useEffect(() => {
     const update = async () => {
-      const data = await getRestaurantsLike(input);
+      const data = await transferWithJSON(getRestaurantsLike, [input]);
       updateRestaurants(data);
       return data;
     };

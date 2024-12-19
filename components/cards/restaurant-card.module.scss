@@ -19,9 +19,10 @@
 }
 
 .photo {
-  margin: 5px;
-  border: 1px solid var(--bg-local);
+  border-right: 1px solid var(--bg-local);
   flex: 0 0 25%;
+  overflow: hidden;
+  border-radius: 5px;
 
   /* Only for now to center temporary text */
   display: flex;

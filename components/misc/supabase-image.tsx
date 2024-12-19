@@ -21,7 +21,7 @@ const SupabaseImage = (props: props) => {
 
   const supabaseImageLoader = () => {
     const url = new URL(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/render/image/public/polizarcie/images/${src}`
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/render/image/public/${process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME}/images/${src}`
     );
     if (width && mode !== "fixedHeight")
       url.searchParams.set("width", width.toString());

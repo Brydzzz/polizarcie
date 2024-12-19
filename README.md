@@ -83,6 +83,7 @@ docker compose up -d
 NEXT_PUBLIC_SUPABASE_URL="http://localhost:8000"
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<nasz ANON_KEY>
 SUPABASE_SERVICE_KEY=<nasz SERVICE_ROLE_KEY>
+NEXT_PUBLIC_SUPABASE_BUCKET_NAME="polizarcie"
 ```
 
 Jeżeli wszystko poszło zgodnie z planem nasz projekt powinien być w pełni skonfigurowany i gotowy do pracy. Aby go uruchomić wpisujemy:

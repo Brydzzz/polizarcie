@@ -32,6 +32,7 @@ model User {
     followedBy          Follow[]                 @relation(name: "followUsersTo")
     reviewLikes         ReviewLike[]
     BaseReview          BaseReview[]
+    Image               Image[]
 }
 
 model UserFavoriteRestaurant {
@@ -85,6 +86,7 @@ model Restaurant {
     reviews        RestaurantReview[]
     menu           Dish[]
     favoriteAmong  UserFavoriteRestaurant[]
+    images         Image[]
 }
 
 model Dish {
@@ -113,6 +115,17 @@ model Address {
     updatedDate DateTime    @updatedAt
 }
 
+model Image {
+    path              String       @id
+    title             String?
+    uploadedById      String
+    uploadedBy        User         @relation(fields: [uploadedById], references: [id])
+    uploadedDate      DateTime     @default(now())
+    updatedDate       DateTime     @updatedAt
+    usedInRestaurants Restaurant[]
+    usedInReviews     BaseReview[]
+}
+
 model BaseReview {
     id          String       @id @default(cuid())
     author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
@@ -122,6 +135,7 @@ model BaseReview {
     likes       Int          @default(0)
     dislikes    Int          @default(0)
     likeObjects ReviewLike[]
+    images      Image[]
 
     // Possible dependents
     restaurantReview           RestaurantReview?
