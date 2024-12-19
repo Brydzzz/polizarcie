@@ -1,20 +1,31 @@
-import { Address, Restaurant } from "@prisma/client";
+import { RestaurantFull } from "@/lib/db/restaurants";
 import Link from "next/link";
 import { MouseEventHandler } from "react";
+import SupabaseImage from "../misc/supabase-image";
 import styles from "./restaurant-card.module.scss";
 
 type Props = {
-  data: Partial<Restaurant & { address: Partial<Address> }>;
+  data: RestaurantFull;
   onClickAddress?: MouseEventHandler;
 };
 
 const RestaurantCard = ({ data, onClickAddress }: Props) => {
-  const { name, slug, address, description } = data;
+  const { name, slug, address, description, images } = data;
   return (
     <Link href={`/restaurant/${slug}`}>
       <div className={styles.container}>
         <div className={styles.photo}>
-          <p>Restaurant Photo</p>
+          {images.length === 0 ? (
+            <p>Brak zdjęcia</p>
+          ) : (
+            <SupabaseImage
+              src={images[0].path}
+              width={140}
+              height={140}
+              quality={50}
+              alt="Zdjęcie"
+            />
+          )}
         </div>
         <div className={styles.details}>
           <p className={styles.name}>{name}</p>
