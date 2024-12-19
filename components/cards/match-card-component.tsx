@@ -13,13 +13,15 @@ const MatchCard = ({ data }: Props) => {
   const { id } = data;
   useEffect(() => {
     const update = async () => {
-      const restaurants = await getTopLikedRests(String(id));
+      if (!id) {
+        return;
+      }
+      const restaurants = await getTopLikedRests(id);
       setLikedRests(restaurants);
     };
     update();
-  }, []);
+  }, [data]);
   // const likedRests = await getTopLikedRests(String(id));
-  console.log(likedRests);
   return (
     <div className={styles.container}>
       <div className={styles.photoBox}>

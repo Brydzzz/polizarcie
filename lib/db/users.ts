@@ -21,19 +21,84 @@ export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
   });
 }
 
-export async function getUnmatchedUser(userId: User["id"]) {
+export async function getUnmatchedUser(
+  userId: User["id"],
+  excludeIds: User["id"][]
+) {
   return await prisma.user.findFirst({
     where: {
-      userOneMatch: {
-        none: {
-          OR: [{ userOneId: userId }, { userTwoId: userId }],
+      id: { not: userId },
+      AND: [
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: userId },
+                { userTwoId: userId },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
         },
-      },
-      userTwoMatch: {
-        none: {
-          OR: [{ userOneId: userId }, { userTwoId: userId }],
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: userId },
+                { userTwoId: userId },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
         },
-      },
+        {
+          id: { notIn: excludeIds }, // Exclude users directly as well.
+        },
+      ],
+    },
+  });
+}
+
+export async function getUnmatchedUsers(
+  userId: User["id"],
+  excludeIds: User["id"][],
+  howMany: number
+) {
+  return await prisma.user.findMany({
+    take: howMany,
+    where: {
+      id: { not: userId },
+      AND: [
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: userId },
+                { userTwoId: userId },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: userId },
+                { userTwoId: userId },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          id: { notIn: excludeIds }, // Exclude users directly as well.
+        },
+      ],
     },
   });
 }
