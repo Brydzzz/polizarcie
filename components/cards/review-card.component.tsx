@@ -61,7 +61,7 @@ const REVIEW_PARTS: ReviewParts = {
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.content}</p>
+          <p className={styles.content}>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -102,7 +102,7 @@ const REVIEW_PARTS: ReviewParts = {
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.content}</p>
+          <p className={styles.content}>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -161,7 +161,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setLoading(true);
     const result = await funcs.getById(data.id);
     if (!result) {
-      console.log("Something went very wrong");
+      console.log("Updated review could not be found in the db");
       return;
     }
     setData(result);

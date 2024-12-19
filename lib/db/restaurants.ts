@@ -1,65 +1,71 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { Restaurant } from "@prisma/client";
+import { getCurrentUser } from "@/utils/users";
+import { Address, Image, Restaurant } from "@prisma/client";
+import { hasPermission } from "../permissions";
+import { getImageByPath } from "./images";
 
-export async function getAllRestaurants() {
+const FULL_INCLUDE_PRESET = {
+  address: true,
+  images: true,
+};
+
+export type RestaurantFull = Restaurant & {
+  address: Address | null;
+  images: Image[];
+};
+
+export async function getAllRestaurants(): Promise<RestaurantFull[]> {
   const restaurants = await prisma.restaurant.findMany({
-    include: {
-      address: {
-        select: {
-          name: true,
-        },
-      },
-    },
+    include: FULL_INCLUDE_PRESET,
   });
   return restaurants;
 }
 
-export async function getRestaurantsLike(like: string) {
+export async function getRestaurantsLike(
+  query: string
+): Promise<RestaurantFull[]> {
   const restaurants = await prisma.restaurant.findMany({
-    include: {
-      address: {
-        select: {
-          name: true,
-        },
-      },
-    },
+    include: FULL_INCLUDE_PRESET,
     where: {
       OR: [
         {
-          name: { contains: like, mode: "insensitive" },
+          name: { contains: query, mode: "insensitive" },
         },
-        { address: { name: { contains: like, mode: "insensitive" } } },
+        { address: { name: { contains: query, mode: "insensitive" } } },
       ],
     },
   });
   return restaurants;
 }
 
-export async function getRestaurantById(id: Restaurant["id"]) {
+export async function getRestaurantById(
+  id: Restaurant["id"]
+): Promise<RestaurantFull | null> {
   const data = await prisma.restaurant.findFirst({
     where: {
       id: id,
     },
+    include: FULL_INCLUDE_PRESET,
   });
   return data;
 }
 
-export async function getRestaurantBySlug(slug: string) {
+export async function getRestaurantBySlug(
+  slug: Restaurant["slug"]
+): Promise<RestaurantFull | null> {
   const data = await prisma.restaurant.findUnique({
     where: {
       slug: slug,
     },
-    include: {
-      address: true,
-    },
+    include: FULL_INCLUDE_PRESET,
   });
 
   return data;
 }
 
-export async function getMenuByRestaurantId(id: string) {
+export async function getMenuByRestaurantId(id: Restaurant["id"]) {
   const data = await prisma.dish.findMany({
     select: {
       name: true,
@@ -74,4 +80,29 @@ export async function getMenuByRestaurantId(id: string) {
     orderBy: { type: "asc" },
   });
   return data;
+}
+
+export async function linkImageToRestaurant(
+  restaurantId: Restaurant["id"],
+  imagePath: Image["path"]
+) {
+  const uploadedById =
+    (await getImageByPath(imagePath))?.uploadedById || undefined;
+  if (!uploadedById) return null;
+  const user = await getCurrentUser();
+  if (user == null) return null;
+  if (!hasPermission(user, "images", "link", { uploadedById: uploadedById }))
+    return null;
+  return await prisma.restaurant.update({
+    where: {
+      id: restaurantId,
+    },
+    data: {
+      images: {
+        connect: {
+          path: imagePath,
+        },
+      },
+    },
+  });
 }

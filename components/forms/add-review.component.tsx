@@ -12,7 +12,7 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { transferWithJSON } from "@/utils/misc.client";
+import { transferWithJSON } from "@/utils/misc";
 import { signIn } from "next-auth/react";
 import { ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
