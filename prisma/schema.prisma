@@ -135,27 +135,29 @@ model BaseReview {
 
 model RestaurantReview {
     // Required to work as review
-    id          String     @id
-    baseData    BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
-    updatedDate DateTime   @updatedAt
-    subject     Restaurant @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-    subjectId   String
+    id              String     @id
+    baseData        BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
+    updatedDate     DateTime   @updatedAt
+    subject         Restaurant @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+    subjectId       String
     // Custom for review
-    content     String
-    stars       Int
-    amountSpent Int
+    content         String
+    censoredContent String
+    stars           Int
+    amountSpent     Int
 }
 
 model DishReview {
     // Required to work as review
-    id          String     @id
-    baseData    BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
-    updatedDate DateTime   @updatedAt
-    subject     Dish       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-    subjectId   String
+    id              String     @id
+    baseData        BaseReview @relation(fields: [id], references: [id], onDelete: Cascade)
+    updatedDate     DateTime   @updatedAt
+    subject         Dish       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+    subjectId       String
     // Custom for review
-    content     String
-    stars       Int
+    content         String
+    censoredContent String
+    stars           Int
 }
 
 model ReviewLike {
