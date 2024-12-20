@@ -1,8 +1,10 @@
 "use server";
 
+import { hasPermission } from "@/lib/permissions";
 import { prisma } from "@/prisma";
-import { currentUserHasPermission } from "@/utils/users";
+import { getCurrentUser } from "@/utils/users";
 import { BaseReview, User } from "@prisma/client";
+import { forbidden, unauthorized } from "next/navigation";
 
 export type BaseReviewFull = {
   baseData: BaseReview & {
@@ -11,18 +13,27 @@ export type BaseReviewFull = {
 };
 
 export async function getBaseReviewById(id: BaseReview["id"]) {
-  if (!currentUserHasPermission("reviews", "hide", { id: id })) return null;
-  return await prisma.baseReview.findFirst({
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) unauthorized();
+  const baseReview = await prisma.baseReview.findFirst({
     where: {
       id: id,
     },
   });
+  if (!baseReview) return baseReview;
+  if (
+    baseReview?.hidden &&
+    !hasPermission(currentUser, "reviews", "viewHidden", baseReview)
+  )
+    forbidden();
+  return baseReview;
 }
 
 export async function hideReview(id: BaseReview["id"], hide: boolean) {
-  const authorId = (await getBaseReviewById(id))?.authorId || undefined;
-  if (!currentUserHasPermission("reviews", "hide", { authorId: authorId }))
-    return null;
+  const baseReview = (await getBaseReviewById(id)) || undefined;
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) unauthorized();
+  if (!hasPermission(currentUser, "reviews", "hide", baseReview)) forbidden();
   return await prisma.baseReview.update({
     where: {
       id: id,
@@ -34,9 +45,10 @@ export async function hideReview(id: BaseReview["id"], hide: boolean) {
 }
 
 export async function deleteReview(id: BaseReview["id"]) {
-  const authorId = (await getBaseReviewById(id))?.authorId || undefined;
-  if (!currentUserHasPermission("reviews", "delete", { authorId: authorId }))
-    return null;
+  const baseReview = (await getBaseReviewById(id)) || undefined;
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) unauthorized();
+  if (!hasPermission(currentUser, "reviews", "delete", baseReview)) forbidden();
   return await prisma.baseReview.delete({
     where: {
       id: id,

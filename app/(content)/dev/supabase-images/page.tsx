@@ -3,30 +3,43 @@
 import Button from "@/components/button/button.component";
 import ImageInput from "@/components/inputs/image-input.component";
 import SupabaseImage from "@/components/misc/supabase-image";
-import { createImage, deleteImage } from "@/lib/db/images";
-import { getRestaurantById, linkImageToRestaurant } from "@/lib/db/restaurants";
+import { createImages, deleteImages } from "@/lib/db/images";
+import {
+  getRestaurantById,
+  linkImagesToRestaurant,
+} from "@/lib/db/restaurants";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { transferWithJSON } from "@/utils/misc";
 import { useState } from "react";
 
 const SupabaseImages = () => {
-  const [path, setPath] = useState<string | undefined>();
-  const [files, setFiles] = useState<FileList | undefined>();
+  const [previewPaths, setPreviewPaths] = useState<string[] | undefined>();
+  const [files, setFiles] = useState<File[] | undefined>();
+  const dispatch = useAppDispatch();
 
   const invoke = () => {
     const exec = async () => {
       const rest = await transferWithJSON(getRestaurantById, ["1"]);
-      rest?.images.forEach((image) => deleteImage(image.path));
-      if (!files) return;
-      Object.values(files).forEach(async (file) => {
-        const result = await createImage(
-          { path: "dev/example.jpg", title: "Example image" },
-          file
+      try {
+        if (rest) await deleteImages(rest.images.map((image) => image.path));
+        if (!files) return;
+        const paths = await createImages(
+          files.map((file) => ({
+            info: {
+              path: file.name,
+              title: "Example image",
+            },
+            imageBody: file,
+          }))
         );
-        if (result) {
-          setPath(result.path);
-          linkImageToRestaurant("1", result.path);
-        }
-      });
+        await linkImagesToRestaurant("1", paths);
+        setPreviewPaths(paths);
+      } catch (error) {
+        dispatch(
+          addSnackbar({ message: (error as Error).message, type: "error" })
+        );
+      }
     };
     exec();
   };
@@ -38,16 +51,34 @@ const SupabaseImages = () => {
     >
       <div className="centralized-y" style={{ width: "350px" }}>
         <form action={invoke}>
-          <ImageInput name="image" label="Image" multiple onChange={setFiles} />
+          <ImageInput
+            name="image"
+            label="Image"
+            multiple
+            onChange={(v) => setFiles(v && Object.values(v))}
+          />
           <Button type="submit">Submit and link to rest 1</Button>
         </form>
-        {path && (
-          <>
-            <SupabaseImage src={path} width={200} height={200} alt="image" />
-            <SupabaseImage src={path} height={200} alt="image" />
-            <SupabaseImage src={path} width={200} alt="image" />
-          </>
-        )}
+        {previewPaths &&
+          previewPaths.map((path, i) => (
+            <div
+              key={i}
+              style={{ display: "flex", flexDirection: "column", gap: "5px" }}
+            >
+              <div
+                style={{ display: "flex", flexDirection: "row", gap: "5px" }}
+              >
+                <SupabaseImage
+                  src={path}
+                  width={200}
+                  height={200}
+                  alt="image"
+                />
+                <SupabaseImage src={path} height={200} alt="image" />
+              </div>
+              <SupabaseImage src={path} width={200} alt="image" />
+            </div>
+          ))}
       </div>
     </div>
   );

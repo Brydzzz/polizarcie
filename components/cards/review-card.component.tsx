@@ -6,6 +6,7 @@ import { deleteReview, hideReview } from "@/lib/db/reviews/base-reviews";
 import { addOrReplaceLikeForReview } from "@/lib/db/reviews/review-likes";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { parseDate } from "@/utils/date-time";
 import {
@@ -156,17 +157,13 @@ const ReviewCard = <Type extends keyof ReviewType>({
     "hide",
     data.baseData
   );
+  const { has: canLike } = useHasPermission(
+    user,
+    "reviews",
+    "like",
+    data.baseData
+  );
 
-  const updateData = async () => {
-    setLoading(true);
-    const result = await funcs.getById(data.id);
-    if (!result) {
-      console.log("Updated review could not be found in the db");
-      return;
-    }
-    setData(result);
-    setLoading(false);
-  };
   const handleStartEditing = () => {
     store.getKeys().forEach((key) => {
       store.setState(key, data[key]);
@@ -176,8 +173,26 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const handleCancelEditing = () => {
     setMode("view");
   };
-  const handleConfirmEditing = async () => {
+
+  const handleAndUpdate = (func: () => Promise<void>) => async () => {
     setLoading(true);
+    try {
+      await func();
+      // updating data in review
+      const result = await funcs.getById(data.id);
+      if (!result) {
+        dispatch(addSnackbar({ message: "Wystąpił błąd", type: "error" }));
+        console.log("Updated review could not be found in the db");
+      } else setData(result);
+    } catch (error) {
+      dispatch(
+        addSnackbar({ message: (error as Error).message, type: "error" })
+      );
+    }
+    setLoading(false);
+  };
+
+  const handleConfirmEditing = handleAndUpdate(async () => {
     const newData = {
       ...data,
       ...store.getCreator(),
@@ -186,41 +201,25 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setData(newData); // optimistic editing
     setMode("view");
     await funcs.edit(newData);
-    await updateData();
-    setLoading(false);
-  };
-  const handleDeleteReview = async () => {
-    setLoading(true);
+  });
+  const handleDeleteReview = handleAndUpdate(async () => {
     await deleteReview(data.id);
     dispatch(updateReviewsUpdate());
-    setLoading(false);
-  };
-  const handleHideReview = async () => {
-    setLoading(true);
+  });
+  const handleHideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: true });
     await hideReview(data.id, true);
-    await updateData();
-    setLoading(false);
-  };
-  const handleUnhideReview = async () => {
-    setLoading(true);
+  });
+  const handleUnhideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: false });
     await hideReview(data.id, false);
-    await updateData();
-    setLoading(false);
-  };
-  const handleLikeReview = async () => {
-    setLoading(true);
+  });
+  const handleLikeReview = handleAndUpdate(async () => {
     await addOrReplaceLikeForReview(data.id, true);
-    await updateData();
-    setLoading(false);
-  };
-  const handleDislikeReview = async () => {
-    setLoading(true);
+  });
+  const handleDislikeReview = handleAndUpdate(async () => {
     await addOrReplaceLikeForReview(data.id, false);
-    await updateData();
-    setLoading(false);
-  };
+  });
 
   return (
     <div className={`${styles.container} ${hidden ? styles.hidden : ""}`}>
@@ -299,14 +298,14 @@ const ReviewCard = <Type extends keyof ReviewType>({
         <div className={styles.expander}></div>
         <span>
           <i
-            onClick={handleLikeReview}
+            onClick={canLike ? handleLikeReview : undefined}
             className={`fa-solid fa-thumbs-up ${styles.positive}`}
           ></i>
           {likes}
         </span>
         <span>
           <i
-            onClick={handleDislikeReview}
+            onClick={canLike ? handleDislikeReview : undefined}
             className={`fa-solid fa-thumbs-down ${styles.negative}`}
           ></i>
           {dislikes}
