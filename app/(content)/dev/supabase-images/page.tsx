@@ -10,19 +10,23 @@ import { useState } from "react";
 
 const SupabaseImages = () => {
   const [path, setPath] = useState<string | undefined>();
+  const [files, setFiles] = useState<FileList | undefined>();
 
-  const invoke = (formData: FormData) => {
+  const invoke = () => {
     const exec = async () => {
       const rest = await transferWithJSON(getRestaurantById, ["1"]);
       rest?.images.forEach((image) => deleteImage(image.path));
-      const result = await createImage(
-        { path: "dev/example.jpg", title: "Example image" },
-        formData.get("image") as File
-      );
-      if (result) {
-        setPath(result.path);
-        linkImageToRestaurant("1", result.path);
-      }
+      if (!files) return;
+      Object.values(files).forEach(async (file) => {
+        const result = await createImage(
+          { path: "dev/example.jpg", title: "Example image" },
+          file
+        );
+        if (result) {
+          setPath(result.path);
+          linkImageToRestaurant("1", result.path);
+        }
+      });
     };
     exec();
   };
@@ -34,7 +38,7 @@ const SupabaseImages = () => {
     >
       <div className="centralized-y" style={{ width: "350px" }}>
         <form action={invoke}>
-          <ImageInput name="image" label="Image" />
+          <ImageInput name="image" label="Image" multiple onChange={setFiles} />
           <Button type="submit">Submit and link to rest 1</Button>
         </form>
         {path && (

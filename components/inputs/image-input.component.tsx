@@ -11,10 +11,21 @@ type Props = {
   disabled?: boolean;
   required?: boolean;
   error?: boolean;
+  multiple?: boolean;
+  onChange?: (value: FileList | undefined) => void;
 };
 
-const ImageInput = ({ id, name, disabled, label, required, error }: Props) => {
-  const [pickedImage, setPickedImage] = useState<string | null>(null);
+const ImageInput = ({
+  id,
+  name,
+  disabled,
+  label,
+  required,
+  error,
+  multiple,
+  onChange,
+}: Props) => {
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>();
 
   function handlePickClick() {
@@ -26,22 +37,24 @@ const ImageInput = ({ id, name, disabled, label, required, error }: Props) => {
     const file = event.target.files[0];
 
     if (!file) {
-      setPickedImage(null);
+      setPreviewImage(null);
+      if (onChange) onChange(undefined);
       return;
     }
 
     const fileReader = new FileReader();
     fileReader.onload = () => {
-      setPickedImage(fileReader.result as string | null);
+      setPreviewImage(fileReader.result as string | null);
     };
     fileReader.readAsDataURL(file);
+    if (onChange) onChange(event.target.files);
   }
 
   return (
     <div className={`${styles.container} ${error ? styles.error : ""}`}>
       <div className={styles.preview}>
-        {pickedImage ? (
-          <Image src={pickedImage} alt="Wybrane zdjęcie" fill />
+        {previewImage ? (
+          <Image src={previewImage} alt="Wybrane zdjęcie" fill />
         ) : (
           "Podgląd"
         )}
@@ -56,11 +69,14 @@ const ImageInput = ({ id, name, disabled, label, required, error }: Props) => {
         onChange={handleImageChange}
         required={required}
         disabled={disabled}
+        multiple={multiple}
       />
       <button type="button" onClick={handlePickClick}>
-        {pickedImage
+        {previewImage
           ? imageInputRef.current && imageInputRef.current.files
-            ? imageInputRef.current.files[0].name
+            ? Object.values(imageInputRef.current.files).map((file, i) => (
+                <p key={i}>{file.name}</p>
+              ))
             : ""
           : "Wybierz plik"}
       </button>
