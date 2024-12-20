@@ -53,7 +53,6 @@ const SupabaseImages = () => {
       <div className="centralized-y" style={{ width: "350px" }}>
         <form action={invoke}>
           <ImageInput
-            name="image"
             label="Image"
             multiple
             onChange={(v) => setFiles(v && Object.values(v))}

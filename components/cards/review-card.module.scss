@@ -94,6 +94,16 @@
     }
   }
 
+  .images {
+    display: flex;
+    gap: 10px;
+
+    & > div {
+      border-radius: 5px;
+      overflow: hidden;
+    }
+  }
+
   .buttons {
     width: 100%;
     display: flex;

@@ -15,6 +15,7 @@ import {
 } from "@/utils/factories/reviews";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
+import ModalableImage from "../images/modalable-image.component";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
@@ -174,23 +175,33 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setMode("view");
   };
 
-  const handleAndUpdate = (func: () => Promise<void>) => async () => {
-    setLoading(true);
-    try {
-      await func();
-      // updating data in review
-      const result = await funcs.getById(data.id);
-      if (!result) {
-        dispatch(addSnackbar({ message: "Wystąpił błąd", type: "error" }));
-        console.log("Updated review could not be found in the db");
-      } else setData(result);
-    } catch (error) {
-      dispatch(
-        addSnackbar({ message: (error as Error).message, type: "error" })
-      );
-    }
-    setLoading(false);
-  };
+  const handleAndUpdate =
+    (
+      func: () => Promise<void>,
+      update: boolean = true,
+      successMessage?: string
+    ) =>
+    async () => {
+      setLoading(true);
+      try {
+        await func();
+        // updating data in review
+        if (update) {
+          const result = await funcs.getById(data.id);
+          if (!result) {
+            dispatch(addSnackbar({ message: "Wystąpił błąd", type: "error" }));
+            console.log("Updated review could not be found in the db");
+          } else setData(result);
+        }
+        if (successMessage)
+          dispatch(addSnackbar({ message: successMessage, type: "success" }));
+      } catch (error) {
+        dispatch(
+          addSnackbar({ message: (error as Error).message, type: "error" })
+        );
+      }
+      setLoading(false);
+    };
 
   const handleConfirmEditing = handleAndUpdate(async () => {
     const newData = {
@@ -202,10 +213,14 @@ const ReviewCard = <Type extends keyof ReviewType>({
     setMode("view");
     await funcs.edit(newData);
   });
-  const handleDeleteReview = handleAndUpdate(async () => {
-    await deleteReview(data.id);
-    dispatch(updateReviewsUpdate());
-  });
+  const handleDeleteReview = handleAndUpdate(
+    async () => {
+      await deleteReview(data.id);
+      dispatch(updateReviewsUpdate());
+    },
+    false,
+    "Usunięto"
+  );
   const handleHideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: true });
     await hideReview(data.id, true);
@@ -252,6 +267,19 @@ const ReviewCard = <Type extends keyof ReviewType>({
       <div className={styles.content}>
         {REVIEW_PARTS[type].content(data, mode, store)}
       </div>
+      {mode === "view" && (
+        <div className={styles.images}>
+          {data.baseData.images.map((image) => (
+            <ModalableImage
+              key={image.title}
+              src={image.path}
+              width={50}
+              height={50}
+              alt={image.title || "zdjęcie"}
+            />
+          ))}
+        </div>
+      )}
       <div className={styles.buttons}>
         {mode === "view" ? (
           <>

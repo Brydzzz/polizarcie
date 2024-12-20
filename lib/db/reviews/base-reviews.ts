@@ -3,12 +3,14 @@
 import { hasPermission } from "@/lib/permissions";
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { BaseReview, User } from "@prisma/client";
+import { BaseReview, Image, User } from "@prisma/client";
 import { forbidden, unauthorized } from "next/navigation";
+import { deleteImages, getImagesByPaths } from "../images";
 
 export type BaseReviewFull = {
   baseData: BaseReview & {
     author: User;
+    images: Image[];
   };
 };
 
@@ -18,6 +20,10 @@ export async function getBaseReviewById(id: BaseReview["id"]) {
   const baseReview = await prisma.baseReview.findFirst({
     where: {
       id: id,
+    },
+    include: {
+      author: true,
+      images: true,
     },
   });
   if (!baseReview) return baseReview;
@@ -46,12 +52,42 @@ export async function hideReview(id: BaseReview["id"], hide: boolean) {
 
 export async function deleteReview(id: BaseReview["id"]) {
   const baseReview = (await getBaseReviewById(id)) || undefined;
+  if (!baseReview) return null;
   const currentUser = await getCurrentUser();
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "delete", baseReview)) forbidden();
+  await deleteImages(baseReview.images.map((image) => image.path));
   return await prisma.baseReview.delete({
     where: {
       id: id,
+    },
+  });
+}
+
+export async function linkImagesToReview(
+  reviewId: BaseReview["id"],
+  imagePaths: Image["path"][]
+) {
+  // permission check
+  const user = await getCurrentUser();
+  if (user == null) unauthorized();
+  const images = await getImagesByPaths(imagePaths);
+  if (
+    !images.every((image) => {
+      return hasPermission(user, "images", "delete", image);
+    })
+  )
+    forbidden();
+
+  // Try to connect
+  return await prisma.baseReview.update({
+    where: {
+      id: reviewId,
+    },
+    data: {
+      images: {
+        connect: imagePaths.map((path) => ({ path: path })),
+      },
     },
   });
 }

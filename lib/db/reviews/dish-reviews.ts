@@ -18,6 +18,7 @@ const FULL_INCLUDE_PRESET = {
   baseData: {
     include: {
       author: true,
+      images: true,
     },
   },
   subject: true,

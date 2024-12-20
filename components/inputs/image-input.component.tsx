@@ -112,7 +112,7 @@ const ImageInput = ({
           {previewImages.length > 0
             ? imageInputRef.current &&
               names.map((name, i) => <p key={i}>{name}</p>)
-            : "Wybierz plik"}
+            : `Wybierz plik${multiple ? "(i)" : ""}`}
         </div>
       </button>
       <label>{label}</label>
