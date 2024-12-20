@@ -1,7 +1,11 @@
 "use client";
 
+import { useAppDispatch } from "@/lib/store/hooks";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
+import { blobToDataURL } from "@/utils/misc";
 import Image from "next/image";
 import { ChangeEvent, LegacyRef, useRef, useState } from "react";
+import LoaderBlur from "../misc/loader-blur.component";
 import styles from "./image-input.module.scss";
 
 type Props = {
@@ -25,36 +29,65 @@ const ImageInput = ({
   multiple,
   onChange,
 }: Props) => {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
 
-  function handlePickClick() {
+  const handlePickClick = () => {
     if (imageInputRef.current) imageInputRef.current.click();
-  }
+  };
 
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) return;
-    const file = event.target.files[0];
-
-    if (!file) {
-      setPreviewImage(null);
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+    const files = event.target.files;
+    if (!files) {
+      setPreviewImages([]);
       if (onChange) onChange(undefined);
+      setLoading(false);
+      return;
+    }
+    if (files.length > 5) {
+      event.preventDefault();
+      dispatch(
+        addSnackbar({ message: "Przekroczono limit 5 plików", type: "error" })
+      );
+      setLoading(false);
       return;
     }
 
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      setPreviewImage(fileReader.result as string | null);
-    };
-    fileReader.readAsDataURL(file);
-    if (onChange) onChange(event.target.files);
-  }
+    let newPreviewImages: string[] = [];
+    for (const file of Object.values(files)) {
+      const data = await blobToDataURL(file);
+      if (data) newPreviewImages.push(data as string);
+    }
+    setPreviewImages(newPreviewImages);
+    if (onChange) onChange(files);
+    setLoading(false);
+  };
 
   return (
     <div className={`${styles.container} ${error ? styles.error : ""}`}>
       <div className={styles.preview}>
-        {previewImage ? (
-          <Image src={previewImage} alt="Wybrane zdjęcie" fill />
+        {previewImages.length > 0 ? (
+          <>
+            <p>{previewImages.length}</p>
+            {previewImages.map((image, i) => {
+              const factor =
+                (previewImages.length - i - 1) / previewImages.length;
+              return (
+                <div
+                  key={i}
+                  style={{
+                    // left: `${factor * 20}px`,
+                    transform: `rotate(${factor * 20}deg)`,
+                  }}
+                >
+                  <Image src={image} alt="Wybrane zdjęcie" fill />
+                </div>
+              );
+            })}
+          </>
         ) : (
           "Podgląd"
         )}
@@ -71,16 +104,19 @@ const ImageInput = ({
         disabled={disabled}
         multiple={multiple}
       />
-      <button type="button" onClick={handlePickClick}>
-        {previewImage
-          ? imageInputRef.current && imageInputRef.current.files
-            ? Object.values(imageInputRef.current.files).map((file, i) => (
-                <p key={i}>{file.name}</p>
-              ))
-            : ""
-          : "Wybierz plik"}
+      <button type="button" onClick={handlePickClick} disabled={loading}>
+        <div>
+          {previewImages.length > 0
+            ? imageInputRef.current && imageInputRef.current.files
+              ? Object.values(imageInputRef.current.files).map((file, i) => (
+                  <p key={i}>{file.name}</p>
+                ))
+              : ""
+            : "Wybierz plik"}
+        </div>
       </button>
       <label>{label}</label>
+      {loading && <LoaderBlur />}
     </div>
   );
 };

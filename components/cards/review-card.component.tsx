@@ -18,7 +18,7 @@ import { ReactNode, useState } from "react";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
-import Loader from "../misc/loader.component";
+import LoaderBlur from "../misc/loader-blur.component";
 import styles from "./review-card.module.scss";
 
 type Props<Type extends keyof ReviewType> = {
@@ -311,11 +311,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
           {dislikes}
         </span>
       </div>
-      {loading && (
-        <div className={styles.loading}>
-          <Loader size="75px" />
-        </div>
-      )}
+      {loading && <LoaderBlur />}
     </div>
   );
 };

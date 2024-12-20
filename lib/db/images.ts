@@ -17,6 +17,9 @@ export async function createImages(
   if (user == null) unauthorized();
   if (!hasPermission(user, "images", "create")) forbidden();
 
+  // validation
+  if (files.length > 5) forbidden();
+
   // upload all to supabase
   const paths = await uploadImages(
     files.map((file) => ({ path: file.info.path, imageBody: file.imageBody }))
