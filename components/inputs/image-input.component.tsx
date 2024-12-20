@@ -29,6 +29,7 @@ const ImageInput = ({
   multiple,
   onChange,
 }: Props) => {
+  const [names, setNames] = useState<string[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>();
   const [loading, setLoading] = useState(false);
@@ -43,6 +44,7 @@ const ImageInput = ({
     const files = event.target.files;
     if (!files) {
       setPreviewImages([]);
+      setNames([]);
       if (onChange) onChange(undefined);
       setLoading(false);
       return;
@@ -62,6 +64,7 @@ const ImageInput = ({
       if (data) newPreviewImages.push(data as string);
     }
     setPreviewImages(newPreviewImages);
+    setNames(Object.values(files).map((file) => file.name));
     if (onChange) onChange(files);
     setLoading(false);
   };
@@ -107,11 +110,8 @@ const ImageInput = ({
       <button type="button" onClick={handlePickClick} disabled={loading}>
         <div>
           {previewImages.length > 0
-            ? imageInputRef.current && imageInputRef.current.files
-              ? Object.values(imageInputRef.current.files).map((file, i) => (
-                  <p key={i}>{file.name}</p>
-                ))
-              : ""
+            ? imageInputRef.current &&
+              names.map((name, i) => <p key={i}>{name}</p>)
             : "Wybierz plik"}
         </div>
       </button>

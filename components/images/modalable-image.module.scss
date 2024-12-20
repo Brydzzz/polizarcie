@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+
+  .preview {
+    position: relative;
+
+    &:hover {
+      cursor: pointer;
+
+      & > img {
+        filter: brightness(1.2);
+      }
+    }
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #0008;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: scroll;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .image {
+      position: absolute;
+      display: flex;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      aspect-ratio: auto;
+      width: 80vw;
+      height: 80vh;
+
+      & > img {
+        object-fit: contain;
+      }
+    }
+  }
+}

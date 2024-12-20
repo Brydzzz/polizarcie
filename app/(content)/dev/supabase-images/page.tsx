@@ -1,8 +1,9 @@
 "use client";
 
 import Button from "@/components/button/button.component";
+import ModalableImage from "@/components/images/modalable-image.component";
+import SupabaseImage from "@/components/images/supabase-image.component";
 import ImageInput from "@/components/inputs/image-input.component";
-import SupabaseImage from "@/components/misc/supabase-image";
 import { createImages, deleteImages } from "@/lib/db/images";
 import {
   getRestaurantById,
@@ -77,6 +78,7 @@ const SupabaseImages = () => {
                 <SupabaseImage src={path} height={200} alt="image" />
               </div>
               <SupabaseImage src={path} width={200} alt="image" />
+              <ModalableImage src={path} width={50} height={50} alt="image" />
             </div>
           ))}
       </div>
