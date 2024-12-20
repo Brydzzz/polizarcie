@@ -11,7 +11,7 @@ const storeDefaults: {
   restaurant: {
     subjectId: "",
     stars: 3,
-    amountSpent: 0,
+    amountSpent: 20,
     content: "",
   },
   dish: {

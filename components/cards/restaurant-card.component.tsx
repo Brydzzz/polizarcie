@@ -1,7 +1,7 @@
 import { RestaurantFull } from "@/lib/db/restaurants";
 import Link from "next/link";
 import { MouseEventHandler } from "react";
-import SupabaseImage from "../misc/supabase-image";
+import SupabaseImage from "../images/supabase-image.component";
 import styles from "./restaurant-card.module.scss";
 
 type Props = {

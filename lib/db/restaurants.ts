@@ -3,8 +3,9 @@
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
 import { Address, Image, Restaurant } from "@prisma/client";
+import { forbidden, unauthorized } from "next/navigation";
 import { hasPermission } from "../permissions";
-import { getImageByPath } from "./images";
+import { getImagesByPaths } from "./images";
 
 const FULL_INCLUDE_PRESET = {
   address: true,
@@ -82,26 +83,29 @@ export async function getMenuByRestaurantId(id: Restaurant["id"]) {
   return data;
 }
 
-export async function linkImageToRestaurant(
+export async function linkImagesToRestaurant(
   restaurantId: Restaurant["id"],
-  imagePath: Image["path"]
+  imagePaths: Image["path"][]
 ) {
-  const uploadedById =
-    (await getImageByPath(imagePath))?.uploadedById || undefined;
-  if (!uploadedById) return null;
+  // permission check
   const user = await getCurrentUser();
-  if (user == null) return null;
-  if (!hasPermission(user, "images", "link", { uploadedById: uploadedById }))
-    return null;
+  if (user == null) unauthorized();
+  const images = await getImagesByPaths(imagePaths);
+  if (
+    !images.every((image) => {
+      return hasPermission(user, "images", "delete", image);
+    })
+  )
+    forbidden();
+
+  // Try to connect
   return await prisma.restaurant.update({
     where: {
       id: restaurantId,
     },
     data: {
       images: {
-        connect: {
-          path: imagePath,
-        },
+        connect: imagePaths.map((path) => ({ path: path })),
       },
     },
   });

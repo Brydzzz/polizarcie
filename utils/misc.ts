@@ -21,3 +21,11 @@ export function randomString(length: number) {
   }
   return result;
 }
+
+export const blobToDataURL = (blob: Blob) => {
+  return new Promise<string | ArrayBuffer | null>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+};

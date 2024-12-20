@@ -31,13 +31,13 @@ export type Permissions = {
 };
 
 const ifOwnReview = (user: User, review: Partial<BaseReview>) =>
-  review.authorId != undefined && review.authorId == user.id;
+  review.authorId != undefined && review.authorId === user.id;
 
 const ifNotOwnReview = (user: User, review: Partial<BaseReview>) =>
   !ifOwnReview(user, review);
 
 const ifOwnImage = (user: User, image: Partial<Image>) =>
-  image.uploadedById != undefined && image.uploadedById == user.id;
+  image.uploadedById != undefined && image.uploadedById === user.id;
 
 const ROLES = {
   ADMIN: {
