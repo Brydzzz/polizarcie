@@ -21,6 +21,7 @@ model User {
     updatedAt           DateTime                 @updatedAt
     description         String?
     // Custom
+    passwordHash        UserPasswordHash?
     roles               Role[]                   @default([USER])
     gender              Gender                   @default(NOT_SET)
     preferredGender     Gender                   @default(NOT_SET)
@@ -31,8 +32,14 @@ model User {
     follows             Follow[]                 @relation(name: "followUsersFrom")
     followedBy          Follow[]                 @relation(name: "followUsersTo")
     reviewLikes         ReviewLike[]
-    BaseReview          BaseReview[]
-    Image               Image[]
+    writtenReviews      BaseReview[]
+    uploadedImages      Image[]
+}
+
+model UserPasswordHash {
+    user         User   @relation(fields: [forUserEmail], references: [email], onDelete: Cascade)
+    forUserEmail String @id
+    hash         String
 }
 
 model UserFavoriteRestaurant {

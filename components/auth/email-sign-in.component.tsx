@@ -1,11 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { signInWithCredentials, signInWithNodemailer } from "@/lib/auth";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
+import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
+import { signInSchema, signUpSchema } from "@/lib/zod/users";
+import { throwParsedIfZodError } from "@/utils/misc";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import Input from "../inputs/generic-input.component";
 import { InputSize, InputStyle } from "../inputs/input.types";
 import PasswordInput from "../inputs/password-input.component";
+import Loader from "../misc/loader.component";
 import styles from "./email-sign-in.module.scss";
 
 const EmailSignIn = () => {
@@ -14,14 +22,90 @@ const EmailSignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordRepet, setPasswordRepet] = useState("");
+  const loading = useAppSelector(selectSignInPageLoading);
+  const dispatch = useAppDispatch();
+  const session = useSession();
+
+  useEffect(() => {
+    dispatch(setSignInPageLoading(false));
+  }, []);
+
+  const trySignInWithCredentials = async (formData: FormData) => {
+    dispatch(setSignInPageLoading(true));
+    try {
+      try {
+        await signInSchema.parseAsync({
+          email: formData.get("email"),
+          password: formData.get("password"),
+        });
+      } catch (error) {
+        throwParsedIfZodError(error as Error);
+      }
+      const err = await signInWithCredentials(formData);
+      if (err) throw new Error(err.error);
+    } catch (error) {
+      const message = (error as Error).message;
+      if (message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
+        const code = message.split(";")[1];
+        switch (code) {
+          case "401":
+            dispatch(
+              addSnackbar({ message: "Nieprawidłowe dane!", type: "error" })
+            );
+            break;
+        }
+      } else if (message.startsWith("NEXT_REDIRECT")) {
+        await session.update();
+        throw error;
+      } else dispatch(addSnackbar({ message: message, type: "error" }));
+    }
+    dispatch(setSignInPageLoading(false));
+  };
+
+  const trySignUpWithNodemailer = async (formData: FormData) => {
+    dispatch(setSignInPageLoading(true));
+    try {
+      try {
+        const { password, passwordRepeat } = await signUpSchema.parseAsync({
+          email: formData.get("email"),
+          name: formData.get("name"),
+          password: formData.get("password"),
+          passwordRepeat: formData.get("passwordRepeat"),
+        });
+        if (password !== passwordRepeat)
+          throw new Error("Passwords did not match!");
+      } catch (error) {
+        throwParsedIfZodError(error as Error);
+        throw error;
+      }
+      const err = await signInWithNodemailer(formData);
+      if (err) throw new Error(err.error);
+    } catch (error) {
+      const message = (error as Error).message;
+      if (message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
+        const code = message.split(";")[1];
+        switch (code) {
+          case "401":
+            dispatch(
+              addSnackbar({ message: "Nieprawidłowe dane!", type: "error" })
+            );
+            break;
+        }
+      } else if (message.startsWith("NEXT_REDIRECT")) {
+        throw error;
+      } else dispatch(addSnackbar({ message: message, type: "error" }));
+    }
+    dispatch(setSignInPageLoading(false));
+  };
 
   return (
     <div className={styles.container}>
       {signInUp ? (
-        <form action="#" className={styles.form}>
+        <form action={trySignUpWithNodemailer} className={styles.form}>
           <h2>Nowe konto</h2>
           <Input
             label="Adres email"
+            name="email"
             type="email"
             style={InputStyle.HERO}
             size={InputSize.MEDIUM}
@@ -31,6 +115,7 @@ const EmailSignIn = () => {
           />
           <Input
             label="Nazwa użytkownika"
+            name="name"
             type="text"
             style={InputStyle.HERO}
             size={InputSize.MEDIUM}
@@ -40,6 +125,7 @@ const EmailSignIn = () => {
           />
           <PasswordInput
             label="Hasło"
+            name="password"
             style={InputStyle.HERO}
             size={InputSize.MEDIUM}
             value={password}
@@ -48,27 +134,39 @@ const EmailSignIn = () => {
           />
           <PasswordInput
             label="Powtórz hasło"
+            name="passwordRepeat"
             style={InputStyle.HERO}
             size={InputSize.MEDIUM}
             value={passwordRepet}
             onChange={(e) => setPasswordRepet(e.target.value)}
             required
           />
-          {email && password && passwordRepet && (
-            <Button
-              type="submit"
-              style={ButtonStyle.SOLID}
-              size={ButtonSize.NORMAL}
-            >
-              Zarejestruj się <i className="fa-solid fa-arrow-right"></i>
-            </Button>
-          )}
+
+          <Button
+            type="submit"
+            style={ButtonStyle.SOLID}
+            size={ButtonSize.NORMAL}
+            disabled={
+              email && username && password && passwordRepet && !loading
+                ? false
+                : true
+            }
+          >
+            {loading ? (
+              <Loader size="16pt" />
+            ) : (
+              <>
+                Zarejestruj się <i className="fa-solid fa-arrow-right"></i>
+              </>
+            )}
+          </Button>
         </form>
       ) : (
-        <form action="#" className={styles.form}>
+        <form action={trySignInWithCredentials} className={styles.form}>
           <Input
             label="Adres email"
             type="email"
+            name="email"
             style={InputStyle.HERO}
             size={InputSize.MEDIUM}
             value={email}
@@ -77,19 +175,27 @@ const EmailSignIn = () => {
           {email && (
             <PasswordInput
               label="Hasło"
+              name="password"
               style={InputStyle.HERO}
               size={InputSize.MEDIUM}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           )}
-          {email && password && (
+          {email && (
             <Button
               type="submit"
               style={ButtonStyle.SOLID}
               size={ButtonSize.NORMAL}
+              disabled={email && password && !loading ? false : true}
             >
-              Zaloguj się <i className="fa-solid fa-arrow-right"></i>
+              {loading ? (
+                <Loader size="16pt" />
+              ) : (
+                <>
+                  Zaloguj się <i className="fa-solid fa-arrow-right"></i>
+                </>
+              )}
             </Button>
           )}
         </form>
