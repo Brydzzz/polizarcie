@@ -1,3 +1,4 @@
+import { ZodError } from "zod";
 import { invokeTransferWithJSON } from "./misc.server";
 
 export async function transferWithJSON<
@@ -29,3 +30,15 @@ export const blobToDataURL = (blob: Blob) => {
     reader.readAsDataURL(blob);
   });
 };
+
+export function parseZodError(error: Error) {
+  if (error instanceof ZodError) {
+    return { error: error.issues.map((issue) => issue.message).join(", ") };
+  }
+  return undefined;
+}
+
+export function throwParsedIfZodError(error: Error) {
+  const zodErr = parseZodError(error);
+  if (zodErr) throw new Error(zodErr.error);
+}
