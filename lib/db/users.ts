@@ -53,3 +53,14 @@ export async function getUserByEmail(email: User["email"]) {
     },
   });
 }
+
+export async function updateUserLastVerificationMail(id: User["id"]) {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      lastVerificationMail: new Date(),
+    },
+  });
+}

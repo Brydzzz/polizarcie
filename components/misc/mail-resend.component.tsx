@@ -19,14 +19,15 @@ const MailResend = ({ userId }: Props) => {
 
   useEffect(() => {
     dispatch(setSignInPageLoading(false));
-    sendMail();
+    sendMail(true);
   }, []);
 
-  const sendMail = async () => {
-    if (loading) return;
+  const sendMail = async (force?: boolean) => {
+    if (!force && loading) return;
     dispatch(setSignInPageLoading(true));
     try {
-      await sendVerificationMail(userId);
+      const err = await sendVerificationMail(userId);
+      if (err) throw new Error(err.error);
       dispatch(addSnackbar({ message: "Wysłano maila", type: "success" }));
     } catch (error) {
       dispatch(
@@ -42,8 +43,16 @@ const MailResend = ({ userId }: Props) => {
       color={ButtonColor.SECONDARY}
       size={ButtonSize.SMALL}
       onClick={sendMail}
+      disabled={loading}
     >
-      {loading ? <Loader size="16pt" /> : "Wyślij ponownie"}
+      {loading ? (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          Wysyłam maila...&nbsp;
+          <Loader size="16pt" />
+        </div>
+      ) : (
+        "Wyślij ponownie"
+      )}
     </Button>
   );
 };

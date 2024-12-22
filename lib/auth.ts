@@ -5,7 +5,7 @@ import { parseZodError, verifyPassword } from "@/utils/misc";
 import { User } from "@prisma/client";
 import { CredentialsSignin } from "next-auth";
 import { redirect, unauthorized } from "next/navigation";
-import { getUserById } from "./db/users";
+import { getUserById, updateUserLastVerificationMail } from "./db/users";
 import {
   createUserWithEmailNameAndPassword,
   getUserWithPasswordHashByEmail,
@@ -69,7 +69,17 @@ export async function signUpWithNodemailer(formData: FormData) {
 
 export async function sendVerificationMail(id: User["id"]) {
   const user = await getUserById(id);
-  if (!user) throw new Error("User with specified id does not exist!");
+  if (!user) return { error: "User with specified id does not exist!" };
+  if (user.lastVerificationMail) {
+    const diff = Math.round(
+      (new Date().getTime() - new Date(user.lastVerificationMail).getTime()) /
+        1000
+    );
+    if (diff < 60) {
+      return { error: `Wait another ${60 - diff}s before resending` };
+    }
+  }
+  await updateUserLastVerificationMail(id);
   try {
     await signIn("nodemailer", {
       email: user.email,
