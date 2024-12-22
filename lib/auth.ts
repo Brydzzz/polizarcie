@@ -2,8 +2,10 @@
 
 import { signIn } from "@/auth";
 import { parseZodError, verifyPassword } from "@/utils/misc";
+import { User } from "@prisma/client";
 import { CredentialsSignin } from "next-auth";
-import { unauthorized } from "next/navigation";
+import { redirect, unauthorized } from "next/navigation";
+import { getUserById } from "./db/users";
 import {
   createUserWithEmailNameAndPassword,
   getUserWithPasswordHashByEmail,
@@ -23,7 +25,7 @@ export async function signInWithCredentials(formData: FormData) {
       Buffer.from(user.passwordHash.hash, "base64")
     );
     if (!result) unauthorized();
-    await signIn("credentials", formData);
+    await signIn("credentials", { email, password, redirectTo: "/browse" });
   } catch (error) {
     if (error instanceof CredentialsSignin) {
       if (error.type === "CredentialsSignin" && error.code === "credentials") {
@@ -36,7 +38,7 @@ export async function signInWithCredentials(formData: FormData) {
   }
 }
 
-export async function signInWithNodemailer(formData: FormData) {
+export async function signUpWithNodemailer(formData: FormData) {
   try {
     const { email, name, password, passwordRepeat } =
       await signUpSchema.parseAsync({
@@ -48,14 +50,33 @@ export async function signInWithNodemailer(formData: FormData) {
     if (password !== passwordRepeat)
       return { error: "Passwords did not match!" };
     try {
-      await createUserWithEmailNameAndPassword(email, name, password);
+      const user = await createUserWithEmailNameAndPassword(
+        email,
+        name,
+        password
+      );
+      redirect(`/auth/verify/${user.id}`);
     } catch (error) {
+      if ((error as Error).message.startsWith("NEXT_REDIRECT")) throw error;
       return { error: "User with this email already exists!" };
     }
-    await signIn("nodemailer", formData);
   } catch (error) {
     const zodErr = parseZodError(error as Error);
     if (zodErr) return zodErr;
+    throw error;
+  }
+}
+
+export async function sendVerificationMail(id: User["id"]) {
+  const user = await getUserById(id);
+  if (!user) throw new Error("User with specified id does not exist!");
+  try {
+    await signIn("nodemailer", {
+      email: user.email,
+      redirect: false,
+      redirectTo: "/browse",
+    });
+  } catch (error) {
     throw error;
   }
 }

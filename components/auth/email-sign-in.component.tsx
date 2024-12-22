@@ -1,6 +1,6 @@
 "use client";
 
-import { signInWithCredentials, signInWithNodemailer } from "@/lib/auth";
+import { signInWithCredentials, signUpWithNodemailer } from "@/lib/auth";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
 import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
@@ -78,7 +78,7 @@ const EmailSignIn = () => {
         throwParsedIfZodError(error as Error);
         throw error;
       }
-      const err = await signInWithNodemailer(formData);
+      const err = await signUpWithNodemailer(formData);
       if (err) throw new Error(err.error);
     } catch (error) {
       const message = (error as Error).message;

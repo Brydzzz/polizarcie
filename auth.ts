@@ -3,8 +3,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Nodemailer from "next-auth/providers/nodemailer";
+import { createTransport } from "nodemailer";
 import { ZodError } from "zod";
-import { authConfig } from "./auth.config";
+import { authConfig, verificationMailHTML } from "./auth.config";
 import { getUserByEmail } from "./lib/db/users";
 import { getUserWithPasswordHashByEmail } from "./lib/db/users.server-only";
 import { signInSchema } from "./lib/zod/users";
@@ -15,7 +16,7 @@ const providers = [
   Nodemailer({
     server: {
       host: process.env.EMAIL_SERVER_HOST,
-      port: process.env.EMAIL_SERVER_PORT,
+      port: parseInt(process.env.EMAIL_SERVER_PORT || ""),
       secure: true,
       auth: {
         user: process.env.EMAIL_SERVER_USER,
@@ -23,6 +24,23 @@ const providers = [
       },
     },
     from: process.env.EMAIL_FROM,
+    sendVerificationRequest: async (params) => {
+      const { identifier, url, provider } = params;
+      const { host } = new URL(url);
+      // NOTE: You are not required to use `nodemailer`, use whatever you want.
+      const transport = createTransport(provider.server);
+      const result = await transport.sendMail({
+        to: identifier,
+        from: provider.from,
+        subject: `Potwierdź swój adres email`,
+        text: `Potwierdź swój adres email w serwisie Poliżarcie\n${url}\n\n`,
+        html: verificationMailHTML({ url }),
+      });
+      const failed = result.rejected.concat(result.pending).filter(Boolean);
+      if (failed.length) {
+        throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
+      }
+    },
   }),
   Credentials({
     credentials: {
