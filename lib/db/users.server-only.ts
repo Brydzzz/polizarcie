@@ -1,5 +1,5 @@
 import { prisma } from "@/prisma";
-import { hashPassword } from "@/utils/misc.server-only";
+import { hashPassword } from "@/utils/misc";
 import { User } from "@prisma/client";
 import "server-only";
 

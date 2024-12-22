@@ -1,14 +1,13 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { parseZodError } from "@/utils/misc";
-import { verifyPassword } from "@/utils/misc.server-only";
+import { parseZodError, verifyPassword } from "@/utils/misc";
 import { CredentialsSignin } from "next-auth";
 import { unauthorized } from "next/navigation";
 import {
   createUserWithEmailNameAndPassword,
   getUserWithPasswordHashByEmail,
-} from "./db/server-only";
+} from "./db/users.server-only";
 import { signInSchema, signUpSchema } from "./zod/users";
 
 export async function signInWithCredentials(formData: FormData) {

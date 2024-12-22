@@ -32,8 +32,8 @@ model User {
     follows             Follow[]                 @relation(name: "followUsersFrom")
     followedBy          Follow[]                 @relation(name: "followUsersTo")
     reviewLikes         ReviewLike[]
-    BaseReview          BaseReview[]
-    Image               Image[]
+    writtenReviews      BaseReview[]
+    uploadedImages      Image[]
 }
 
 model UserPasswordHash {

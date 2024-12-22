@@ -5,10 +5,10 @@ import Credentials from "next-auth/providers/credentials";
 import Nodemailer from "next-auth/providers/nodemailer";
 import { ZodError } from "zod";
 import { authConfig } from "./auth.config";
-import { getUserWithPasswordHashByEmail } from "./lib/db/server-only";
 import { getUserByEmail } from "./lib/db/users";
+import { getUserWithPasswordHashByEmail } from "./lib/db/users.server-only";
 import { signInSchema } from "./lib/zod/users";
-import { verifyPassword } from "./utils/misc.server-only";
+import { verifyPassword } from "./utils/misc";
 
 const providers = [
   ...authConfig.providers,
