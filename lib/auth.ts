@@ -5,12 +5,17 @@ import { parseZodError, verifyPassword } from "@/utils/misc";
 import { User } from "@prisma/client";
 import { CredentialsSignin } from "next-auth";
 import { redirect, unauthorized } from "next/navigation";
-import { getUserById, updateUserLastVerificationMail } from "./db/users";
+import {
+  getUserByEmail,
+  getUserById,
+  updateUserLastVerificationMail,
+} from "./db/users";
 import {
   createUserWithEmailNameAndPassword,
   getUserWithPasswordHashByEmail,
+  setUserPasswordCache,
 } from "./db/users.server-only";
-import { signInSchema, signUpSchema } from "./zod/users";
+import { resetPasswordSchema, signInSchema, signUpSchema } from "./zod/users";
 
 export async function signInWithCredentials(formData: FormData) {
   try {
@@ -67,7 +72,31 @@ export async function signUpWithNodemailer(formData: FormData) {
   }
 }
 
-export async function sendVerificationMail(id: User["id"]) {
+export async function resetUserPassword(formData: FormData) {
+  try {
+    const { email, password, passwordRepeat } =
+      await resetPasswordSchema.parseAsync({
+        email: formData.get("email"),
+        password: formData.get("password"),
+        passwordRepeat: formData.get("passwordRepeat"),
+      });
+    if (password !== passwordRepeat)
+      return { error: "Passwords did not match!" };
+    const user = await getUserByEmail(email);
+    if (!user) return { error: "User with specified id does not exist!" };
+    await setUserPasswordCache(user.id, password);
+    redirect(`/auth/verify/${user.id}-reset`);
+  } catch (error) {
+    const zodErr = parseZodError(error as Error);
+    if (zodErr) return zodErr;
+    throw error;
+  }
+}
+
+export async function sendVerificationMail(
+  id: User["id"],
+  redirectTo?: string
+) {
   const user = await getUserById(id);
   if (!user) return { error: "User with specified id does not exist!" };
   if (user.lastVerificationMail) {
@@ -84,7 +113,7 @@ export async function sendVerificationMail(id: User["id"]) {
     await signIn("nodemailer", {
       email: user.email,
       redirect: false,
-      redirectTo: "/browse",
+      redirectTo: redirectTo || "/browse",
     });
   } catch (error) {
     throw error;

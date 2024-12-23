@@ -1,10 +1,18 @@
 "use client";
 
-import { signInWithCredentials, signUpWithNodemailer } from "@/lib/auth";
+import {
+  resetUserPassword,
+  signInWithCredentials,
+  signUpWithNodemailer,
+} from "@/lib/auth";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
 import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
-import { signInSchema, signUpSchema } from "@/lib/zod/users";
+import {
+  resetPasswordSchema,
+  signInSchema,
+  signUpSchema,
+} from "@/lib/zod/users";
 import { throwParsedIfZodError } from "@/utils/misc";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -17,7 +25,9 @@ import Loader from "../misc/loader.component";
 import styles from "./email-sign-in.module.scss";
 
 const EmailSignIn = () => {
-  const [signInUp, setSignInUp] = useState(false);
+  const [mode, setMode] = useState<"sign-in" | "sign-up" | "reset-password">(
+    "sign-in"
+  );
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -82,16 +92,34 @@ const EmailSignIn = () => {
       if (err) throw new Error(err.error);
     } catch (error) {
       const message = (error as Error).message;
-      if (message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
-        const code = message.split(";")[1];
-        switch (code) {
-          case "401":
-            dispatch(
-              addSnackbar({ message: "Nieprawidłowe dane!", type: "error" })
-            );
-            break;
-        }
-      } else if (message.startsWith("NEXT_REDIRECT")) {
+      if (message.startsWith("NEXT_REDIRECT")) {
+        throw error;
+      } else dispatch(addSnackbar({ message: message, type: "error" }));
+    }
+    dispatch(setSignInPageLoading(false));
+  };
+
+  const tryResettingPassword = async (formData: FormData) => {
+    dispatch(setSignInPageLoading(true));
+    try {
+      try {
+        const { password, passwordRepeat } =
+          await resetPasswordSchema.parseAsync({
+            email: formData.get("email"),
+            password: formData.get("password"),
+            passwordRepeat: formData.get("passwordRepeat"),
+          });
+        if (password !== passwordRepeat)
+          throw new Error("Passwords did not match!");
+      } catch (error) {
+        throwParsedIfZodError(error as Error);
+        throw error;
+      }
+      const err = await resetUserPassword(formData);
+      if (err) throw new Error(err.error);
+    } catch (error) {
+      const message = (error as Error).message;
+      if (message.startsWith("NEXT_REDIRECT")) {
         throw error;
       } else dispatch(addSnackbar({ message: message, type: "error" }));
     }
@@ -100,7 +128,7 @@ const EmailSignIn = () => {
 
   return (
     <div className={styles.container}>
-      {signInUp ? (
+      {mode === "sign-up" ? (
         <form action={trySignUpWithNodemailer} className={styles.form}>
           <h2>Nowe konto</h2>
           <Input
@@ -161,7 +189,7 @@ const EmailSignIn = () => {
             )}
           </Button>
         </form>
-      ) : (
+      ) : mode === "sign-in" ? (
         <form action={trySignInWithCredentials} className={styles.form}>
           <Input
             label="Adres email"
@@ -199,16 +227,81 @@ const EmailSignIn = () => {
             </Button>
           )}
         </form>
-      )}
-      {signInUp ? (
-        <div className={styles.switch} onClick={() => setSignInUp(false)}>
+      ) : mode === "reset-password" ? (
+        <form action={tryResettingPassword} className={styles.form}>
+          <h2>Resetowanie hasła</h2>
+          <Input
+            label="Adres email"
+            type="email"
+            name="email"
+            style={InputStyle.HERO}
+            size={InputSize.MEDIUM}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <PasswordInput
+            label="Nowe hasło"
+            name="password"
+            style={InputStyle.HERO}
+            size={InputSize.MEDIUM}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <PasswordInput
+            label="Powtórz hasło"
+            name="passwordRepeat"
+            style={InputStyle.HERO}
+            size={InputSize.MEDIUM}
+            value={passwordRepet}
+            onChange={(e) => setPasswordRepet(e.target.value)}
+            required
+          />
+          <Button
+            type="submit"
+            style={ButtonStyle.SOLID}
+            size={ButtonSize.NORMAL}
+            disabled={
+              email && password && passwordRepet && !loading ? false : true
+            }
+          >
+            {loading ? (
+              <Loader size="16pt" />
+            ) : (
+              <>
+                Wyślij link potwierdzający&nbsp;
+                <i className="fa-solid fa-arrow-right"></i>
+              </>
+            )}
+          </Button>
+        </form>
+      ) : undefined}
+      {mode === "sign-up" ? (
+        <div className={styles.switch} onClick={() => setMode("sign-in")}>
           Masz już konto? <span className={styles.highlight}>Zaloguj się</span>
         </div>
-      ) : (
-        <div className={styles.switch} onClick={() => setSignInUp(true)}>
-          Nie masz konta? <span className={styles.highlight}>Załóż je</span>
+      ) : mode === "sign-in" ? (
+        <>
+          {email && (
+            <div
+              className={styles.switch}
+              onClick={() => setMode("reset-password")}
+            >
+              Zapomniałeś hasła?{" "}
+              <span className={styles.highlight}>Zresetuj je</span>
+            </div>
+          )}
+
+          <div className={styles.switch} onClick={() => setMode("sign-up")}>
+            Nie masz konta? <span className={styles.highlight}>Załóż je</span>
+          </div>
+        </>
+      ) : mode === "reset-password" ? (
+        <div className={styles.switch} onClick={() => setMode("sign-in")}>
+          Przypomniałeś sobie hasło?{" "}
+          <span className={styles.highlight}>Zaloguj się</span>
         </div>
-      )}
+      ) : undefined}
     </div>
   );
 };

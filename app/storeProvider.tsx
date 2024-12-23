@@ -47,7 +47,6 @@ const StoreProvider = ({ children }: Props) => {
           );
           storeRef.current?.dispatch(setPreviousSessionStatus(session.status));
         }
-        console.log(session.data.user);
 
         const result = await transferWithJSON(getUserByEmail, [
           session.data.user.email,

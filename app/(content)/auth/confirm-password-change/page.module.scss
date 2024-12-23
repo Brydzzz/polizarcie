@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  min-height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+
+  & > h2 {
+    font-weight: normal;
+    text-align: center;
+  }
+
+  & > h1 {
+    color: var(--primary);
+  }
+
+  & > p {
+    color: var(--disabled);
+  }
+
+  & > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+}

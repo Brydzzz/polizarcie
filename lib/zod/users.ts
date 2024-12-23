@@ -22,5 +22,16 @@ export const signUpSchema = object({
     .min(1, "Password is required")
     .min(8, "Password length can not be less than 8")
     .max(32, "Password length can not be more than 32"),
-  passwordRepeat: string({ required_error: " repeat is required" }),
+  passwordRepeat: string({ required_error: "Password repeat is required" }),
+});
+
+export const resetPasswordSchema = object({
+  email: string({ required_error: "Email is required" })
+    .min(1, "Email is required")
+    .email("Invalid email"),
+  password: string({ required_error: "Password is required" })
+    .min(1, "Password is required")
+    .min(8, "Password length can not be less than 8")
+    .max(32, "Password length can not be more than 32"),
+  passwordRepeat: string({ required_error: "Password repeat is required" }),
 });

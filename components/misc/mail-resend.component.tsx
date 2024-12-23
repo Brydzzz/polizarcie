@@ -11,9 +11,10 @@ import Loader from "./loader.component";
 
 type Props = {
   userId: string;
+  mode: "verify" | "reset";
 };
 
-const MailResend = ({ userId }: Props) => {
+const MailResend = ({ userId, mode }: Props) => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectSignInPageLoading);
 
@@ -26,7 +27,10 @@ const MailResend = ({ userId }: Props) => {
     if (!force && loading) return;
     dispatch(setSignInPageLoading(true));
     try {
-      const err = await sendVerificationMail(userId);
+      const err = await sendVerificationMail(
+        userId,
+        mode === "reset" ? "/auth/confirm-password-change" : undefined
+      );
       if (err) throw new Error(err.error);
       dispatch(addSnackbar({ message: "Wysłano maila", type: "success" }));
     } catch (error) {
@@ -42,7 +46,7 @@ const MailResend = ({ userId }: Props) => {
       style={ButtonStyle.OUTLINE}
       color={ButtonColor.SECONDARY}
       size={ButtonSize.SMALL}
-      onClick={sendMail}
+      onClick={() => sendMail()}
       disabled={loading}
     >
       {loading ? (

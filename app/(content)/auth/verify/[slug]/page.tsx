@@ -10,7 +10,14 @@ type Props = {
 };
 
 const VerifyPage = async ({ params }: Props) => {
-  const { slug: id } = await params;
+  const { slug } = await params;
+  const parts = slug.split("-");
+  const id = parts.at(0) || "";
+  const modeRaw = parts.at(1);
+  const mode: "verify" | "reset" =
+    modeRaw && (modeRaw === "verify" || modeRaw === "reset")
+      ? modeRaw
+      : "verify";
   const user = await getUserById(id);
   if (!user) notFound();
   return (
@@ -20,9 +27,13 @@ const VerifyPage = async ({ params }: Props) => {
         <br />
         Wysłaliśmy na Twój adres e-mail link weryfikacyjny,
       </h2>
-      <h1>Proszę potwierdź swoje konto.</h1>
+      <h1>
+        {mode === "verify"
+          ? "Proszę potwierdź swoje konto."
+          : "Proszę potwierdź, że to Ty"}
+      </h1>
       <div>
-        Nie dostałeś maila? <MailResend userId={user.id} />
+        Nie dostałeś maila? <MailResend userId={user.id} mode={mode} />
       </div>
     </div>
   );

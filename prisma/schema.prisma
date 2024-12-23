@@ -22,6 +22,7 @@ model User {
     description          String?
     // Custom
     passwordHash         UserPasswordHash?
+    passwordHashCache    UserPasswordHashCache?
     lastVerificationMail DateTime?
     roles                Role[]                   @default([USER])
     gender               Gender                   @default(NOT_SET)
@@ -38,6 +39,12 @@ model User {
 }
 
 model UserPasswordHash {
+    user         User   @relation(fields: [forUserEmail], references: [email], onDelete: Cascade)
+    forUserEmail String @id
+    hash         String
+}
+
+model UserPasswordHashCache {
     user         User   @relation(fields: [forUserEmail], references: [email], onDelete: Cascade)
     forUserEmail String @id
     hash         String

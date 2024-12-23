@@ -20,7 +20,7 @@ export function verificationMailHTML(params: { url: string }) {
   return `
 <body>
   <div style="width: 100%; background-color: ${color.background}; display: flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; color: ${color.text};  border-radius: 30px;">
-    <h1 style="font-weight: normal; text-align: center">Dokończ swoją rejestrację w <br/><strong>Poliżarciu</strong></h1>
+    <h1 style="font-weight: normal; text-align: center">Dokończ swoją weryfikację w <br/><strong>Poliżarciu</strong></h1>
     <a href="${url}"
       target="_blank"
       style="font-size: 18px; font-family: Helvetica, Arial, sans-serif; background-color: ${color.brand}; color: ${color.text}; text-decoration: none; border-radius: 5px; padding: 10px 20px; display: inline-block; font-weight: bold;"

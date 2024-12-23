@@ -51,6 +51,15 @@
     }
     &.outline {
       border: 3px solid var(--bg-color);
+      &.small {
+        padding: 9px 12px;
+      }
+      &.normal {
+        padding: 12px 17px;
+      }
+      &.large {
+        padding: 15px 22px;
+      }
       &:disabled {
         --fg-color: var(--disabled);
       }

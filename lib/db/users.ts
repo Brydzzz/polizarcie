@@ -1,7 +1,13 @@
 "use server";
 
 import { prisma } from "@/prisma";
+import { getCurrentUser } from "@/utils/users";
 import { Restaurant, User } from "@prisma/client";
+import { unauthorized } from "next/navigation";
+import {
+  clearUserPasswordCache,
+  updateUserPasswordFromCache,
+} from "./users.server-only";
 
 export async function getUserById(id: User["id"]) {
   return await prisma.user.findFirst({
@@ -63,4 +69,18 @@ export async function updateUserLastVerificationMail(id: User["id"]) {
       lastVerificationMail: new Date(),
     },
   });
+}
+
+export async function confirmPasswordChange() {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) unauthorized();
+  const result = await updateUserPasswordFromCache(currentUser.id);
+  if (result) await clearUserPasswordCache(currentUser.id);
+  return result;
+}
+
+export async function cancelPasswordChange() {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) unauthorized();
+  return await clearUserPasswordCache(currentUser.id);
 }
