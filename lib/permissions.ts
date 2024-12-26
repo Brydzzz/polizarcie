@@ -1,4 +1,4 @@
-import { BaseReview, Role, User } from "@prisma/client";
+import { BaseReview, Image, Role, User } from "@prisma/client";
 
 type PermissionCheck<Key extends keyof Permissions> =
   | boolean
@@ -24,13 +24,20 @@ export type Permissions = {
       | "delete"
       | "like";
   };
+  images: {
+    dataType: Partial<Image>;
+    action: "create" | "link" | "delete";
+  };
 };
 
 const ifOwnReview = (user: User, review: Partial<BaseReview>) =>
-  review.authorId != undefined && review.authorId == user.id;
+  review.authorId != undefined && review.authorId === user.id;
 
 const ifNotOwnReview = (user: User, review: Partial<BaseReview>) =>
   !ifOwnReview(user, review);
+
+const ifOwnImage = (user: User, image: Partial<Image>) =>
+  image.uploadedById != undefined && image.uploadedById === user.id;
 
 const ROLES = {
   ADMIN: {
@@ -43,6 +50,11 @@ const ROLES = {
       delete: true,
       like: true,
     },
+    images: {
+      create: true,
+      link: true,
+      delete: true,
+    },
   },
   MODERATOR: {
     reviews: {
@@ -54,6 +66,11 @@ const ROLES = {
       delete: ifOwnReview,
       like: ifNotOwnReview,
     },
+    images: {
+      create: true,
+      link: true,
+      delete: true,
+    },
   },
   USER: {
     reviews: {
@@ -64,6 +81,11 @@ const ROLES = {
       hide: ifOwnReview,
       delete: ifOwnReview,
       like: ifNotOwnReview,
+    },
+    images: {
+      create: true,
+      link: ifOwnImage,
+      delete: ifOwnImage,
     },
   },
 } as const satisfies RolesWithPermissions;

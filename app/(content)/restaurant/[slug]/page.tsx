@@ -1,7 +1,7 @@
 import StarInput from "@/components/inputs/star-input.component";
 import MenuList from "@/components/lists/menu-list.component";
 import ReviewList from "@/components/lists/review-list.component";
-import MapView from "@/components/map-view.component";
+import MapView from "@/components/misc/map-view.component";
 import MenuReviewSection from "@/components/sections/menu-review-section.component";
 import {
   getMenuByRestaurantId,

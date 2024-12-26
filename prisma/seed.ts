@@ -1,6 +1,7 @@
-import { DishType, Gender } from "@prisma/client";
+import { DishType, Gender, Role } from "@prisma/client";
 import slugify from "slugify";
 import { prisma } from "../prisma";
+import { hashPassword } from "../utils/misc";
 
 async function initData() {
   // TODO add some actual database initialization
@@ -52,6 +53,18 @@ async function initData() {
       gender: Gender.FEMALE,
       meetingStatus: false,
       points: 0,
+      roles: [Role.ADMIN],
+      emailVerified: "2137-01-01T08:00:00.000Z",
+      passwordHash: {
+        connectOrCreate: {
+          where: {
+            forUserEmail: "balbinka@gmail.com",
+          },
+          create: {
+            hash: (await hashPassword("balbinka")).toString("base64"),
+          },
+        },
+      },
     },
     {
       id: "dummy-user-2",
@@ -60,6 +73,18 @@ async function initData() {
       gender: Gender.FEMALE,
       meetingStatus: false,
       points: 0,
+      roles: [Role.MODERATOR],
+      emailVerified: "2137-01-01T08:00:00.000Z",
+      passwordHash: {
+        connectOrCreate: {
+          where: {
+            forUserEmail: "brygida@gmail.com",
+          },
+          create: {
+            hash: (await hashPassword("brygida")).toString("base64"),
+          },
+        },
+      },
     },
     {
       id: "dummy-user-3",
@@ -68,6 +93,18 @@ async function initData() {
       gender: Gender.MALE,
       meetingStatus: false,
       points: 0,
+      roles: [Role.MODERATOR],
+      emailVerified: "2137-01-01T08:00:00.000Z",
+      passwordHash: {
+        connectOrCreate: {
+          where: {
+            forUserEmail: "mateusz@gmail.com",
+          },
+          create: {
+            hash: (await hashPassword("mateusz")).toString("base64"),
+          },
+        },
+      },
     },
   ];
   for (const user of users) {

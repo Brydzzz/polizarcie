@@ -1,6 +1,8 @@
 "use client";
 
 import useReviewStore from "@/hooks/use-review-store";
+import { createImages, deleteImages } from "@/lib/db/images";
+import { linkImagesToReview } from "@/lib/db/reviews/base-reviews";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
@@ -12,13 +14,15 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { transferWithJSON } from "@/utils/misc.client";
+import { transferWithJSON } from "@/utils/misc";
 import { signIn } from "next-auth/react";
 import { ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
 import TextArea from "../inputs/generic-textarea.component";
+import ImageInput from "../inputs/image-input.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
+import LoaderBlur from "../misc/loader-blur.component";
 import styles from "./add-review.module.scss";
 
 type Props<Type extends keyof ReviewType> = {
@@ -91,8 +95,10 @@ const AddReview = <Type extends keyof ReviewType>({
     ReviewType[Type]["subject"] | undefined
   >();
   const currentUser = useAppSelector(selectCurrentUser);
-  const loading = useAppSelector(selectUserLoading);
+  const userLoading = useAppSelector(selectUserLoading);
   const store = useReviewStore(type);
+  const [files, setFiles] = useState<File[] | undefined>();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const exec = async () => {
@@ -103,15 +109,44 @@ const AddReview = <Type extends keyof ReviewType>({
   }, []);
 
   const submit = async () => {
-    await transferWithJSON(funcs.create, [
-      { ...store.getCreator(), subjectId: subjectId },
-    ]);
-    dispatch(updateReviewsUpdate());
-    dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
+    setLoading(true);
+    try {
+      let imagesPaths: string[] = [];
+      if (files) {
+        imagesPaths = await createImages(
+          files.map((file) => ({
+            info: {
+              path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
+              title: `${subjectId}`,
+            },
+            imageBody: file,
+          }))
+        );
+      }
+      const result = await transferWithJSON(funcs.create, [
+        { ...store.getCreator(), subjectId: subjectId },
+      ]);
+      if (!result) {
+        if (files) await deleteImages(imagesPaths);
+        throw new Error("Wystąpił błąd");
+      }
+      if (files) {
+        await linkImagesToReview(result.id, imagesPaths);
+      }
+      dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
+    } catch (error) {
+      dispatch(
+        addSnackbar({ message: (error as Error).message, type: "error" })
+      );
+    }
+    try {
+    } catch (error) {}
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+    dispatch(updateReviewsUpdate());
+    setLoading(false);
   };
 
   return (
@@ -120,8 +155,13 @@ const AddReview = <Type extends keyof ReviewType>({
       <h3>Dodaj swoją opinię</h3>
       <form action={submit} className={styles.form}>
         {FIELDS[type].inputs(store)}
+        <ImageInput
+          label="Zdjęcia"
+          multiple
+          onChange={(v) => setFiles(v && Object.values(v))}
+        />
         <div className={styles.right}>
-          {!loading &&
+          {!userLoading &&
             (currentUser ? (
               <Button type="submit">Prześlij</Button>
             ) : (
@@ -131,6 +171,7 @@ const AddReview = <Type extends keyof ReviewType>({
             ))}
         </div>
       </form>
+      {loading && <LoaderBlur />}
     </div>
   );
 };
