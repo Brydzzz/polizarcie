@@ -27,7 +27,6 @@ const RestaurantPage = async ({ params }: Props) => {
   const score = await getRestaurantAvgStarsById(restaurant.id);
   const menu = await getMenuByRestaurantId(restaurant.id);
   const roundedScore = score._avg.stars?.toFixed(2);
-  const likedRest = false;
 
   const hours = [
     {
