@@ -9,18 +9,31 @@ import StarInput from "../inputs/star-input.component";
 import Switch from "../inputs/switch.component";
 import styles from "./filter-modal.module.scss";
 
-// TODO add onclicks for buttons
 type Props = {
+  filters: Filters;
   onCancelButtonClick?: MouseEventHandler;
+  onApplyButtonClick?: (filters: Filters) => void;
 };
 
-type FacultyState = {
+export type Filters = {
+  priceRange: { min: number; max: number };
+  isOpen: boolean;
+  minRating: number;
+  sortOption: "name" | "rating" | "price";
+  faculty: Faculty;
+};
+
+export type Faculty = {
   value: string;
   x?: number;
   y?: number;
 };
 
-const FilterModal = ({ onCancelButtonClick }: Props) => {
+const FilterModal = ({
+  filters,
+  onCancelButtonClick,
+  onApplyButtonClick,
+}: Props) => {
   const sortOptions = [
     { name: "Nazwa", value: "name" },
     { name: "Ocena", value: "rating" },
@@ -119,13 +132,26 @@ const FilterModal = ({ onCancelButtonClick }: Props) => {
     },
   ];
 
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 100 });
-  const [isOpen, setIsOpen] = useState(false);
-  const [minRating, setMinRating] = useState(0);
-  const [selectedSort, setSelectedSort] = useState("name");
-  const [selectedFaculty, setSelectedFaculty] = useState<FacultyState>({
-    value: "none",
-  });
+  const [priceRange, setPriceRange] = useState(filters.priceRange);
+  const [isOpen, setIsOpen] = useState(filters.isOpen);
+  const [minRating, setMinRating] = useState(filters.minRating);
+  const [selectedSort, setSelectedSort] = useState<"name" | "rating" | "price">(
+    filters.sortOption
+  );
+  const [selectedFaculty, setSelectedFaculty] = useState<Faculty>(
+    filters.faculty
+  );
+
+  const handleApply = () => {
+    const updatedFilters: Filters = {
+      priceRange: priceRange,
+      isOpen: isOpen,
+      minRating: minRating,
+      sortOption: selectedSort,
+      faculty: selectedFaculty,
+    };
+    onApplyButtonClick ? onApplyButtonClick(updatedFilters) : "";
+  };
 
   const handleFacultyChange = (value: string) => {
     const faculty = facultyOptions.find((f) => f.value === value);
@@ -146,7 +172,7 @@ const FilterModal = ({ onCancelButtonClick }: Props) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>Filtry</h1>
-        <span onClick={onCancelButtonClick}>
+        <span onClick={onCancelButtonClick || (() => {})}>
           <i className="fa-solid fa-xmark"></i>
         </span>
       </div>
@@ -155,7 +181,9 @@ const FilterModal = ({ onCancelButtonClick }: Props) => {
           label="Sortuj"
           options={sortOptions}
           value={selectedSort}
-          onChange={(e) => setSelectedSort(e.target.value)}
+          onChange={(e) =>
+            setSelectedSort(e.target.value as "name" | "rating" | "price")
+          }
         ></SelectBox>
         <RangeInput
           value={priceRange}
@@ -188,7 +216,7 @@ const FilterModal = ({ onCancelButtonClick }: Props) => {
         <Button style={ButtonStyle.BACKDROP} onClick={clearFilters}>
           Wyczyść
         </Button>
-        <Button>Zastosuj</Button>
+        <Button onClick={handleApply}>Zastosuj</Button>
       </div>
     </div>
   );
