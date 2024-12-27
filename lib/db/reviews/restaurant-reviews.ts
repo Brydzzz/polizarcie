@@ -218,3 +218,14 @@ export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
     },
   });
 }
+
+export async function getRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
+  return await prisma.restaurantReview.aggregate({
+    _avg: {
+      amountSpent: true,
+    },
+    where: {
+      subjectId: id,
+    },
+  });
+}
