@@ -60,7 +60,7 @@ export async function getUnmatchedUser(
           },
         },
         {
-          id: { notIn: excludeIds }, // Exclude users directly as well.
+          id: { notIn: excludeIds },
         },
       ],
     },
@@ -102,7 +102,7 @@ export async function getUnmatchedUsers(
           },
         },
         {
-          id: { notIn: excludeIds }, // Exclude users directly as well.
+          id: { notIn: excludeIds },
         },
       ],
     },
@@ -134,7 +134,7 @@ export async function checkIfRestLikedByUser(
 }
 
 export async function getTopLikedRests(userId: User["id"]) {
-  return await prisma.restaurant.findMany({
+  const liked = await prisma.restaurant.findMany({
     where: {
       favoriteAmong: {
         some: {
@@ -147,6 +147,36 @@ export async function getTopLikedRests(userId: User["id"]) {
       favoriteAmong: true,
     },
   });
+  return liked.sort((a, b) => {
+    const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    return aRanking - bRanking;
+  });
+}
+
+export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
+  return await Promise.all(
+    usersIDs.map(async (userId) => {
+      const userTopLiked = await prisma.restaurant.findMany({
+        where: {
+          favoriteAmong: {
+            some: {
+              userId: userId,
+              rankingPosition: { in: [1, 2, 3] },
+            },
+          },
+        },
+        include: {
+          favoriteAmong: true,
+        },
+      });
+      return userTopLiked.sort((a, b) => {
+        const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        return aRanking - bRanking;
+      });
+    })
+  );
 }
 
 export async function getUserByEmail(email: User["email"]) {

@@ -1,7 +1,6 @@
 import DishCard from "@/components/cards/dish-card.component";
 import LinkCard from "@/components/cards/link-card.component";
 import MatchCard from "@/components/cards/match-card-component";
-import RestaurantCard from "@/components/cards/restaurant-card.component";
 import UserCard from "@/components/cards/user-desc-card-component";
 import {
   Address,
@@ -110,9 +109,9 @@ const CardPage = () => {
       style={{ marginTop: "100px", paddingBottom: "100px" }}
     >
       <div className="centralized-y" style={{ width: "600px" }}>
-        {TEST_REST.map((rest, i) => (
+        {/* {TEST_REST.map((rest, i) => (
           <RestaurantCard key={i} data={rest}></RestaurantCard>
-        ))}
+        ))} */}
         {TEST_DISH.map((dish, i) => (
           <DishCard key={i} data={dish}></DishCard>
         ))}
@@ -123,7 +122,7 @@ const CardPage = () => {
           <UserCard key={i} data={usr} socials={false}></UserCard>
         ))}
         {TEST_USER2.map((usr2, i) => (
-          <MatchCard key={i} data={usr2}></MatchCard>
+          <MatchCard key={i} data={usr2} likedRests={[]}></MatchCard>
         ))}
         {TEST_LINK.map((lin, i) => (
           <LinkCard key={i} data={lin}></LinkCard>
