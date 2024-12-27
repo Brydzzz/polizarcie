@@ -27,20 +27,19 @@ export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
   });
 }
 
-export async function getUnmatchedUser(
-  userId: User["id"],
-  excludeIds: User["id"][]
-) {
+export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
   return await prisma.user.findFirst({
     where: {
-      id: { not: userId },
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
       AND: [
         {
           userOneMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -51,8 +50,8 @@ export async function getUnmatchedUser(
           userTwoMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -68,21 +67,23 @@ export async function getUnmatchedUser(
 }
 
 export async function getUnmatchedUsers(
-  userId: User["id"],
+  user: User,
   excludeIds: User["id"][],
   howMany: number
 ) {
   return await prisma.user.findMany({
     take: howMany,
     where: {
-      id: { not: userId },
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
       AND: [
         {
           userOneMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -93,8 +94,8 @@ export async function getUnmatchedUsers(
           userTwoMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],

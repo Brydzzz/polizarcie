@@ -15,6 +15,7 @@ import styles from "./page.module.scss";
 const MatchPage = () => {
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
+  const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
   // const [user1, setUser1] = useState<User | undefined>();
@@ -22,68 +23,77 @@ const MatchPage = () => {
 
   const pushUnmatchedUser = async () => {
     if (!user) return;
-    console.log(users.map((usr) => usr.id));
     const data = await getUnmatchedUser(
-      user.id,
+      user,
       users.map((usr) => usr.id)
     );
-    console.log(data);
     if (!data) return;
     const rests = await getTopLikedRests(data.id);
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
-      console.log(rests);
     }
-    console.log(likedRests);
     setUsers((users) => [...users, data]);
   };
   useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
-      const data = await getUnmatchedUsers(user.id, [], 4);
-      console.log(data);
+      const data = await getUnmatchedUsers(user, [], 4);
       setUsers(data);
       if (data) {
         const rests = await getTopLikedRestsForUsers(data.map((usr) => usr.id));
         if (rests) {
           setLikedRests(rests);
-          console.log(rests);
         }
       }
     };
     initUsers();
+    console.log(users);
   }, [user]);
 
   useEffect(() => {
     const match = async () => {
-      if (!user || !users[1]) return;
-      if (decision == 1) {
-        matchYesWith(user.id, users[1].id);
+      if (
+        !user ||
+        (first == false && !users[0]) ||
+        (first == true && !users[1])
+      )
+        return;
+      if (decision == 1 && first == false) {
+        await matchYesWith(user.id, users[0].id);
+      } else if (decision == 1 && first == true) {
+        await matchYesWith(user.id, users[1].id);
+      } else if (decision == 2 && first == false) {
+        await matchNoWith(user.id, users[0].id);
+      } else if (decision == 2 && first == true) {
+        await matchNoWith(user.id, users[1].id);
+      }
+      if (first) {
+        setLikedRests((likedRests) => {
+          return likedRests.slice(1);
+        });
+        setUsers((users) => {
+          return users.slice(1);
+        });
+        await pushUnmatchedUser();
       } else {
-        matchNoWith(user.id, users[1].id);
+        setFirst(true);
       }
     };
     match();
-    setUsers((users) => {
-      return users.slice(1);
-    });
-    setLikedRests((likedRests) => {
-      return likedRests.slice(1);
-    });
-    pushUnmatchedUser();
     console.log(users);
-    console.log(likedRests);
   }, [next]);
 
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <div>
-          {users[1] ? (
+          {decision == 0 && users[0] ? (
+            <MatchCard data={users[0]} likedRests={likedRests[0]} />
+          ) : decision != 0 && users[1] ? (
             <MatchCard data={users[1]} likedRests={likedRests[1]} />
           ) : null}
         </div>
-        {users[1] ? (
+        {users[1] || (users[0] && decision == 0) ? (
           <div className={styles.buttons}>
             <div className={styles.yes}>
               <i
@@ -106,16 +116,18 @@ const MatchPage = () => {
           </div>
         ) : null}
       </div>
-      {users[0] && decision != 0 ? (
+      {users[0] && first ? (
         <div className={styles.back}>
           <div className={styles.card}>
-            {users[0] && decision != 0 ? (
+            {users[0] && first ? (
               <MatchCard data={users[0]} likedRests={likedRests[0]} />
             ) : null}
           </div>
           <div className={styles.card}>
             {users[2] ? (
               <MatchCard data={users[2]} likedRests={likedRests[2]} />
+            ) : users[1] && first ? (
+              <MatchCard data={users[1]} likedRests={likedRests[1]} />
             ) : null}
           </div>
         </div>
@@ -123,6 +135,8 @@ const MatchPage = () => {
         <div className={styles.oneCard}>
           {users[2] ? (
             <MatchCard data={users[2]} likedRests={likedRests[2]} />
+          ) : users[1] && first ? (
+            <MatchCard data={users[1]} likedRests={likedRests[1]} />
           ) : null}
         </div>
       )}
