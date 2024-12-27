@@ -23,7 +23,7 @@
     & > .restaurants {
       background-color: var(--bg-local);
       border: 2px solid var(--primary-background-fade-1);
-      height: 40%; // Use auto instead of percentage height for flexibility
+      height: 40%;
       border-radius: 8px;
       padding: 5px 10px;
     }
@@ -37,7 +37,7 @@
   & > .photoBox {
     margin-top: 20px;
     margin-bottom: 20px;
-    height: 35%; // You may still use percentage height here, but be cautious about how the parent behaves.
+    height: 35%;
     width: 45%;
 
     & > .photo {

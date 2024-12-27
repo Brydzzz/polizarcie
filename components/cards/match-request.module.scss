@@ -1,0 +1,31 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  --bg-local: rgba(61, 41, 53, 0.7);
+  border: 1px solid var(--primary-background-fade-1);
+  border-radius: 8px;
+  background-color: var(--bg-local);
+  min-width: 300px;
+  width: 100%;
+  height: 100%;
+  & > .name {
+    padding: 15 15 0 0;
+    font-size: 15pt;
+    color: var(--text);
+    height: calc(10%);
+    padding-bottom: 15pt;
+  }
+  & > .photoBox {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    height: 35%;
+    width: 45%;
+  }
+  & > .photo {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 5px solid var(--background-dark);
+    border-radius: 50%;
+  }
+}
