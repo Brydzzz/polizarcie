@@ -2,6 +2,7 @@
 
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
+import FilterModal from "@/components/modals/filter-modal.component";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ import styles from "./page.module.scss";
 const SearchPage = () => {
   const [rests, updateRestaurants] = useState<RestaurantFull[]>([]);
   const [input, setInput] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
   useEffect(() => {
     const update = async () => {
       const data = await transferWithJSON(getRestaurantsLike, [input]);
@@ -25,6 +27,13 @@ const SearchPage = () => {
   ];
   return (
     <main className={styles.container}>
+      {isModalVisible && (
+        <div className={`${isModalVisible ? styles.overlay : ""}`}>
+          <div className={styles.filterModal}>
+            <FilterModal onCancelButtonClick={() => setIsModalVisible(false)} />
+          </div>
+        </div>
+      )}
       <h1>Jedzonko w okolicy</h1>
       <Searchbar
         id="search"
@@ -32,6 +41,8 @@ const SearchPage = () => {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onCancelButtonClick={() => setInput("")}
+        filters
+        onFilterButtonClick={(e) => setIsModalVisible(!isModalVisible)}
       />
       <div className={styles.matrix}>
         <div className={styles.column}>

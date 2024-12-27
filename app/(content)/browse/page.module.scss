@@ -6,6 +6,7 @@
   justify-content: flex-start;
   flex-direction: column;
   padding-top: 100px;
+  z-index: 0;
 
   & > h1 {
     font-family: "Gluten";
@@ -32,6 +33,25 @@
     row-gap: 25px;
   }
   .column:empty {
-  display: none;
+    display: none;
   }
+}
+
+.filterModal {
+  z-index: 4;
+  margin-top: 110px;
+}
+
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  --bg-local: rgba(30, 21, 26, 0.6);
+  background: var(--bg-local);
+  top: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
