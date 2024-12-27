@@ -9,30 +9,47 @@ datasource db {
 
 model User {
     // required by Next-Auth
-    id                  String                   @id @default(cuid())
-    name                String?
-    email               String                   @unique
-    emailVerified       DateTime?
-    image               String?
-    accounts            Account[]
-    sessions            Session[]
-    Authenticator       Authenticator[]
-    createdAt           DateTime                 @default(now())
-    updatedAt           DateTime                 @updatedAt
-    description         String?
+    id                   String                   @id @default(cuid())
+    name                 String?
+    email                String                   @unique
+    emailVerified        DateTime?
+    image                String?
+    accounts             Account[]
+    sessions             Session[]
+    Authenticator        Authenticator[]
+    createdAt            DateTime                 @default(now())
+    updatedAt            DateTime                 @updatedAt
+    description          String?
     // Custom
-    roles               Role[]                   @default([USER])
-    gender              Gender                   @default(NOT_SET)
-    preferredGender     Gender                   @default(NOT_SET)
-    meetingStatus       Boolean                  @default(false)
-    points              Int                      @default(0)
-    medias              UserMedia[]
-    favoriteRestaurants UserFavoriteRestaurant[]
-    follows             Follow[]                 @relation(name: "followUsersFrom")
-    followedBy          Follow[]                 @relation(name: "followUsersTo")
-    reviewLikes         ReviewLike[]
-    BaseReview          BaseReview[]
-    Image               Image[]
+    passwordHash         UserPasswordHash?
+    passwordHashCache    UserPasswordHashCache?
+    lastVerificationMail DateTime?
+    roles                Role[]                   @default([USER])
+    gender               Gender                   @default(NOT_SET)
+    preferredGender      Gender                   @default(NOT_SET)
+    meetingStatus        Boolean                  @default(false)
+    points               Int                      @default(0)
+    medias               UserMedia[]
+    favoriteRestaurants  UserFavoriteRestaurant[]
+    follows              Follow[]                 @relation(name: "followUsersFrom")
+    followedBy           Follow[]                 @relation(name: "followUsersTo")
+    reviewLikes          ReviewLike[]
+    writtenReviews       BaseReview[]
+    uploadedImages       Image[]
+    userOneMatch Match[] @relation(name: "matchUserOne")
+    userTwoMatch Match[] @relation(name: "matchUserTwo")
+}
+
+model UserPasswordHash {
+    user         User   @relation(fields: [forUserEmail], references: [email], onDelete: Cascade)
+    forUserEmail String @id
+    hash         String
+}
+
+model UserPasswordHashCache {
+    user         User   @relation(fields: [forUserEmail], references: [email], onDelete: Cascade)
+    forUserEmail String @id
+    hash         String
 }
 
 model UserFavoriteRestaurant {
@@ -190,6 +207,16 @@ model Follow {
     to     User     @relation(name: "followUsersTo", fields: [toId], references: [id], onDelete: Cascade)
     toId   String
     date   DateTime @default(now()) @db.Timestamp()
+}
+
+model Match {
+    userOneId String
+    userTwoId String
+    userOne   User    @relation(name: "matchUserOne", fields: [userOneId], references: [id], onDelete: Cascade)
+    userTwo   User    @relation(name: "matchUserTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+    value     Boolean
+
+    @@id([userOneId, userTwoId])
 }
 
 // Required by Next-Auth

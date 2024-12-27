@@ -18,6 +18,7 @@ Konspekt znajduje się w pliku: [konspekt.md](./konspekt.md)
   <img src="https://www.vectorlogo.zone/logos/sass-lang/sass-lang-icon.svg" alt="Sass" />
   <img src="https://www.vectorlogo.zone/logos/postgresql/postgresql-icon.svg" alt="PostgreSQL" />
   <img src="https://www.vectorlogo.zone/logos/nodejs/nodejs-icon.svg" alt="NodeJS" />
+  <img src="https://raw.githubusercontent.com/gilbarbara/logos/refs/heads/main/logos/zod.svg" height=60 alt="Coolify" />
   <img src="https://raw.githubusercontent.com/walkxcode/dashboard-icons/refs/heads/main/svg/coolify.svg" height=60 alt="Coolify" />
 </div>
 
@@ -73,10 +74,11 @@ docker compose pull
 ```sh
 # Modyfikujemy poniższe linijki w pliku .env (tym supabase-a, nie naszym!)
 # Poniżej podałem jakieś przykładowe wartości, w produkcji będzie trzeba ustawić inne!
+# Możemy wygenerować własne przy pomocy: https://supabase.com/docs/guides/self-hosting/docker#generate-api-keys
 POSTGRES_PASSWORD=postgres
-JWT_SECRET=VgA5vyudVnWkCDeko8V8nyaPaCQuw029uEt864Nh
-ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE
-SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
+JWT_SECRET=iHoI8ceNlSWQ85k0Ml4XIO1ldUVaGXGn7mY4oZNI
+ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzM0NjQ5MjAwLAogICJleHAiOiAxODkyNDE1NjAwCn0.cldxy7XXdlWdZFjkGQHsA3dDEzx-lP79dCO43FDCEa0
+SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogInNlcnZpY2Vfcm9sZSIsCiAgImlzcyI6ICJzdXBhYmFzZSIsCiAgImlhdCI6IDE3MzQ2NDkyMDAsCiAgImV4cCI6IDE4OTI0MTU2MDAKfQ.zC2mOmlxiqTbDutERZklO5A17KA8ah7e5lN17TghMS4
 DASHBOARD_USERNAME=supabase
 DASHBOARD_PASSWORD=supabase
 ```

@@ -17,3 +17,13 @@ export const selectSnackbars = createSelector(
   [selectUiReducer],
   (uiReducer) => uiReducer.snackbars
 );
+
+export const selectSignInPageOptions = createSelector(
+  [selectUiReducer],
+  (uiReducer) => uiReducer.signInPage
+);
+
+export const selectSignInPageLoading = createSelector(
+  [selectSignInPageOptions],
+  (signInPageOptions) => signInPageOptions.loading
+);

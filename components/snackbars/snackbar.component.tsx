@@ -9,9 +9,24 @@ const Snackbar = ({ id, message, timeout, type }: SnackbarData) => {
   const dispatch = useAppDispatch();
   const [life, setLife] = useState(100);
   const [exit, setExit] = useState(false);
+  const [parsedMessage, setParsedMessage] = useState(message);
 
   useEffect(() => {
     let timeLeft = timeout;
+    if (type === "error" && message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
+      const code = message.split(";")[1];
+      switch (code) {
+        case "401":
+          setParsedMessage(`${code} - Zaloguj się`);
+          break;
+        case "403":
+          setParsedMessage(`${code} - Nie jesteś upoważniony`);
+          break;
+        default:
+          setParsedMessage(`Błąd ${code}`);
+          break;
+      }
+    }
     const anim = setInterval(() => {
       timeLeft -= 10;
       setLife((timeLeft / timeout) * 100);
@@ -22,7 +37,7 @@ const Snackbar = ({ id, message, timeout, type }: SnackbarData) => {
     return () => {
       clearInterval(anim);
     };
-  }, [id]);
+  }, []);
 
   const kill = () => {
     dispatch(removeSnackbar(id));
@@ -34,7 +49,7 @@ const Snackbar = ({ id, message, timeout, type }: SnackbarData) => {
         styles[type]
       }`}
     >
-      {message}
+      <p>{parsedMessage}</p>
       <i onClick={kill} className="fa-solid fa-xmark"></i>
       <div className={`${styles.lifeBar} ${styles.full}`}></div>
       <div style={{ width: `${life}%` }} className={styles.lifeBar}></div>

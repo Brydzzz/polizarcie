@@ -7,7 +7,7 @@
   font-size: 14pt;
   --size: 250px;
   width: var(--size);
-  height: 50px;
+  min-height: 50px;
   border-radius: 10px;
   transition: all 0.3s;
   animation: enter 0.5s forwards cubic-bezier(0.17, 0.67, 0.31, 1.58);
@@ -32,12 +32,16 @@
     animation: exit 0.3s forwards ease-in;
   }
 
+  & > p {
+    width: calc(100% - 40px);
+  }
+
   & > i {
     position: absolute;
     top: 0;
     right: 0;
     height: 100%;
-    aspect-ratio: 1;
+    width: 40px;
     display: flex;
     align-items: center;
     justify-content: center;

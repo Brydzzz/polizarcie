@@ -19,9 +19,11 @@ const SignIn = async () => {
           <EmailSignIn />
           Lub zaloguj się przy pomocy:
           <div className={styles.providers}>
-            {Object.values(providerMap).map((provider) => (
-              <ProviderButton key={provider.id} provider={provider} />
-            ))}
+            {Object.values(providerMap)
+              .filter((provider) => provider.name !== "Nodemailer")
+              .map((provider) => (
+                <ProviderButton key={provider.id} provider={provider} />
+              ))}
           </div>
         </div>
       </div>

@@ -13,12 +13,18 @@ type UiState = {
   restaurantPage: {
     view: "menu" | "reviews";
   };
+  signInPage: {
+    loading: boolean;
+  };
   snackbars: SnackbarData[];
 };
 
 const INITIAL_STATE: UiState = {
   restaurantPage: {
     view: "menu",
+  },
+  signInPage: {
+    loading: false,
   },
   snackbars: [],
 };
@@ -29,6 +35,9 @@ export const UiSlice = createSlice({
   reducers: {
     setRestaurantPageView(state, action: DispatchAction<"menu" | "reviews">) {
       state.restaurantPage.view = action.payload;
+    },
+    setSignInPageLoading(state, action: DispatchAction<boolean>) {
+      state.signInPage.loading = action.payload;
     },
     addSnackbar(
       state,
@@ -48,7 +57,11 @@ export const UiSlice = createSlice({
   },
 });
 
-export const { setRestaurantPageView, addSnackbar, removeSnackbar } =
-  UiSlice.actions;
+export const {
+  setRestaurantPageView,
+  setSignInPageLoading,
+  addSnackbar,
+  removeSnackbar,
+} = UiSlice.actions;
 
 export const UiReducer = UiSlice.reducer;

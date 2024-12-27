@@ -2,6 +2,7 @@
 
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
+import { forbidden, unauthorized } from "next/navigation";
 import { hasPermission } from "../../permissions";
 import { getBaseReviewById } from "./base-reviews";
 
@@ -10,7 +11,7 @@ export async function addOrReplaceLikeForReview(
   like: boolean
 ) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
+  if (!currentUser) unauthorized();
   const baseReview = await getBaseReviewById(reviewId);
   if (!baseReview) return null;
   if (
@@ -18,7 +19,7 @@ export async function addOrReplaceLikeForReview(
       authorId: baseReview.authorId,
     })
   )
-    return null;
+    forbidden();
   const previous = (
     await prisma.reviewLike.findFirst({
       where: {
@@ -68,7 +69,7 @@ export async function addOrReplaceLikeForReview(
 
 export async function removeLikeForReview(reviewId: string) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) return null;
+  if (!currentUser) unauthorized();
   const baseReview = await getBaseReviewById(reviewId);
   if (!baseReview) return null;
   if (
@@ -76,7 +77,7 @@ export async function removeLikeForReview(reviewId: string) {
       authorId: baseReview.authorId,
     })
   )
-    return null;
+    forbidden();
   const previous =
     (
       await prisma.reviewLike.findFirst({

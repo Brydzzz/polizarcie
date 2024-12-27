@@ -39,6 +39,7 @@ const SupabaseImage = (props: props) => {
       loader={supabaseImageLoader}
       style={{
         ...props.style,
+        maxWidth: "100%",
         width: mode === "fixedHeight" ? "auto" : undefined,
         height: mode === "fixedWidth" ? "auto" : undefined,
       }}

@@ -1,0 +1,46 @@
+.main {
+  display: flex;
+  flex-direction: row;
+  & > .container {
+    opacity: 1;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    z-index: 0;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding-top: 100px;
+    & > .buttons {
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row;
+      font-size: 40pt;
+      & > .yes {
+        padding: 20px;
+        color: var(--secondary-light);
+      }
+      & > .no {
+        padding: 20px;
+        color: var(--primary);
+      }
+    }
+  }
+
+  & > .back {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    justify-content: center;
+    align-items: right;
+    top: 25%;
+    width: 100%;
+    z-index: -1;
+    & > .card {
+      justify-content: flex-end;
+      opacity: 0.4;
+      padding-right: 100px;
+      padding-left: 100px;
+    }
+  }
+}
