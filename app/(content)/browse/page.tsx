@@ -29,7 +29,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     const update = async () => {
-      const data = await transferWithJSON(getRestaurantsLike, [input]);
+      const data = await transferWithJSON(getRestaurantsLike, [input, filters]);
       updateRestaurants(data);
       return data;
     };
