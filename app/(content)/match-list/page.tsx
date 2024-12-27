@@ -7,7 +7,7 @@ import { Match, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchRequestPage = () => {
-  const [decision, setDec] = useState<number>(0);
+  const [decision, setDec] = useState<boolean>(false);
   const [requests, setRequests] = useState<
     Array<Partial<Match & { userOne: Partial<User> }>>
   >([]);
@@ -21,11 +21,11 @@ const MatchRequestPage = () => {
       setRequests(data);
     };
     fetchReqs();
-  }, [user]);
+  }, [user, decision]);
 
   return (
     <main className={styles.main}>
-      <div className={styles.requests}>
+      <div className={styles.requests} onClick={() => setDec(!decision)}>
         {requests.map((req, idx) =>
           req.userOne ? (
             <MatchRequestCard key={idx} data={req} UserOne={req.userOne} />

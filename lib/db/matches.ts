@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/prisma";
-import { MatchRequest, User } from "@prisma/client";
+import { Match, MatchRequest, User } from "@prisma/client";
 
 export async function matchYesWith(ourId: User["id"], theirId: User["id"]) {
   return await prisma.match.create({
@@ -33,6 +33,40 @@ export async function getPendingRequestsFor(
     },
     include: {
       userOne: true,
+    },
+  });
+}
+
+export async function DenyMatchRequest(
+  userOneId: Match["userOneId"],
+  userTwoId: Match["userTwoId"]
+) {
+  return await prisma.match.update({
+    where: {
+      userOneId_userTwoId: {
+        userOneId: userOneId,
+        userTwoId: userTwoId,
+      },
+    },
+    data: {
+      value: MatchRequest.DENIED,
+    },
+  });
+}
+
+export async function AcceptMatchRequest(
+  userOneId: Match["userOneId"],
+  userTwoId: Match["userTwoId"]
+) {
+  return await prisma.match.update({
+    where: {
+      userOneId_userTwoId: {
+        userOneId: userOneId,
+        userTwoId: userTwoId,
+      },
+    },
+    data: {
+      value: MatchRequest.ACCEPTED,
     },
   });
 }
