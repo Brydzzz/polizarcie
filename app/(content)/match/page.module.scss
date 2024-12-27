@@ -19,10 +19,18 @@
       & > .yes {
         padding: 20px;
         color: var(--secondary-light);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        &:hover {
+          transform: scale(1.1); /* Hover effect to lift the card */
+        }
       }
       & > .no {
         padding: 20px;
         color: var(--primary);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        &:hover {
+          transform: scale(1.1); /* Hover effect to lift the card */
+        }
       }
     }
   }
