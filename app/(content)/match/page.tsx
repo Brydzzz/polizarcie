@@ -106,18 +106,26 @@ const MatchPage = () => {
           </div>
         ) : null}
       </div>
-      <div className={styles.back}>
-        <div className={styles.card}>
-          {users[0] && decision != 0 ? (
-            <MatchCard data={users[0]} likedRests={likedRests[0]} />
-          ) : null}
+      {users[0] && decision != 0 ? (
+        <div className={styles.back}>
+          <div className={styles.card}>
+            {users[0] && decision != 0 ? (
+              <MatchCard data={users[0]} likedRests={likedRests[0]} />
+            ) : null}
+          </div>
+          <div className={styles.card}>
+            {users[2] ? (
+              <MatchCard data={users[2]} likedRests={likedRests[2]} />
+            ) : null}
+          </div>
         </div>
-        <div className={styles.card}>
+      ) : (
+        <div className={styles.oneCard}>
           {users[2] ? (
             <MatchCard data={users[2]} likedRests={likedRests[2]} />
           ) : null}
         </div>
-      </div>
+      )}
     </main>
   );
 };
