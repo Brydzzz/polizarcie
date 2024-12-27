@@ -2,15 +2,15 @@
 import { Match, User } from "@prisma/client";
 import styles from "./match-request.module.scss";
 type Props = {
-  data: Partial<Match & { UserOne: Partial<User> }>;
+  data: Partial<Match>;
+  UserOne: Partial<User>;
 };
 
-const MatchRequestCard = ({ data }: Props) => {
-  const { UserOne } = data;
+const MatchRequestCard = ({ data, UserOne }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.details}>
-        <p className={styles.name}>{UserOne?.name}</p>
+        {UserOne ? <p className={styles.name}>{UserOne.name}</p> : null}
       </div>
     </div>
   );

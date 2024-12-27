@@ -1,0 +1,10 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  & > .requests {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}

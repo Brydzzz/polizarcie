@@ -21,3 +21,18 @@ export async function matchNoWith(ourId: User["id"], theirId: User["id"]) {
     },
   });
 }
+
+export async function getPendingRequestsFor(
+  userId: User["id"],
+  howMany: number
+) {
+  return await prisma.match.findMany({
+    where: {
+      userTwoId: userId,
+      value: MatchRequest.PENDING,
+    },
+    include: {
+      userOne: true,
+    },
+  });
+}
