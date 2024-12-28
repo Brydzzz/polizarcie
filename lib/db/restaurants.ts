@@ -3,6 +3,7 @@
 import { Filters } from "@/components/modals/filter-modal.component";
 import { prisma } from "@/prisma";
 import { getDistance } from "@/utils/coordinates/distance";
+import { isRestaurantOpen } from "@/utils/restaurants";
 import { getCurrentUser } from "@/utils/users";
 import { Address, Image, Restaurant } from "@prisma/client";
 import { forbidden, unauthorized } from "next/navigation";
@@ -51,13 +52,6 @@ export async function getRestaurantsLike(
   const MAX_DISTANCE = 500;
   const results = await Promise.all(
     restaurants.map(async (restaurant) => {
-      const [avgStars, avgPrice] = await Promise.all([
-        getRestaurantAvgStarsById(restaurant.id),
-        getRestaurantAvgAmountSpentById(restaurant.id),
-      ]);
-
-      const stars = avgStars._avg.stars || 0;
-      const price = avgPrice._avg.amountSpent || 0;
       if (
         filters.faculty.x &&
         filters.faculty.y &&
@@ -76,6 +70,16 @@ export async function getRestaurantsLike(
           return null;
         }
       }
+
+      if (filters.isOpen && !isRestaurantOpen(restaurant)) return null;
+
+      const [avgStars, avgPrice] = await Promise.all([
+        getRestaurantAvgStarsById(restaurant.id),
+        getRestaurantAvgAmountSpentById(restaurant.id),
+      ]);
+
+      const stars = avgStars._avg.stars || 0;
+      const price = avgPrice._avg.amountSpent || 0;
       console.log(
         `Restaurant: ${restaurant.name}, AvgStars: ${stars}, AvgPrice: ${price},`
       );
