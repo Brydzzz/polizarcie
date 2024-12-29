@@ -87,13 +87,13 @@ const MatchPage = () => {
     <main className={styles.main}>
       <div className={styles.container}>
         <div>
-          {decision == 0 && users[0] ? (
+          {!first && users[0] ? (
             <MatchCard data={users[0]} likedRests={likedRests[0]} />
-          ) : decision != 0 && users[1] ? (
+          ) : first && users[1] ? (
             <MatchCard data={users[1]} likedRests={likedRests[1]} />
           ) : null}
         </div>
-        {users[1] || (users[0] && decision == 0) ? (
+        {users[1] || (users[0] && !first) ? (
           <div className={styles.buttons}>
             <div className={styles.yes}>
               <i
@@ -125,17 +125,19 @@ const MatchPage = () => {
           </div>
           <div className={styles.card}>
             {users[2] ? (
-              <MatchCard data={users[2]} likedRests={likedRests[2]} />
-            ) : users[1] && first ? (
+              <div className={styles.card}>
+                <MatchCard data={users[2]} likedRests={likedRests[2]} />
+              </div>
+            ) : users[1] && !first ? (
               <MatchCard data={users[1]} likedRests={likedRests[1]} />
             ) : null}
           </div>
         </div>
       ) : (
         <div className={styles.oneCard}>
-          {users[2] ? (
+          {users[2] && first ? (
             <MatchCard data={users[2]} likedRests={likedRests[2]} />
-          ) : users[1] && first ? (
+          ) : users[1] && !first ? (
             <MatchCard data={users[1]} likedRests={likedRests[1]} />
           ) : null}
         </div>
