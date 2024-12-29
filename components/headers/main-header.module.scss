@@ -34,6 +34,18 @@
   .title {
     margin-left: 30px;
   }
+  & > .options {
+    margin-top: 12pt;
+    display: flex;
+    flex-direction: row;
+    margin-left: 30pt;
+    & > .option {
+      padding-left: 10pt;
+      padding-right: 10pt;
+      font-family: "Gluten", sans-serif;
+      font-weight: bold;
+    }
+  }
 
   .buttons {
     width: 100%;
