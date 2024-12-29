@@ -98,13 +98,21 @@ const RangeInput = ({
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
           <div
             className={styles.dot}
-            style={{ left: `${(value.min / (limit.max - limit.min)) * 100}%` }}
+            style={{
+              left: `${
+                ((value.min - limit.min) / (limit.max - limit.min)) * 100
+              }%`,
+            }}
           >
             <i className="fa-solid fa-caret-right"></i>
           </div>
           <div
             className={styles.dot}
-            style={{ left: `${(value.max / (limit.max - limit.min)) * 100}%` }}
+            style={{
+              left: `${
+                ((value.max - limit.min) / (limit.max - limit.min)) * 100
+              }%`,
+            }}
           >
             <i className="fa-solid fa-caret-left"></i>
           </div>

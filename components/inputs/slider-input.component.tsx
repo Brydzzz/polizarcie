@@ -57,7 +57,9 @@ const SliderInput = ({
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
           <div
             className={styles.dot}
-            style={{ left: `${(value / (limit.max - limit.min)) * 100}%` }}
+            style={{
+              left: `${((value - limit.min) / (limit.max - limit.min)) * 100}%`,
+            }}
           >
             <i className="fa-solid fa-circle-dot"></i>
           </div>
