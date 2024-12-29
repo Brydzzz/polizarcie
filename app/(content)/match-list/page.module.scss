@@ -23,6 +23,9 @@
   & > .contacts {
     margin-left: 20pt;
     margin-right: 20pt;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
     & > .contact {
       padding-top: 5pt;
       padding-bottom: 5pt;

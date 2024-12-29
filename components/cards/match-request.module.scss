@@ -30,13 +30,13 @@
       }
     }
     & > .photoBox {
-      margin-top: 3px;
-      margin-bottom: 3px;
+      padding-top: 10pt;
+      padding-bottom: 10pt;
       width: 20%;
       max-width: 100px;
       overflow: hidden;
       & > .photo {
-        width: 100%;
+        width: 80%;
         aspect-ratio: 1 / 1;
         border: 3px solid var(--background-dark);
         border-radius: 50%;
@@ -52,10 +52,18 @@
       font-size: 30pt;
       color: var(--secondary-light);
       margin-right: 10px;
+      &:hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform: scale(1.1); /* Hover effect to lift the card */
+      }
     }
     & > .no {
       font-size: 30pt;
       color: var(--primary);
+      &:hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform: scale(1.1); /* Hover effect to lift the card */
+      }
     }
   }
 }

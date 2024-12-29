@@ -26,11 +26,29 @@ const MatchRequestPage = () => {
   useEffect(() => {
     const fetchReqs = async () => {
       if (!user) return;
-      const data = await getPendingRequestsFor(user?.id, 3);
+      const data = await getPendingRequestsFor(user?.id, 5);
       setRequests(data);
     };
     fetchReqs();
+    console.log(requests);
   }, [user, decision]);
+
+  // useEffect(() => {
+  //   const fetchReq = async () => {
+  //     if (!user) return;
+  //     const data = await getPendingRequestFor(
+  //       user?.id,
+  //       requests
+  //         .map((request) => request.userOne?.id)
+  //         .filter((id) => id !== undefined) as string[]
+  //     );
+  //     if (data) {
+  //       setRequests((requests) => [...requests, data]);
+  //     }
+  //   };
+  //   fetchReq();
+  //   console.log(requests);
+  // }, [decision]);
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -40,7 +58,6 @@ const MatchRequestPage = () => {
       setContacts(data);
     };
     fetchMatches();
-    console.log(contacts);
   }, [user, decision]);
 
   return loading ? (
