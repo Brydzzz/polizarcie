@@ -36,7 +36,7 @@ const RangeInput = ({
     const left = axis.getBoundingClientRect().left;
     const width = axis.getBoundingClientRect().right - left;
     const percentage = Math.max(0, Math.min((clientX - left) / width, 1));
-    return Math.round((limit.max - limit.min) * percentage);
+    return Math.round((limit.max - limit.min) * percentage) + limit.min;
   };
 
   const minClamp = (value: number): number =>
