@@ -8,6 +8,7 @@ const FilterModalPage = () => {
     minRating: 0,
     sortOption: "name-asc",
     faculty: { value: "none" },
+    facultyDistance: 500,
   };
   return (
     <div

@@ -16,6 +16,7 @@ const SearchPage = () => {
     minRating: 0,
     sortOption: "name-asc",
     faculty: { value: "none", x: undefined, y: undefined },
+    facultyDistance: 400,
   };
   const [filters, setFilters] = useState(filters_default);
   const [rests, updateRestaurants] = useState<RestaurantFull[]>([]);

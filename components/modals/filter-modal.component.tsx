@@ -5,6 +5,7 @@ import Button from "../button/button.component";
 import { ButtonStyle } from "../button/button.types";
 import SelectBox from "../inputs/generic-select.component";
 import RangeInput from "../inputs/range-input.component";
+import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
 import Switch from "../inputs/switch.component";
 import styles from "./filter-modal.module.scss";
@@ -27,6 +28,7 @@ export type Filters = {
     | "rating-desc"
     | "price-desc";
   faculty: Faculty;
+  facultyDistance: number;
 };
 
 export type Faculty = {
@@ -155,6 +157,9 @@ const FilterModal = ({
   const [selectedFaculty, setSelectedFaculty] = useState<Faculty>(
     filters.faculty
   );
+  const [facultyDistance, setFacultyDistance] = useState(
+    filters.facultyDistance
+  );
 
   const handleApply = () => {
     const updatedFilters: Filters = {
@@ -163,6 +168,7 @@ const FilterModal = ({
       minRating: minRating,
       sortOption: selectedSort,
       faculty: selectedFaculty,
+      facultyDistance: facultyDistance,
     };
     onApplyButtonClick ? onApplyButtonClick(updatedFilters) : "";
   };
@@ -180,6 +186,7 @@ const FilterModal = ({
     setMinRating(0);
     setSelectedSort("name-asc");
     setSelectedFaculty({ value: "none" });
+    setFacultyDistance(500);
   };
 
   return (
@@ -233,6 +240,15 @@ const FilterModal = ({
           value={selectedFaculty.value}
           onChange={(e) => handleFacultyChange(e.target.value)}
         ></SelectBox>
+        <SliderInput
+          value={facultyDistance}
+          limit={{ min: 200, max: 900 }}
+          onChange={(v) => setFacultyDistance(v)}
+          step={100}
+          suffix=" m"
+          label="Max. odległość od wydziału"
+          disabled={selectedFaculty.value === "none"}
+        ></SliderInput>
       </div>
       <div className={styles.buttons}>
         <Button style={ButtonStyle.BACKDROP} onClick={clearFilters}>

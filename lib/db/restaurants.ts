@@ -99,7 +99,6 @@ export async function getRestaurantsLike(
 
   console.log(`"Found restaurants:", ${restaurants.length}`);
 
-  const MAX_DISTANCE = 500;
   const results = await Promise.all(
     restaurants.map(async (restaurant) => {
       // distance filter
@@ -116,7 +115,7 @@ export async function getRestaurantsLike(
           Number(restaurant.address?.xCoords)
         );
         console.log(`Distance ${distanceTo}`);
-        if (distanceTo > MAX_DISTANCE) {
+        if (distanceTo > filters.facultyDistance) {
           console.log(`Skipping restaurant:, ${restaurant.name}`);
           return null;
         }
