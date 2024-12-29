@@ -17,6 +17,7 @@ type Props = {
   step?: number;
   suffix?: string;
   label?: string;
+  disabled?: boolean;
 };
 
 const RangeInput = ({
@@ -28,6 +29,7 @@ const RangeInput = ({
   step,
   suffix,
   label,
+  disabled,
 }: Props) => {
   const axisRef = useRef<HTMLDivElement>();
   const [selectedDot, setSelectedDot] = useState(false); // false for min, true for max
@@ -69,6 +71,7 @@ const RangeInput = ({
   };
 
   const handleOnMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.buttons !== 1) return; // if left mouse button not clicked
     const dotValue = axisValueAt(e.clientX);
 
@@ -78,19 +81,21 @@ const RangeInput = ({
   };
 
   const handleMouseUp = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.buttons === 1) return; // if left mouse button still clicked
     const dotValue = axisValueAt(e.clientX);
     updateValue(dotValue);
   };
 
   const handleOnMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.buttons !== 1) return; // if left mouse button not clicked
     const dotValue = axisValueAt(e.clientX);
     updateValue(dotValue);
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       <div
         className={styles.range}
         onMouseDown={handleOnMouseDown}

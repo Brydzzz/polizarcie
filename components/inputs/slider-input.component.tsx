@@ -17,6 +17,7 @@ type Props = {
   step?: number;
   suffix?: string;
   label?: string;
+  disabled?: boolean;
 };
 
 const SliderInput = ({
@@ -28,6 +29,7 @@ const SliderInput = ({
   step,
   suffix,
   label,
+  disabled,
 }: Props) => {
   const axisRef = useRef<HTMLDivElement>();
 
@@ -49,12 +51,13 @@ const SliderInput = ({
     Math.max(limit.min, Math.min(value, limit.max));
 
   const handleOnMouseEvent = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.buttons !== 1) return; // if left mouse button not clicked
     const dotValue = axisValueAt(e.clientX);
     onChange(clamp(dotValue));
   };
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       <div
         className={styles.slider}
         onMouseMove={handleOnMouseEvent}
