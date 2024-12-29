@@ -1,89 +1,157 @@
 "use client";
 import MatchCard from "@/components/cards/match-card-component";
+import LoaderBlur from "@/components/misc/loader-blur.component";
+import LoginNeeded from "@/components/misc/login-needed.component";
 import { matchNoWith, matchYesWith } from "@/lib/db/matches";
-import { getUnmatchedUser, getUnmatchedUsers } from "@/lib/db/users";
+import {
+  getTopLikedRests,
+  getTopLikedRestsForUsers,
+  getUnmatchedUser,
+  getUnmatchedUsers,
+} from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
-import { selectCurrentUser } from "@/lib/store/user/user.selector";
-import { User } from "@prisma/client";
+import {
+  selectCurrentUser,
+  selectUserLoading,
+} from "@/lib/store/user/user.selector";
+import { Restaurant, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchPage = () => {
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
+  const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
-  // const [user1, setUser1] = useState<User | undefined>();
+  const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
   const user = useAppSelector(selectCurrentUser);
-
+  const loading = useAppSelector(selectUserLoading);
   const pushUnmatchedUser = async () => {
     if (!user) return;
-    console.log(users.map((usr) => usr.id));
     const data = await getUnmatchedUser(
-      user.id,
+      user,
       users.map((usr) => usr.id)
     );
-    console.log(data);
     if (!data) return;
+    const rests = await getTopLikedRests(data.id);
+    if (rests) {
+      setLikedRests((likedRests) => [...likedRests, rests]);
+    }
     setUsers((users) => [...users, data]);
   };
   useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
-      const data = await getUnmatchedUsers(user.id, [], 4);
-      console.log(data);
+      const data = await getUnmatchedUsers(user, [], 4);
       setUsers(data);
+      if (data) {
+        const rests = await getTopLikedRestsForUsers(data.map((usr) => usr.id));
+        if (rests) {
+          setLikedRests(rests);
+        }
+      }
     };
     initUsers();
-  }, [user]);
+  }, [user, loading]);
 
   useEffect(() => {
     const match = async () => {
-      if (!user || !users[1]) return;
-      if (decision == 1) {
-        matchYesWith(user.id, users[1].id);
+      if (
+        !user ||
+        (first == false && !users[0]) ||
+        (first == true && !users[1])
+      )
+        return;
+      if (decision == 1 && first == false) {
+        await matchYesWith(user.id, users[0].id);
+      } else if (decision == 1 && first == true) {
+        await matchYesWith(user.id, users[1].id);
+      } else if (decision == 2 && first == false) {
+        await matchNoWith(user.id, users[0].id);
+      } else if (decision == 2 && first == true) {
+        await matchNoWith(user.id, users[1].id);
+      }
+      if (first) {
+        setLikedRests((likedRests) => {
+          return likedRests.slice(1);
+        });
+        setUsers((users) => {
+          return users.slice(1);
+        });
+        await pushUnmatchedUser();
       } else {
-        matchNoWith(user.id, users[1].id);
+        setFirst(true);
       }
     };
     match();
-    setUsers((users) => {
-      return users.slice(1);
-    });
-    pushUnmatchedUser();
     console.log(users);
   }, [next]);
 
-  return (
+  return loading ? (
+    <LoaderBlur />
+  ) : user ? (
     <main className={styles.main}>
       <div className={styles.container}>
-        <div>{users[1] ? <MatchCard data={users[1]} /> : null}</div>
-        <div className={styles.buttons}>
-          <div className={styles.yes}>
-            <i
-              className="fa-solid fa-square-check"
-              onClick={() => {
-                goNext(!next);
-                setDec(1);
-              }}
-            ></i>
-          </div>
-          <div className={styles.no}>
-            <i
-              className="fa-solid fa-square-xmark"
-              onClick={() => {
-                goNext(!next);
-                setDec(2);
-              }}
-            ></i>
-          </div>
+        <div>
+          {!first && users[0] ? (
+            <MatchCard data={users[0]} likedRests={likedRests[0]} />
+          ) : first && users[1] ? (
+            <MatchCard data={users[1]} likedRests={likedRests[1]} />
+          ) : null}
         </div>
+        {users[1] || (users[0] && !first) ? (
+          <div className={styles.buttons}>
+            <div className={styles.yes}>
+              <i
+                className="fa-solid fa-square-check"
+                onClick={() => {
+                  goNext(!next);
+                  setDec(1);
+                }}
+              ></i>
+            </div>
+            <div className={styles.no}>
+              <i
+                className="fa-solid fa-square-xmark"
+                onClick={() => {
+                  goNext(!next);
+                  setDec(2);
+                }}
+              ></i>
+            </div>
+          </div>
+        ) : null}
       </div>
-      <div className={styles.back}>
-        <div className={styles.card}>
-          {users[0] && decision != 0 ? <MatchCard data={users[0]} /> : null}
+      {users[0] && first ? (
+        <div className={styles.back}>
+          <div className={styles.card}>
+            {users[0] && first ? (
+              <MatchCard data={users[0]} likedRests={likedRests[0]} />
+            ) : null}
+          </div>
+          <div className={styles.card}>
+            {users[2] ? (
+              <div className={styles.card}>
+                <MatchCard data={users[2]} likedRests={likedRests[2]} />
+              </div>
+            ) : users[1] && !first ? (
+              <MatchCard data={users[1]} likedRests={likedRests[1]} />
+            ) : null}
+          </div>
         </div>
-        <div className={styles.card}>
-          {users[2] ? <MatchCard data={users[2]} /> : null}
+      ) : (
+        <div className={styles.oneCard}>
+          {users[2] && first ? (
+            <MatchCard data={users[2]} likedRests={likedRests[2]} />
+          ) : users[1] && !first ? (
+            <MatchCard data={users[1]} likedRests={likedRests[1]} />
+          ) : null}
         </div>
+      )}
+    </main>
+  ) : (
+    <main className={styles.main}>
+      <div className={styles.login}>
+        <LoginNeeded />
       </div>
     </main>
   );

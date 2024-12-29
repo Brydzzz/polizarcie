@@ -2,7 +2,7 @@
 
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { Restaurant, User } from "@prisma/client";
+import { MatchRequest, Restaurant, User } from "@prisma/client";
 import { unauthorized } from "next/navigation";
 import {
   clearUserPasswordCache,
@@ -27,20 +27,19 @@ export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
   });
 }
 
-export async function getUnmatchedUser(
-  userId: User["id"],
-  excludeIds: User["id"][]
-) {
+export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
   return await prisma.user.findFirst({
     where: {
-      id: { not: userId },
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
       AND: [
         {
           userOneMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -51,8 +50,8 @@ export async function getUnmatchedUser(
           userTwoMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -60,29 +59,64 @@ export async function getUnmatchedUser(
           },
         },
         {
-          id: { notIn: excludeIds }, // Exclude users directly as well.
+          id: { notIn: excludeIds },
         },
       ],
     },
   });
 }
 
+export async function getUsersMatchedWith(userId: User["id"]) {
+  return await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+      OR: [
+        {
+          userOneMatch: {
+            some: {
+              AND: [
+                { OR: [{ userOneId: userId }, { userTwoId: userId }] },
+                { value: MatchRequest.ACCEPTED },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            some: {
+              AND: [
+                { OR: [{ userOneId: userId }, { userTwoId: userId }] },
+                { value: MatchRequest.ACCEPTED },
+              ],
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      medias: true,
+    },
+  });
+}
+
 export async function getUnmatchedUsers(
-  userId: User["id"],
+  user: User,
   excludeIds: User["id"][],
   howMany: number
 ) {
   return await prisma.user.findMany({
     take: howMany,
     where: {
-      id: { not: userId },
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
       AND: [
         {
           userOneMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -93,8 +127,8 @@ export async function getUnmatchedUsers(
           userTwoMatch: {
             none: {
               OR: [
-                { userOneId: userId },
-                { userTwoId: userId },
+                { userOneId: user.id },
+                { userTwoId: user.id },
                 { userOneId: { in: excludeIds } },
                 { userTwoId: { in: excludeIds } },
               ],
@@ -102,7 +136,7 @@ export async function getUnmatchedUsers(
           },
         },
         {
-          id: { notIn: excludeIds }, // Exclude users directly as well.
+          id: { notIn: excludeIds },
         },
       ],
     },
@@ -134,7 +168,7 @@ export async function checkIfRestLikedByUser(
 }
 
 export async function getTopLikedRests(userId: User["id"]) {
-  return await prisma.restaurant.findMany({
+  const liked = await prisma.restaurant.findMany({
     where: {
       favoriteAmong: {
         some: {
@@ -147,6 +181,36 @@ export async function getTopLikedRests(userId: User["id"]) {
       favoriteAmong: true,
     },
   });
+  return liked.sort((a, b) => {
+    const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    return aRanking - bRanking;
+  });
+}
+
+export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
+  return await Promise.all(
+    usersIDs.map(async (userId) => {
+      const userTopLiked = await prisma.restaurant.findMany({
+        where: {
+          favoriteAmong: {
+            some: {
+              userId: userId,
+              rankingPosition: { in: [1, 2, 3] },
+            },
+          },
+        },
+        include: {
+          favoriteAmong: true,
+        },
+      });
+      return userTopLiked.sort((a, b) => {
+        const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        return aRanking - bRanking;
+      });
+    })
+  );
 }
 
 export async function getUserByEmail(email: User["email"]) {

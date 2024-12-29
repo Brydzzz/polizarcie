@@ -210,9 +210,10 @@ model Follow {
 model Match {
     userOneId String
     userTwoId String
-    userOne   User    @relation(name: "matchUserOne", fields: [userOneId], references: [id], onDelete: Cascade)
-    userTwo   User    @relation(name: "matchUserTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
-    value     Boolean
+    userOne   User         @relation(name: "matchUserOne", fields: [userOneId], references: [id], onDelete: Cascade)
+    userTwo   User         @relation(name: "matchUserTwo", fields: [userTwoId], references: [id], onDelete: Cascade)
+    value     MatchRequest
+    sentAt    DateTime     @default(now()) @db.Timestamp()
 
     @@id([userOneId, userTwoId])
 }
@@ -303,4 +304,10 @@ enum DishType {
     OTHER
     DRINK
     SIDE
+}
+
+enum MatchRequest {
+    ACCEPTED
+    DENIED
+    PENDING
 }

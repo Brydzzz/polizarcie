@@ -1,0 +1,18 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+  --bg-local: rgba(61, 41, 53, 0.7);
+  background-color: var(--bg-local);
+  border: 2px solid var(--primary-dark);
+  border-radius: 8px;
+  & > .message {
+    padding: 20pt;
+    font-size: 20pt;
+  }
+  & > .button {
+    padding: 50pt;
+  }
+}

@@ -1,0 +1,69 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  // align-items: center;
+  justify-content: space-between;
+  --bg-local: rgba(61, 41, 53, 0.7);
+  border: 1px solid var(--primary-background-fade-1);
+  border-radius: 8px;
+  background-color: var(--bg-local);
+  min-width: 300px;
+  width: 100%;
+  height: 100%;
+  & > .left {
+    display: flex;
+    flex-direction: row;
+    padding-left: 10pt;
+    width: 30%;
+    & > .namebox {
+      display: flex;
+      align-items: center;
+      & > .name {
+        display: flex;
+        align-items: center;
+        padding-top: 5px;
+        padding-bottom: 5pt;
+        padding-left: 10pt;
+        font-size: 15pt;
+        color: var(--text);
+        height: calc(10%);
+      }
+    }
+    & > .photoBox {
+      padding-top: 10pt;
+      padding-bottom: 10pt;
+      width: 20%;
+      max-width: 100px;
+      overflow: hidden;
+      & > .photo {
+        width: 80%;
+        aspect-ratio: 1 / 1;
+        border: 3px solid var(--background-dark);
+        border-radius: 50%;
+      }
+    }
+  }
+  & > .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 30pt;
+    & > .yes {
+      font-size: 30pt;
+      color: var(--secondary-light);
+      margin-right: 10px;
+      &:hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform: scale(1.1); /* Hover effect to lift the card */
+      }
+    }
+    & > .no {
+      font-size: 30pt;
+      color: var(--primary);
+      &:hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transform: scale(1.1); /* Hover effect to lift the card */
+      }
+    }
+  }
+}
