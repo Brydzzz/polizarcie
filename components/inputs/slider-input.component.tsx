@@ -14,6 +14,7 @@ type Props = {
   value: number;
   limit: Range;
   onChange: (value: number) => void;
+  step?: number;
   suffix?: string;
   label?: string;
 };
@@ -24,6 +25,7 @@ const SliderInput = ({
   value,
   limit,
   onChange,
+  step,
   suffix,
   label,
 }: Props) => {
@@ -35,7 +37,12 @@ const SliderInput = ({
     const left = axis.getBoundingClientRect().left;
     const width = axis.getBoundingClientRect().right - left;
     const percentage = Math.max(0, Math.min((clientX - left) / width, 1));
-    return Math.round((limit.max - limit.min) * percentage) + limit.min;
+    return (
+      Math.round(
+        Math.round(((limit.max - limit.min) * percentage) / (step || 1)) *
+          (step || 1)
+      ) + limit.min
+    );
   };
 
   const clamp = (value: number) =>

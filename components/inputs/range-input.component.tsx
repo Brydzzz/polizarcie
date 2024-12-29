@@ -14,6 +14,7 @@ type Props = {
   value: Range;
   limit: Range;
   onChange: (value: Range) => void;
+  step?: number;
   suffix?: string;
   label?: string;
 };
@@ -24,6 +25,7 @@ const RangeInput = ({
   value,
   limit,
   onChange,
+  step,
   suffix,
   label,
 }: Props) => {
@@ -36,7 +38,12 @@ const RangeInput = ({
     const left = axis.getBoundingClientRect().left;
     const width = axis.getBoundingClientRect().right - left;
     const percentage = Math.max(0, Math.min((clientX - left) / width, 1));
-    return Math.round((limit.max - limit.min) * percentage) + limit.min;
+    return (
+      Math.round(
+        Math.round(((limit.max - limit.min) * percentage) / (step || 1)) *
+          (step || 1)
+      ) + limit.min
+    );
   };
 
   const minClamp = (value: number): number =>
