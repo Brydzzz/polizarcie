@@ -49,15 +49,14 @@ const SearchPage = () => {
   );
   return (
     <main className={styles.container}>
+      <div className={`${isModalVisible ? styles.overlay : ""}`}></div>
       {isModalVisible && (
-        <div className={`${isModalVisible ? styles.overlay : ""}`}>
-          <div className={styles.filterModal}>
-            <FilterModal
-              filters={filters}
-              onApplyButtonClick={handleFilterChange}
-              onCancelButtonClick={() => setIsModalVisible(false)}
-            />
-          </div>
+        <div className={styles.filterModal}>
+          <FilterModal
+            filters={filters}
+            onApplyButtonClick={handleFilterChange}
+            onCancelButtonClick={() => setIsModalVisible(false)}
+          />
         </div>
       )}
       <h1>Jedzonko w okolicy</h1>

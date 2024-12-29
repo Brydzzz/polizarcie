@@ -221,19 +221,21 @@ const FilterModal = ({
           suffix=" zł"
           label="Cena na osobę"
         ></RangeInput>
-        <div className={styles.rating}>
-          <h3>Minimalna Ocena</h3>
-          <StarInput
-            value={minRating}
-            max={5}
-            onChange={setMinRating}
-          ></StarInput>
+        <div className={styles.shortInputs}>
+          <div className={styles.rating}>
+            <h3>Minimalna Ocena</h3>
+            <StarInput
+              value={minRating}
+              max={5}
+              onChange={setMinRating}
+            ></StarInput>
+          </div>
+          <Switch
+            label="Otwarte Teraz"
+            checked={isOpen}
+            onChange={setIsOpen}
+          ></Switch>
         </div>
-        <Switch
-          label="Otwarte Teraz"
-          checked={isOpen}
-          onChange={setIsOpen}
-        ></Switch>
         <SelectBox
           label="Wydział"
           options={facultyOptions}

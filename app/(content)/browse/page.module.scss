@@ -39,7 +39,9 @@
 
 .filterModal {
   z-index: 4;
-  margin-top: 110px;
+  position: fixed;
+  top: 130px;
+  left: auto;
 }
 
 .overlay {
@@ -51,7 +53,4 @@
   top: 0;
   left: 0;
   z-index: 3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
