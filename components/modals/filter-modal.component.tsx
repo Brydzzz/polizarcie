@@ -19,7 +19,13 @@ export type Filters = {
   priceRange: { min: number; max: number };
   isOpen: boolean;
   minRating: number;
-  sortOption: "name" | "rating" | "price";
+  sortOption:
+    | "name-asc"
+    | "rating-asc"
+    | "price-asc"
+    | "name-desc"
+    | "rating-desc"
+    | "price-desc";
   faculty: Faculty;
 };
 
@@ -35,9 +41,12 @@ const FilterModal = ({
   onApplyButtonClick,
 }: Props) => {
   const sortOptions = [
-    { name: "Nazwa", value: "name" },
-    { name: "Ocena", value: "rating" },
-    { name: "Cena na osobę", value: "price" },
+    { name: "Nazwa (Rosnąco)", value: "name-asc" },
+    { name: "Nazwa (Malejąco)", value: "name-desc" },
+    { name: "Ocena (Rosnąco)", value: "rating-asc" },
+    { name: "Ocena (Malejąco)", value: "rating-desc" },
+    { name: "Cena na osobę (Rosnąco)", value: "price-asc" },
+    { name: "Cena na osobę (Malejąco)", value: "price-desc" },
   ];
 
   const facultyOptions = [
@@ -135,9 +144,14 @@ const FilterModal = ({
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [isOpen, setIsOpen] = useState(filters.isOpen);
   const [minRating, setMinRating] = useState(filters.minRating);
-  const [selectedSort, setSelectedSort] = useState<"name" | "rating" | "price">(
-    filters.sortOption
-  );
+  const [selectedSort, setSelectedSort] = useState<
+    | "name-asc"
+    | "rating-asc"
+    | "price-asc"
+    | "name-desc"
+    | "rating-desc"
+    | "price-desc"
+  >(filters.sortOption);
   const [selectedFaculty, setSelectedFaculty] = useState<Faculty>(
     filters.faculty
   );
@@ -164,7 +178,7 @@ const FilterModal = ({
     setPriceRange({ min: 0, max: 100 });
     setIsOpen(false);
     setMinRating(0);
-    setSelectedSort("name");
+    setSelectedSort("name-asc");
     setSelectedFaculty({ value: "none" });
   };
 
@@ -182,7 +196,15 @@ const FilterModal = ({
           options={sortOptions}
           value={selectedSort}
           onChange={(e) =>
-            setSelectedSort(e.target.value as "name" | "rating" | "price")
+            setSelectedSort(
+              e.target.value as
+                | "name-asc"
+                | "rating-asc"
+                | "price-asc"
+                | "name-desc"
+                | "rating-desc"
+                | "price-desc"
+            )
           }
         ></SelectBox>
         <RangeInput

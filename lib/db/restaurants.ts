@@ -34,16 +34,30 @@ export async function getRestaurantsLike(
   console.log(`Search started with query:, ${query}`);
   console.log(`Filters:, ${JSON.stringify(filters)}`);
 
-  let orderBy: { [key: string]: "asc" | "desc" } = {};
+  let orderBy: {
+    [key: string]:
+      | "asc"
+      | "desc"
+      | { sort: "asc" | "desc"; nulls: "first" | "last" };
+  } = {};
   switch (filters.sortOption) {
-    case "name":
+    case "name-asc":
       orderBy = { name: "asc" };
       break;
-    case "rating":
-      orderBy = { averageStars: "asc" };
+    case "rating-asc":
+      orderBy = { averageStars: { sort: "asc", nulls: "first" } };
       break;
-    case "price":
-      orderBy = { averageStars: "asc" };
+    case "price-asc":
+      orderBy = { averageAmountSpent: { sort: "asc", nulls: "first" } };
+      break;
+    case "name-desc":
+      orderBy = { name: "desc" };
+      break;
+    case "rating-desc":
+      orderBy = { averageStars: { sort: "desc", nulls: "last" } };
+      break;
+    case "price-desc":
+      orderBy = { averageAmountSpent: { sort: "desc", nulls: "last" } };
       break;
   }
 

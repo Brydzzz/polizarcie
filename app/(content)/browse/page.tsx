@@ -14,7 +14,7 @@ const SearchPage = () => {
     priceRange: { min: 0, max: 100 },
     isOpen: false,
     minRating: 0,
-    sortOption: "name",
+    sortOption: "name-asc",
     faculty: { value: "none", x: undefined, y: undefined },
   };
   const [filters, setFilters] = useState(filters_default);

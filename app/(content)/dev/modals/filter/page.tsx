@@ -6,7 +6,7 @@ const FilterModalPage = () => {
     priceRange: { min: 0, max: 100 },
     isOpen: false,
     minRating: 0,
-    sortOption: "name",
+    sortOption: "name-asc",
     faculty: { value: "none" },
   };
   return (
