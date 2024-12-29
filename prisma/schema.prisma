@@ -36,8 +36,8 @@ model User {
     reviewLikes          ReviewLike[]
     writtenReviews       BaseReview[]
     uploadedImages       Image[]
-    userOneMatch Match[] @relation(name: "matchUserOne")
-    userTwoMatch Match[] @relation(name: "matchUserTwo")
+    userOneMatch         Match[]                  @relation(name: "matchUserOne")
+    userTwoMatch         Match[]                  @relation(name: "matchUserTwo")
 }
 
 model UserPasswordHash {
@@ -155,10 +155,8 @@ model BaseReview {
     images      Image[]
 
     // Possible dependents
-    restaurantReview           RestaurantReview?
-    restaurantReviewBaseDataId String?
-    dishReview                 DishReview?
-    dishReviewBaseDataId       String?
+    restaurantReview RestaurantReview?
+    dishReview       DishReview?
 }
 
 model RestaurantReview {

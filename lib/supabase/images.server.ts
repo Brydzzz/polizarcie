@@ -1,6 +1,7 @@
 import { randomString } from "@/utils/misc";
 import { createClient } from "@supabase/supabase-js";
 import "server-only";
+import slugify from "slugify";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -28,9 +29,9 @@ export async function uploadImages(
   for (const { path, imageBody } of images) {
     const parts = path.split(".");
     const extension = parts.pop();
-    const randomizedPath = `${parts.join(".")}-${randomString(
-      10
-    )}.${extension}`;
+    const randomizedPath = slugify(
+      `${parts.join(".")}-${randomString(10)}.${extension}`
+    );
 
     const { data, error } = await supabase.storage
       .from(`${process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME}/images`)
