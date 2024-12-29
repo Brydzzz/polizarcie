@@ -3,6 +3,7 @@
 .main {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
   & > .container {
     opacity: 1;
     width: 100%;
@@ -63,5 +64,12 @@
     opacity: 0.4;
     padding-right: 100px;
     padding-left: 100px;
+  }
+  .login {
+    margin-top: 100pt;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
   }
 }

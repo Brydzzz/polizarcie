@@ -1,10 +1,15 @@
 "use client";
 import ContactCard from "@/components/cards/contact-card.component.tsx";
 import MatchRequestCard from "@/components/cards/match-request.component";
+import LoaderBlur from "@/components/misc/loader-blur.component";
+import LoginNeeded from "@/components/misc/login-needed.component";
 import { getPendingRequestsFor } from "@/lib/db/matches";
 import { getUsersMatchedWith } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
-import { selectCurrentUser } from "@/lib/store/user/user.selector";
+import {
+  selectCurrentUser,
+  selectUserLoading,
+} from "@/lib/store/user/user.selector";
 import { Match, User, UserMedia } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
@@ -17,6 +22,7 @@ const MatchRequestPage = () => {
     Array<Partial<User & { medias: Partial<UserMedia>[] }>>
   >([]);
   const user = useAppSelector(selectCurrentUser);
+  const loading = useAppSelector(selectUserLoading);
   useEffect(() => {
     const fetchReqs = async () => {
       if (!user) return;
@@ -37,7 +43,9 @@ const MatchRequestPage = () => {
     console.log(contacts);
   }, [user, decision]);
 
-  return (
+  return loading ? (
+    <LoaderBlur />
+  ) : user ? (
     <main className={styles.main}>
       <div className={styles.prompt}>
         <p>Zainteresowani wspólnym pożeraniem: </p>
@@ -66,6 +74,12 @@ const MatchRequestPage = () => {
             </div>
           )
         )}
+      </div>
+    </main>
+  ) : (
+    <main className={styles.mainlog}>
+      <div className={styles.login}>
+        <LoginNeeded />
       </div>
     </main>
   );

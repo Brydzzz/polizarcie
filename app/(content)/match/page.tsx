@@ -1,5 +1,7 @@
 "use client";
 import MatchCard from "@/components/cards/match-card-component";
+import LoaderBlur from "@/components/misc/loader-blur.component";
+import LoginNeeded from "@/components/misc/login-needed.component";
 import { matchNoWith, matchYesWith } from "@/lib/db/matches";
 import {
   getTopLikedRests,
@@ -8,7 +10,10 @@ import {
   getUnmatchedUsers,
 } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
-import { selectCurrentUser } from "@/lib/store/user/user.selector";
+import {
+  selectCurrentUser,
+  selectUserLoading,
+} from "@/lib/store/user/user.selector";
 import { Restaurant, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
@@ -18,9 +23,8 @@ const MatchPage = () => {
   const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
-  // const [user1, setUser1] = useState<User | undefined>();
   const user = useAppSelector(selectCurrentUser);
-
+  const loading = useAppSelector(selectUserLoading);
   const pushUnmatchedUser = async () => {
     if (!user) return;
     const data = await getUnmatchedUser(
@@ -47,8 +51,7 @@ const MatchPage = () => {
       }
     };
     initUsers();
-    console.log(users);
-  }, [user]);
+  }, [user, loading]);
 
   useEffect(() => {
     const match = async () => {
@@ -83,7 +86,9 @@ const MatchPage = () => {
     console.log(users);
   }, [next]);
 
-  return (
+  return loading ? (
+    <LoaderBlur />
+  ) : user ? (
     <main className={styles.main}>
       <div className={styles.container}>
         <div>
@@ -142,6 +147,12 @@ const MatchPage = () => {
           ) : null}
         </div>
       )}
+    </main>
+  ) : (
+    <main className={styles.main}>
+      <div className={styles.login}>
+        <LoginNeeded />
+      </div>
     </main>
   );
 };

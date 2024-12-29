@@ -22,6 +22,7 @@ const RestaurantLiked = ({ restId }: Props) => {
       return data;
     };
     update();
+    console.log(user);
   }, [user]);
   useEffect(() => {
     const update = async () => {
@@ -37,7 +38,11 @@ const RestaurantLiked = ({ restId }: Props) => {
     };
     update();
   }, [liked]);
-  return <HeartInput liked={liked} heartSize="30pt" onChange={setLiked} />;
+  return user ? (
+    <HeartInput liked={liked} heartSize="30pt" onChange={setLiked} />
+  ) : (
+    <HeartInput liked={liked} heartSize="30pt" disabled />
+  );
 };
 
 export default RestaurantLiked;

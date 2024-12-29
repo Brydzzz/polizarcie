@@ -29,3 +29,15 @@
     }
   }
 }
+.mainlog {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  & > .login {
+    margin-top: 100pt;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+  }
+}
