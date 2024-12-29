@@ -126,9 +126,6 @@ export async function getRestaurantsLike(
         return null;
       }
 
-      // isOpen filter
-      if (filters.isOpen && !isRestaurantOpen(restaurant)) return null;
-
       console.log(
         `Adding restaurant: ${restaurant.name} x: ${restaurant.address?.xCoords} y: ${restaurant.address?.yCoords}`
       );
