@@ -9,10 +9,6 @@ import { Address, Image, Restaurant } from "@prisma/client";
 import { forbidden, unauthorized } from "next/navigation";
 import { hasPermission } from "../permissions";
 import { getImagesByPaths } from "./images";
-import {
-  getRestaurantAvgAmountSpentById,
-  getRestaurantAvgStarsById,
-} from "./reviews/restaurant-reviews";
 
 const FULL_INCLUDE_PRESET = {
   address: true,
@@ -37,6 +33,20 @@ export async function getRestaurantsLike(
 ): Promise<RestaurantFull[]> {
   console.log(`Search started with query:, ${query}`);
   console.log(`Filters:, ${JSON.stringify(filters)}`);
+
+  let orderBy: { [key: string]: "asc" | "desc" } = {};
+  switch (filters.sortOption) {
+    case "name":
+      orderBy = { name: "asc" };
+      break;
+    case "rating":
+      orderBy = { averageStars: "asc" };
+      break;
+    case "price":
+      orderBy = { averageStars: "asc" };
+      break;
+  }
+
   const restaurants = await prisma.restaurant.findMany({
     include: FULL_INCLUDE_PRESET,
     where: {
@@ -46,12 +56,39 @@ export async function getRestaurantsLike(
         },
         { address: { name: { contains: query, mode: "insensitive" } } },
       ],
+      AND: [
+        {
+          OR: [
+            {
+              averageAmountSpent: {
+                gte: filters.priceRange.min,
+                lte: filters.priceRange.max,
+              },
+            },
+            { averageAmountSpent: null },
+          ],
+        },
+        {
+          OR: [
+            {
+              averageStars: {
+                gte: filters.minRating,
+              },
+            },
+            { averageStars: null },
+          ],
+        },
+      ],
     },
+    orderBy: orderBy,
   });
+
   console.log(`"Found restaurants:", ${restaurants.length}`);
+
   const MAX_DISTANCE = 500;
   const results = await Promise.all(
     restaurants.map(async (restaurant) => {
+      // distance filter
       if (
         filters.faculty.x &&
         filters.faculty.y &&
@@ -71,30 +108,31 @@ export async function getRestaurantsLike(
         }
       }
 
+      // isOpen filter
+      if (filters.isOpen && !isRestaurantOpen(restaurant)) {
+        console.log(`Skipping restaurant:, ${restaurant.name}`);
+        return null;
+      }
+
+      // Handle null values
+      const priceFiltersOff =
+        filters.priceRange.min == 0 && filters.priceRange.max == 100;
+      if (!priceFiltersOff && !restaurant.averageAmountSpent) {
+        console.log(`Skipping restaurant:, ${restaurant.name}`);
+        return null;
+      }
+      if (!restaurant.averageStars && filters.minRating !== 0) {
+        console.log(`Skipping restaurant:, ${restaurant.name}`);
+        return null;
+      }
+
+      // isOpen filter
       if (filters.isOpen && !isRestaurantOpen(restaurant)) return null;
 
-      const [avgStars, avgPrice] = await Promise.all([
-        getRestaurantAvgStarsById(restaurant.id),
-        getRestaurantAvgAmountSpentById(restaurant.id),
-      ]);
-
-      const stars = avgStars._avg.stars || 0;
-      const price = avgPrice._avg.amountSpent || 0;
       console.log(
-        `Restaurant: ${restaurant.name}, AvgStars: ${stars}, AvgPrice: ${price},`
+        `Adding restaurant: ${restaurant.name} x: ${restaurant.address?.xCoords} y: ${restaurant.address?.yCoords}`
       );
-      if (
-        stars >= filters.minRating &&
-        price >= filters.priceRange.min &&
-        price <= filters.priceRange.max
-      ) {
-        console.log(
-          `Adding restaurant: ${restaurant.name} x:${restaurant.address?.xCoords} y:${restaurant.address?.yCoords}`
-        );
-        return restaurant;
-      }
-      console.log(`Skipping restaurant:, ${restaurant.name}`);
-      return null;
+      return restaurant;
     })
   );
 
