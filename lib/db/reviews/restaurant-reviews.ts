@@ -175,7 +175,7 @@ export async function createRestaurantReview(data: RestaurantReviewCreator) {
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "create")) forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  return await prisma.baseReview.create({
+  const review = await prisma.baseReview.create({
     data: {
       authorId: currentUser.id,
       restaurantReview: {
@@ -189,6 +189,8 @@ export async function createRestaurantReview(data: RestaurantReviewCreator) {
       },
     },
   });
+  updateRestaurantStats(data.subjectId);
+  return review;
 }
 
 export async function updateRestaurantReview(data: RestaurantReview) {
@@ -197,7 +199,7 @@ export async function updateRestaurantReview(data: RestaurantReview) {
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "edit", baseReview)) forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  return await prisma.restaurantReview.update({
+  const review = await prisma.restaurantReview.update({
     where: { id: data.id },
     data: {
       amountSpent: data.amountSpent,
@@ -206,6 +208,8 @@ export async function updateRestaurantReview(data: RestaurantReview) {
       stars: data.stars,
     },
   });
+  updateRestaurantStats(data.subjectId);
+  return review;
 }
 
 export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
@@ -229,3 +233,40 @@ export async function getRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
     },
   });
 }
+
+export async function updateRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
+  const updatedAvgAmountSpent = await getRestaurantAvgAmountSpentById(id);
+  const newAmountSpent = Number(
+    updatedAvgAmountSpent._avg.amountSpent?.toFixed(2)
+  );
+  return await prisma.restaurant.update({
+    where: { id: id },
+    data: {
+      averageAmountSpent: newAmountSpent,
+    },
+  });
+}
+
+export async function updateRestaurantAvgStarsById(id: Restaurant["id"]) {
+  const updatedAvgStars = await getRestaurantAvgStarsById(id);
+  const newAvgStars = Number(updatedAvgStars._avg.stars?.toFixed(2));
+  return await prisma.restaurant.update({
+    where: { id: id },
+    data: {
+      averageStars: newAvgStars,
+    },
+  });
+}
+
+export async function updateRestaurantStats(id: Restaurant["id"]) {
+  await updateRestaurantAvgAmountSpentById(id);
+  await updateRestaurantAvgStarsById(id);
+}
+
+// export async function deleteRestaurantReview(
+//   reviewId: RestaurantReview["id"],
+//   restaurantId: Restaurant["id"]
+// ) {
+//   await deleteReview(reviewId);
+//   await updateRestaurantStats(restaurantId);
+// }
