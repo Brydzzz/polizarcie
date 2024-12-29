@@ -27,6 +27,7 @@ export async function getPendingRequestsFor(
   howMany: number
 ) {
   return await prisma.match.findMany({
+    take: howMany,
     where: {
       userTwoId: userId,
       value: MatchRequest.PENDING,
@@ -34,8 +35,29 @@ export async function getPendingRequestsFor(
     include: {
       userOne: true,
     },
+    orderBy: {
+      sentAt: "desc",
+    },
   });
 }
+
+// export async function getPendingRequestFor(
+//   userId: User["id"],
+//   excludeIds: User["id"][]
+// ) {
+//   return await prisma.match.findFirst({
+//     where: {
+//       userTwoId: userId,
+//       value: MatchRequest.PENDING,
+//       userTwo: {
+//         AND: [{ id: { not: { in: excludeIds } } }, { id: { not: userId } }],
+//       },
+//     },
+//     include: {
+//       userOne: true,
+//     },
+//   });
+// }
 
 export async function DenyMatchRequest(
   userOneId: Match["userOneId"],
