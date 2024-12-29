@@ -35,11 +35,17 @@ const SearchPage = () => {
     };
     update();
   }, [input, filters]);
-  const middleIndex = Math.ceil(rests.length / 2);
-  const [first_half, second_half] = [
-    rests.slice(0, middleIndex),
-    rests.slice(middleIndex),
-  ];
+  const [firstColumn, secondColumn] = rests.reduce(
+    ([col1, col2], rest, index) => {
+      if (index % 2 === 0) {
+        col1.push(rest);
+      } else {
+        col2.push(rest);
+      }
+      return [col1, col2];
+    },
+    [[], []] as [RestaurantFull[], RestaurantFull[]]
+  );
   return (
     <main className={styles.container}>
       {isModalVisible && (
@@ -65,12 +71,12 @@ const SearchPage = () => {
       />
       <div className={styles.matrix}>
         <div className={styles.column}>
-          {first_half.map((rest, index) => (
+          {firstColumn.map((rest, index) => (
             <RestaurantCard key={index} data={rest}></RestaurantCard>
           ))}
         </div>
         <div className={styles.column}>
-          {second_half.map((rest, index) => (
+          {secondColumn.map((rest, index) => (
             <RestaurantCard key={index} data={rest}></RestaurantCard>
           ))}
         </div>
