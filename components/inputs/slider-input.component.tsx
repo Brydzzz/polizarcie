@@ -14,8 +14,10 @@ type Props = {
   value: number;
   limit: Range;
   onChange: (value: number) => void;
+  step?: number;
   suffix?: string;
   label?: string;
+  disabled?: boolean;
 };
 
 const SliderInput = ({
@@ -24,8 +26,10 @@ const SliderInput = ({
   value,
   limit,
   onChange,
+  step,
   suffix,
   label,
+  disabled,
 }: Props) => {
   const axisRef = useRef<HTMLDivElement>();
 
@@ -35,19 +39,25 @@ const SliderInput = ({
     const left = axis.getBoundingClientRect().left;
     const width = axis.getBoundingClientRect().right - left;
     const percentage = Math.max(0, Math.min((clientX - left) / width, 1));
-    return Math.round((limit.max - limit.min) * percentage);
+    return (
+      Math.round(
+        Math.round(((limit.max - limit.min) * percentage) / (step || 1)) *
+          (step || 1)
+      ) + limit.min
+    );
   };
 
   const clamp = (value: number) =>
     Math.max(limit.min, Math.min(value, limit.max));
 
   const handleOnMouseEvent = (e: MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (e.buttons !== 1) return; // if left mouse button not clicked
     const dotValue = axisValueAt(e.clientX);
     onChange(clamp(dotValue));
   };
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       <div
         className={styles.slider}
         onMouseMove={handleOnMouseEvent}
@@ -57,7 +67,9 @@ const SliderInput = ({
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
           <div
             className={styles.dot}
-            style={{ left: `${(value / (limit.max - limit.min)) * 100}%` }}
+            style={{
+              left: `${((value - limit.min) / (limit.max - limit.min)) * 100}%`,
+            }}
           >
             <i className="fa-solid fa-circle-dot"></i>
           </div>

@@ -2,6 +2,22 @@
   position: relative;
   width: 100%;
   --bg-local: var(--background-light);
+  --primary-local: var(--primary);
+
+  &.disabled {
+    --primary-local: var(--disabled);
+
+    .range,
+    .slider {
+      &:hover {
+        border: none;
+      }
+    }
+
+    label {
+      border: 1px solid var(--disabled);
+    }
+  }
 
   .range,
   .slider {
@@ -24,7 +40,7 @@
     border: 1px solid var(--bg-local);
 
     &:hover {
-      border-color: var(--primary);
+      border-color: var(--primary-local);
     }
 
     .limit {
@@ -57,7 +73,7 @@
       position: relative;
       width: 100%;
       height: 5px;
-      background-color: var(--primary);
+      background-color: var(--primary-local);
 
       &::before,
       &::after {
@@ -110,7 +126,7 @@
           width: var(--dot-size);
           aspect-ratio: 1;
           border-radius: 50%;
-          background-color: var(--primary);
+          background-color: var(--primary-local);
           z-index: 4;
         }
 
@@ -153,7 +169,7 @@
     padding-left: calc(10px + calc(var(--dot-size) / 2));
 
     .limit:nth-child(1) {
-      background-color: var(--primary);
+      background-color: var(--primary-local);
       left: calc(10px + calc(var(--dot-size) / 2));
       transform: translate(-50%, -50%);
     }
@@ -175,7 +191,7 @@
   }
 
   label {
-    color: var(--primary);
+    color: var(--primary-local);
     font-size: 10pt;
     position: absolute;
     pointer-events: none;
