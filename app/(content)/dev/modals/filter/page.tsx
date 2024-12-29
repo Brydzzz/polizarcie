@@ -13,7 +13,7 @@ const FilterModalPage = () => {
   return (
     <div
       style={{
-        marginTop: "50px",
+        marginTop: "20px",
         width: "450px",
         marginLeft: "auto",
         marginRight: "auto",
