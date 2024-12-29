@@ -2,7 +2,7 @@
 
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { Restaurant, User } from "@prisma/client";
+import { MatchRequest, Restaurant, User } from "@prisma/client";
 import { unauthorized } from "next/navigation";
 import {
   clearUserPasswordCache,
@@ -62,6 +62,39 @@ export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
           id: { notIn: excludeIds },
         },
       ],
+    },
+  });
+}
+
+export async function getUsersMatchedWith(userId: User["id"]) {
+  return await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+      OR: [
+        {
+          userOneMatch: {
+            some: {
+              AND: [
+                { OR: [{ userOneId: userId }, { userTwoId: userId }] },
+                { value: MatchRequest.ACCEPTED },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            some: {
+              AND: [
+                { OR: [{ userOneId: userId }, { userTwoId: userId }] },
+                { value: MatchRequest.ACCEPTED },
+              ],
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      medias: true,
     },
   });
 }

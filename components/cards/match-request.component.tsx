@@ -17,9 +17,9 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
         return;
       }
       if (decision == 1) {
-        await DenyMatchRequest(data.userOneId, data.userTwoId);
-      } else if (decision == 2) {
         await AcceptMatchRequest(data.userOneId, data.userTwoId);
+      } else if (decision == 2) {
+        await DenyMatchRequest(data.userOneId, data.userTwoId);
       }
     };
     dec();
