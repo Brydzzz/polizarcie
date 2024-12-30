@@ -66,7 +66,7 @@ const RestaurantCard = ({ data, onClickAddress, mode, width }: Props) => {
               Średnia cena na osobę: <b>{averageAmountSpent}&nbsp;zł</b>
             </span>
           )}
-          {<span className={styles.open}>Otwarte teraz!</span>}
+          {isOpen && <span className={styles.open}>Otwarte teraz!</span>}
         </div>
       </div>
     </Link>
