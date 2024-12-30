@@ -269,9 +269,9 @@ const ReviewCard = <Type extends keyof ReviewType>({
       </div>
       {mode === "view" && (
         <div className={styles.images}>
-          {data.baseData.images.map((image) => (
+          {data.baseData.images.map((image, i) => (
             <ModalableImage
-              key={image.title}
+              key={i}
               src={image.path}
               width={50}
               height={50}
