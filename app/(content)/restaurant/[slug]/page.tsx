@@ -7,7 +7,6 @@ import {
   getMenuByRestaurantId,
   getRestaurantBySlug,
 } from "@/lib/db/restaurants";
-import { getRestaurantAvgStarsById } from "@/lib/db/reviews/restaurant-reviews";
 import { parseTime } from "@/utils/date-time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -24,9 +23,7 @@ const RestaurantPage = async ({ params }: Props) => {
   const slug = (await params).slug;
   const restaurant = await getRestaurantBySlug(slug);
   if (!restaurant) notFound();
-  const score = await getRestaurantAvgStarsById(restaurant.id);
   const menu = await getMenuByRestaurantId(restaurant.id);
-  const roundedScore = score._avg.stars?.toFixed(2);
 
   const hours = [
     {
@@ -93,12 +90,12 @@ const RestaurantPage = async ({ params }: Props) => {
           <div className={styles.column}>
             <div className={styles.rating}>
               <StarInput
-                value={score._avg.stars ? Math.round(score._avg.stars) : 0}
+                value={restaurant.averageStars || 0}
                 max={5}
                 starSize="24pt"
                 disabled
               ></StarInput>
-              <p>{roundedScore || 0}</p>
+              <p>{restaurant.averageStars || 0}</p>
             </div>
             <div className={styles.info}>
               <h2>Adres:</h2>
