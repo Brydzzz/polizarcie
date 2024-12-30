@@ -134,7 +134,7 @@ export async function getRestaurantsLike(
         console.log(`Skipping restaurant:, ${restaurant.name}`);
         return null;
       }
-      if (!restaurant.averageStars && filters.minRating !== 0) {
+      if (!restaurant.averageStars && filters.minRating !== 1) {
         console.log(`Skipping restaurant:, ${restaurant.name}`);
         return null;
       }

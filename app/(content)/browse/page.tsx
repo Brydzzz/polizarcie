@@ -1,9 +1,12 @@
 "use client";
 
+import FilterCard from "@/components/cards/filter-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import type { Filters } from "@/components/modals/filter-modal.component";
-import FilterModal from "@/components/modals/filter-modal.component";
+import FilterModal, {
+  facultyOptions,
+} from "@/components/modals/filter-modal.component";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
@@ -13,7 +16,7 @@ const SearchPage = () => {
   const filters_default: Filters = {
     priceRange: { min: 0, max: 100 },
     isOpen: false,
-    minRating: 0,
+    minRating: 1,
     sortOption: "name-asc",
     faculty: { value: "none", x: undefined, y: undefined },
     facultyDistance: 400,
@@ -26,6 +29,12 @@ const SearchPage = () => {
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
     setIsModalVisible(false);
+  };
+
+  const handleFilterCancel = <K extends keyof Filters>(cancelledFilter: K) => {
+    let newFilters = { ...filters };
+    newFilters[cancelledFilter] = filters_default[cancelledFilter];
+    setFilters(newFilters);
   };
 
   useEffect(() => {
@@ -69,6 +78,42 @@ const SearchPage = () => {
         filters
         onFilterButtonClick={(e) => setIsModalVisible(!isModalVisible)}
       />
+      <div className={styles.filterCards}>
+        {!(
+          filters.priceRange.min === filters_default.priceRange.min &&
+          filters.priceRange.max === filters_default.priceRange.max
+        ) && (
+          <FilterCard
+            name={"Cena na osobę"}
+            value={`${filters.priceRange.min}zł - ${filters.priceRange.max}zł`}
+            onCancelButtonClick={() => handleFilterCancel("priceRange")}
+          ></FilterCard>
+        )}
+        {filters.minRating !== 1 && (
+          <FilterCard
+            name={"Minimalna Ocena"}
+            value={filters.minRating}
+            onCancelButtonClick={() => handleFilterCancel("minRating")}
+          ></FilterCard>
+        )}
+        {filters.isOpen && (
+          <FilterCard
+            name={"Otwarte Teraz"}
+            value={"Tak"}
+            onCancelButtonClick={() => handleFilterCancel("isOpen")}
+          ></FilterCard>
+        )}
+        {filters.faculty.value !== "none" && (
+          <FilterCard
+            name={"Wydział"}
+            value={`${
+              facultyOptions.find((f) => f.value === filters.faculty.value)
+                ?.name
+            } ≤ ${filters.facultyDistance}m`}
+            onCancelButtonClick={() => handleFilterCancel("faculty")}
+          ></FilterCard>
+        )}
+      </div>
       <div className={styles.matrix}>
         <div className={styles.column}>
           {firstColumn.map((rest, index) => (

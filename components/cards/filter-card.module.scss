@@ -1,0 +1,13 @@
+.container {
+  background-color: var(--secondary);
+  border: 3px solid var(--secondary-dark);
+  border-radius: 10px;
+  padding: 4px 10px;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+  flex-grow: 0;
+
+  .cancelIcon {
+    margin-left: 15px;
+    cursor: pointer;
+  }
+}

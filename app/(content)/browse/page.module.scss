@@ -15,25 +15,35 @@
     margin-bottom: 100px;
     text-transform: uppercase;
   }
-}
 
-.matrix {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: row;
-  margin-top: 40px;
-  padding: 0 80px 0;
-
-  & > .column {
-    padding: 20px;
+  & > .matrix {
     display: flex;
-    flex-direction: column;
-    flex: 1;
-    row-gap: 25px;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: row;
+    padding: 0 80px 0;
+
+    & > .column {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      row-gap: 25px;
+    }
+    & > .column:empty {
+      display: none;
+    }
   }
-  .column:empty {
-    display: none;
+  & > .filterCards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 30px;
+    margin-top: 20px;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    row-gap: 20px;
   }
 }
 

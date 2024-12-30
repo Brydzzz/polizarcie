@@ -8,6 +8,10 @@
   border: 2px solid var(--primary);
 }
 
+.cancelIcon {
+    cursor: pointer;
+}
+
 .header {
   display: flex;
   flex-direction: row;
