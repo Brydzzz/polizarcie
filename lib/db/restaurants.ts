@@ -31,9 +31,6 @@ export async function getRestaurantsLike(
   query: string,
   filters: Filters
 ): Promise<RestaurantFull[]> {
-  console.log(`Search started with query:, ${query}`);
-  console.log(`Filters:, ${JSON.stringify(filters)}`);
-
   let orderBy: {
     [key: string]:
       | "asc"
@@ -97,8 +94,6 @@ export async function getRestaurantsLike(
     orderBy: orderBy,
   });
 
-  console.log(`"Found restaurants:", ${restaurants.length}`);
-
   const results = await Promise.all(
     restaurants.map(async (restaurant) => {
       // distance filter
@@ -114,16 +109,13 @@ export async function getRestaurantsLike(
           Number(restaurant.address?.yCoords),
           Number(restaurant.address?.xCoords)
         );
-        console.log(`Distance ${distanceTo}`);
         if (distanceTo > filters.facultyDistance) {
-          console.log(`Skipping restaurant:, ${restaurant.name}`);
           return null;
         }
       }
 
       // isOpen filter
       if (filters.isOpen && !isRestaurantOpen(restaurant)) {
-        console.log(`Skipping restaurant:, ${restaurant.name}`);
         return null;
       }
 
@@ -131,17 +123,12 @@ export async function getRestaurantsLike(
       const priceFiltersOff =
         filters.priceRange.min == 0 && filters.priceRange.max == 100;
       if (!priceFiltersOff && !restaurant.averageAmountSpent) {
-        console.log(`Skipping restaurant:, ${restaurant.name}`);
         return null;
       }
       if (!restaurant.averageStars && filters.minRating !== 1) {
-        console.log(`Skipping restaurant:, ${restaurant.name}`);
         return null;
       }
 
-      console.log(
-        `Adding restaurant: ${restaurant.name} x: ${restaurant.address?.xCoords} y: ${restaurant.address?.yCoords}`
-      );
       return restaurant;
     })
   );

@@ -1,7 +1,7 @@
+import { prisma } from "@/prisma";
+import { hashPassword } from "@/utils/misc";
 import { DishType, Gender, Role } from "@prisma/client";
 import slugify from "slugify";
-import { prisma } from "../prisma";
-import { hashPassword } from "../utils/misc";
 
 async function initData() {
   // TODO add some actual database initialization
@@ -47,7 +47,7 @@ async function initData() {
 
   const users = [
     {
-      id: "dummy-user-1",
+      id: "dummyUser1",
       name: "Balbinka",
       email: "balbinka@gmail.com",
       gender: Gender.FEMALE,
@@ -67,7 +67,7 @@ async function initData() {
       },
     },
     {
-      id: "dummy-user-2",
+      id: "dummyUser2",
       name: "Brygida",
       email: "brygida@gmail.com",
       gender: Gender.FEMALE,
@@ -87,7 +87,27 @@ async function initData() {
       },
     },
     {
-      id: "dummy-user-3",
+      id: "dummyUser4",
+      name: "Noobek",
+      email: "noobek@gmail.com",
+      gender: Gender.MALE,
+      meetingStatus: false,
+      points: 0,
+      roles: [Role.USER],
+      emailVerified: "2137-01-01T08:00:00.000Z",
+      passwordHash: {
+        connectOrCreate: {
+          where: {
+            forUserEmail: "noobek@gmail.com",
+          },
+          create: {
+            hash: (await hashPassword("noobek")).toString("base64"),
+          },
+        },
+      },
+    },
+    {
+      id: "dummyUser3",
       name: "Mateusz",
       email: "mateusz@gmail.com",
       gender: Gender.MALE,
