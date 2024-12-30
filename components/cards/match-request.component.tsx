@@ -2,6 +2,7 @@
 import { AcceptMatchRequest, DenyMatchRequest } from "@/lib/db/matches";
 import { Match, User } from "@prisma/client";
 import { useEffect, useState } from "react";
+import SupabaseImage from "../images/supabase-image.component";
 import styles from "./match-request.module.scss";
 type Props = {
   data: Partial<Match>;
@@ -28,7 +29,19 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
     <div className={styles.container}>
       <div className={styles.left}>
         <div className={styles.photoBox}>
-          <div className={styles.photo}></div>
+          {UserOne.image ? (
+            UserOne.image.includes("https") ? (
+              <img src={UserOne.image} width={50} height={50} alt="Zdjęcie" />
+            ) : (
+              <SupabaseImage
+                src={UserOne.image}
+                width={50}
+                height={50}
+                quality={100}
+                alt="Zdjęcie"
+              />
+            )
+          ) : null}
         </div>
         <div className={styles.namebox}>
           {UserOne ? <p className={styles.name}>{UserOne.name}</p> : null}

@@ -42,12 +42,7 @@
       width: 20%;
       max-width: 100px;
       overflow: hidden;
-      & > .photo {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border: 3px solid var(--background-dark);
-        border-radius: 50%;
-      }
+      min-width: 30px;
     }
   }
 }
