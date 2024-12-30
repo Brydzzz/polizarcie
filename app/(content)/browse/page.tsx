@@ -1,6 +1,8 @@
 "use client";
 
-import FilterCard from "@/components/cards/filter-card.component";
+import FilterCard, {
+  FilterCardStyle,
+} from "@/components/cards/filter-card.component";
 import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import type { Filters } from "@/components/modals/filter-modal.component";
@@ -37,6 +39,9 @@ const SearchPage = () => {
     setFilters(newFilters);
   };
 
+  const areFiltersDefault =
+    JSON.stringify(filters) === JSON.stringify(filters_default);
+
   useEffect(() => {
     const update = async () => {
       const data = await transferWithJSON(getRestaurantsLike, [input, filters]);
@@ -45,6 +50,7 @@ const SearchPage = () => {
     };
     update();
   }, [input, filters]);
+
   const [firstColumn, secondColumn] = rests.reduce(
     ([col1, col2], rest, index) => {
       if (index % 2 === 0) {
@@ -79,6 +85,14 @@ const SearchPage = () => {
         onFilterButtonClick={(e) => setIsModalVisible(!isModalVisible)}
       />
       <div className={styles.filterCards}>
+        {!areFiltersDefault && (
+          <FilterCard
+            name={"Wyczyść wszystkie filtry"}
+            value={""}
+            style={FilterCardStyle.BACKDROP}
+            onCardClick={() => setFilters(filters_default)}
+          ></FilterCard>
+        )}
         {!(
           filters.priceRange.min === filters_default.priceRange.min &&
           filters.priceRange.max === filters_default.priceRange.max
