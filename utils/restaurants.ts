@@ -43,8 +43,10 @@ export function isRestaurantOpen(restaurant: Restaurant): boolean {
     return false;
   }
 
-  const openingTimeMin = openingTime.getHours() * 60 + openingTime.getMinutes();
-  const closingTimeMin = closingTime.getHours() * 60 + closingTime.getMinutes();
+  const openingTimeMin =
+    new Date(openingTime).getHours() * 60 + new Date(openingTime).getMinutes();
+  const closingTimeMin =
+    new Date(closingTime).getHours() * 60 + new Date(closingTime).getMinutes();
   if (time >= openingTimeMin && time <= closingTimeMin) {
     return true;
   }

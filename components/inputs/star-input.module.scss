@@ -9,8 +9,23 @@
   height: fit-content;
 
   .star {
+    display: flex;
+
     &:hover {
       cursor: pointer;
+    }
+  }
+
+  .partial {
+    position: relative;
+    height: 1em;
+    width: 1em;
+
+    & > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
     }
   }
 

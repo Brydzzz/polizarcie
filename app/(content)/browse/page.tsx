@@ -3,8 +3,8 @@
 import FilterCard, {
   FilterCardStyle,
 } from "@/components/cards/filter-card.component";
-import RestaurantCard from "@/components/cards/restaurant-card.component";
 import Searchbar from "@/components/inputs/searchbar.component";
+import RestaurantList from "@/components/lists/restaurant-list.component";
 import type { Filters } from "@/components/modals/filter-modal.component";
 import FilterModal, {
   facultyOptions,
@@ -24,7 +24,7 @@ const SearchPage = () => {
     facultyDistance: 400,
   };
   const [filters, setFilters] = useState(filters_default);
-  const [rests, updateRestaurants] = useState<RestaurantFull[]>([]);
+  const [restaurants, updateRestaurants] = useState<RestaurantFull[]>([]);
   const [input, setInput] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -51,17 +51,6 @@ const SearchPage = () => {
     update();
   }, [input, filters]);
 
-  const [firstColumn, secondColumn] = rests.reduce(
-    ([col1, col2], rest, index) => {
-      if (index % 2 === 0) {
-        col1.push(rest);
-      } else {
-        col2.push(rest);
-      }
-      return [col1, col2];
-    },
-    [[], []] as [RestaurantFull[], RestaurantFull[]]
-  );
   return (
     <main className={styles.container}>
       <div className={`${isModalVisible ? styles.overlay : ""}`}></div>
@@ -128,18 +117,7 @@ const SearchPage = () => {
           ></FilterCard>
         )}
       </div>
-      <div className={styles.matrix}>
-        <div className={styles.column}>
-          {firstColumn.map((rest, index) => (
-            <RestaurantCard key={index} data={rest}></RestaurantCard>
-          ))}
-        </div>
-        <div className={styles.column}>
-          {secondColumn.map((rest, index) => (
-            <RestaurantCard key={index} data={rest}></RestaurantCard>
-          ))}
-        </div>
-      </div>
+      <RestaurantList data={restaurants} />
     </main>
   );
 };

@@ -23,11 +23,13 @@ const StarInput = ({
   starSize,
 }: Props) => {
   const [stars, setStars] = useState<boolean[]>([]);
+  const [partial, setPartial] = useState(0);
 
   useEffect(() => {
     const new_stars: boolean[] = [];
-    for (let i = 0; i < max; i++) new_stars.push(i < value);
+    for (let i = 0; i < max; i++) new_stars.push(i + 1 <= value);
     setStars(new_stars);
+    setPartial(value - Math.floor(value));
   }, [value, max]);
 
   const handleClick = (i: number) => {
@@ -48,6 +50,16 @@ const StarInput = ({
         >
           {star ? (
             <i className="fa-solid fa-star"></i>
+          ) : value > i ? (
+            <div className={styles.partial}>
+              <i className="fa-regular fa-star"></i>
+              <i
+                className="fa-solid fa-star"
+                style={{
+                  width: `${partial * 90 + 10}%`,
+                }}
+              ></i>
+            </div>
           ) : (
             <i className="fa-regular fa-star"></i>
           )}

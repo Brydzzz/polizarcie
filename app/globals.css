@@ -7,6 +7,7 @@
   --primary-dark: #f47425;
   --primary: #f5853f;
   --primary-light: #f69355;
+  --text-dark: #b8b6b5;
   --text: #fffcf9;
   --secondary-dark: #57614c;
   --secondary: #646f58;
@@ -28,6 +29,13 @@
   --google-color: #174ea6;
 
   --bounce-bezier: cubic-bezier(0.17, 0.67, 0.31, 1.58);
+
+  /* device max sizes */
+  --xs: 600px;
+  --sm: 768px;
+  --md: 992px;
+  --lg: 1200px;
+  --xl: 1920px;
 }
 
 html,
