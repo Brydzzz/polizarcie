@@ -13,6 +13,7 @@ import RangeInput from "@/components/inputs/range-input.component";
 import Searchbar from "@/components/inputs/searchbar.component";
 import SliderInput from "@/components/inputs/slider-input.component";
 import StarInput from "@/components/inputs/star-input.component";
+import Switch from "@/components/inputs/switch.component";
 import { useState } from "react";
 
 const FiltersPage = () => {
@@ -31,6 +32,7 @@ const FiltersPage = () => {
   const [text9, setText9] = useState("");
   const [multiselect, setMultiselect] = useState<string[]>([]);
   const [checkbox, setCheckbox] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
 
   return (
     <div
@@ -170,6 +172,11 @@ const FiltersPage = () => {
           filters
         />
         <HeartInput liked={heart} onChange={setHeart} />
+        <Switch
+          label="Switch"
+          checked={isToggled}
+          onChange={setIsToggled}
+        ></Switch>
       </div>
     </div>
   );

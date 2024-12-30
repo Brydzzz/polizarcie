@@ -77,33 +77,35 @@ model UserMedia {
 }
 
 model Restaurant {
-    id             String                   @id @default(cuid())
-    name           String                   @unique
-    slug           String                   @unique
-    address        Address?                 @relation(fields: [addressId], references: [id])
-    addressId      String?                  @unique
-    description    String
-    createdDate    DateTime                 @default(now())
-    updatedDate    DateTime                 @updatedAt
-    hidden         Boolean                  @default(false)
-    openingTimeMon DateTime                 @db.Time()
-    closingTimeMon DateTime                 @db.Time()
-    openingTimeTue DateTime                 @db.Time()
-    closingTimeTue DateTime                 @db.Time()
-    openingTimeWen DateTime                 @db.Time()
-    closingTimeWen DateTime                 @db.Time()
-    openingTimeThu DateTime                 @db.Time()
-    closingTimeThu DateTime                 @db.Time()
-    openingTimeFri DateTime                 @db.Time()
-    closingTimeFri DateTime                 @db.Time()
-    openingTimeSat DateTime                 @db.Time()
-    closingTimeSat DateTime                 @db.Time()
-    openingTimeSun DateTime                 @db.Time()
-    closingTimeSun DateTime                 @db.Time()
-    reviews        RestaurantReview[]
-    menu           Dish[]
-    favoriteAmong  UserFavoriteRestaurant[]
-    images         Image[]
+    id                 String                   @id @default(cuid())
+    name               String                   @unique
+    slug               String                   @unique
+    address            Address?                 @relation(fields: [addressId], references: [id])
+    addressId          String?                  @unique
+    description        String
+    createdDate        DateTime                 @default(now())
+    updatedDate        DateTime                 @updatedAt
+    hidden             Boolean                  @default(false)
+    openingTimeMon     DateTime                 @db.Time()
+    closingTimeMon     DateTime                 @db.Time()
+    openingTimeTue     DateTime                 @db.Time()
+    closingTimeTue     DateTime                 @db.Time()
+    openingTimeWen     DateTime                 @db.Time()
+    closingTimeWen     DateTime                 @db.Time()
+    openingTimeThu     DateTime                 @db.Time()
+    closingTimeThu     DateTime                 @db.Time()
+    openingTimeFri     DateTime                 @db.Time()
+    closingTimeFri     DateTime                 @db.Time()
+    openingTimeSat     DateTime                 @db.Time()
+    closingTimeSat     DateTime                 @db.Time()
+    openingTimeSun     DateTime                 @db.Time()
+    closingTimeSun     DateTime                 @db.Time()
+    averageStars       Float?
+    averageAmountSpent Float?
+    reviews            RestaurantReview[]
+    menu               Dish[]
+    favoriteAmong      UserFavoriteRestaurant[]
+    images             Image[]
 }
 
 model Dish {

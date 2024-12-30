@@ -6,6 +6,10 @@ import { getCurrentUser } from "@/utils/users";
 import { BaseReview, Image, User } from "@prisma/client";
 import { forbidden, unauthorized } from "next/navigation";
 import { deleteImages, getImagesByPaths } from "../images";
+import {
+  getRestaurantReviewById,
+  updateRestaurantStats,
+} from "./restaurant-reviews";
 
 export type BaseReviewFull = {
   baseData: BaseReview & {
@@ -57,11 +61,17 @@ export async function deleteReview(id: BaseReview["id"]) {
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "delete", baseReview)) forbidden();
   await deleteImages(baseReview.images.map((image) => image.path));
-  return await prisma.baseReview.delete({
+  // TODO: find a cleaner way to update restaurant stats
+  const restaurantReview = await getRestaurantReviewById(id);
+  const review = await prisma.baseReview.delete({
     where: {
       id: id,
     },
   });
+  if (restaurantReview) {
+    await updateRestaurantStats(restaurantReview.subjectId);
+  }
+  return review;
 }
 
 export async function linkImagesToReview(
