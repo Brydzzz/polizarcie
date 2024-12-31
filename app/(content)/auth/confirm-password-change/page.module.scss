@@ -6,6 +6,8 @@
   justify-content: center;
   align-items: center;
   gap: 50px;
+  text-align: center;
+  padding: 0 20px;
 
   & > h2 {
     font-weight: normal;
@@ -16,14 +18,23 @@
     color: var(--primary);
   }
 
-  & > p {
-    color: var(--disabled);
-  }
-
   & > div {
+    color: var(--disabled);
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: wrap;
     gap: 20px;
+  }
+}
+
+@media (max-width: "600px") {
+  .container {
+    font-size: 10pt;
+    margin-top: 75px;
+    min-height: auto;
+    padding: 80px 20px;
+    background: var(--background-light);
+    margin-bottom: 100px;
   }
 }

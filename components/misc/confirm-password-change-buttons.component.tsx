@@ -2,16 +2,24 @@
 
 import { cancelPasswordChange, confirmPasswordChange } from "@/lib/db/users";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
-import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
+import {
+  selectSignInPageLoading,
+  selectViewportWidth,
+} from "@/lib/store/ui/ui.selector";
+import {
+  addSnackbar,
+  setSignInPageLoading,
+  ViewportSize,
+} from "@/lib/store/ui/ui.slice";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import Button from "../button/button.component";
-import { ButtonColor, ButtonStyle } from "../button/button.types";
+import { ButtonColor, ButtonSize, ButtonStyle } from "../button/button.types";
 
 const ConfirmPasswordChangeButtons = () => {
   const dispatch = useAppDispatch();
   const loading = useAppSelector(selectSignInPageLoading);
+  const size = useAppSelector(selectViewportWidth);
 
   useEffect(() => {
     dispatch(setSignInPageLoading(false));
@@ -53,11 +61,17 @@ const ConfirmPasswordChangeButtons = () => {
         onClick={cancel}
         style={ButtonStyle.OUTLINE}
         color={ButtonColor.SECONDARY}
+        size={size < ViewportSize.XS ? ButtonSize.SMALL : ButtonSize.NORMAL}
         disabled={loading}
       >
         Anuluj zmianę
       </Button>
-      <Button onClick={confirm} disabled={loading}>
+
+      <Button
+        onClick={confirm}
+        disabled={loading}
+        size={size < ViewportSize.XS ? ButtonSize.SMALL : ButtonSize.NORMAL}
+      >
         Potwierdzam zmianę
       </Button>
     </>
