@@ -15,11 +15,7 @@ const RestaurantList = ({ data }: Props) => {
   const size = useAppSelector(selectViewportWidth);
 
   return (
-    <div
-      className={`${styles.container} ${
-        size < ViewportSize.LG ? styles.oneRow : ""
-      }`}
-    >
+    <div className={`${styles.container} ${size < 1080 ? styles.oneRow : ""}`}>
       {data.map((restaurant) => (
         <RestaurantCard
           key={restaurant.id}

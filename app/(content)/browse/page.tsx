@@ -75,7 +75,7 @@ const SearchPage = () => {
         id="search"
         placeholder="Co byś dziś przekąsił?"
         size={
-          size > ViewportSize.LG
+          size > 1080
             ? InputSize.LARGE
             : size > ViewportSize.XS
             ? InputSize.MEDIUM
