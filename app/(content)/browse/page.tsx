@@ -3,12 +3,14 @@
 import FilterCard, {
   FilterCardStyle,
 } from "@/components/cards/filter-card.component";
+import { InputSize } from "@/components/inputs/input.types";
 import Searchbar from "@/components/inputs/searchbar.component";
 import RestaurantList from "@/components/lists/restaurant-list.component";
 import type { Filters } from "@/components/modals/filter-modal.component";
 import FilterModal, {
   facultyOptions,
 } from "@/components/modals/filter-modal.component";
+import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
@@ -27,6 +29,7 @@ const SearchPage = () => {
   const [restaurants, updateRestaurants] = useState<RestaurantFull[]>([]);
   const [input, setInput] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const size = useViewportSize();
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
@@ -63,10 +66,19 @@ const SearchPage = () => {
           />
         </div>
       )}
-      <h1>Jedzonko w okolicy</h1>
+      <h1 className={`${size < ViewportSize.SM ? styles.compact : ""}`}>
+        Jedzonko w okolicy
+      </h1>
       <Searchbar
         id="search"
         placeholder="Co byś dziś przekąsił?"
+        size={
+          size > ViewportSize.LG
+            ? InputSize.LARGE
+            : size > ViewportSize.XS
+            ? InputSize.MEDIUM
+            : InputSize.SMALL
+        }
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onCancelButtonClick={() => setInput("")}

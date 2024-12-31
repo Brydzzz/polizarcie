@@ -6,10 +6,20 @@
   padding: 25px;
   border-radius: 10px;
   border: 2px solid var(--primary);
+
+  &.compact {
+    width: calc(100vw - 40px);
+    max-width: 400px;
+
+    .filters {
+      align-items: center;
+      gap: 20px;
+    }
+  }
 }
 
 .cancelIcon {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .header {
@@ -25,10 +35,10 @@
 }
 
 .rating {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .filters {
@@ -47,9 +57,10 @@
 }
 
 .shortInputs {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 90px;
-    border: 1px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 90px;
+  border: 1px;
+  justify-content: space-between;
 }

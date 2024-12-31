@@ -1,5 +1,6 @@
 "use client";
 
+import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
 import { MouseEventHandler, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonStyle } from "../button/button.types";
@@ -160,6 +161,7 @@ const FilterModal = ({
   const [facultyDistance, setFacultyDistance] = useState(
     filters.facultyDistance
   );
+  const size = useViewportSize();
 
   const handleApply = () => {
     const updatedFilters: Filters = {
@@ -190,7 +192,11 @@ const FilterModal = ({
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${
+        size < ViewportSize.XS ? styles.compact : ""
+      }`}
+    >
       <div className={styles.header}>
         <h1>Filtry</h1>
         <span
@@ -224,21 +230,40 @@ const FilterModal = ({
           suffix=" zł"
           label="Cena na osobę"
         ></RangeInput>
-        <div className={styles.shortInputs}>
-          <div className={styles.rating}>
-            <h3>Minimalna Ocena</h3>
-            <StarInput
-              value={minRating}
-              max={5}
-              onChange={setMinRating}
-            ></StarInput>
+        {size < ViewportSize.XS ? (
+          <>
+            <div className={styles.rating}>
+              <h3>Minimalna Ocena</h3>
+              <StarInput
+                value={minRating}
+                max={5}
+                onChange={setMinRating}
+              ></StarInput>
+            </div>
+            <Switch
+              label="Otwarte Teraz"
+              checked={isOpen}
+              onChange={setIsOpen}
+            ></Switch>
+          </>
+        ) : (
+          <div className={styles.shortInputs}>
+            <div className={styles.rating}>
+              <h3>Minimalna Ocena</h3>
+              <StarInput
+                value={minRating}
+                max={5}
+                onChange={setMinRating}
+              ></StarInput>
+            </div>
+            <Switch
+              label="Otwarte Teraz"
+              checked={isOpen}
+              onChange={setIsOpen}
+            ></Switch>
           </div>
-          <Switch
-            label="Otwarte Teraz"
-            checked={isOpen}
-            onChange={setIsOpen}
-          ></Switch>
-        </div>
+        )}
+
         <SelectBox
           label="Wydział"
           options={facultyOptions}

@@ -15,6 +15,12 @@
     font-size: 36pt;
     margin-bottom: 100px;
     text-transform: uppercase;
+    text-align: center;
+
+    &.compact {
+      font-size: 24pt;
+      margin-bottom: 50px;
+    }
   }
 
   & > .matrix {
