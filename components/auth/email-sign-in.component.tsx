@@ -6,8 +6,15 @@ import {
   signUpWithNodemailer,
 } from "@/lib/auth";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
-import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
+import {
+  selectSignInPageLoading,
+  selectViewportWidth,
+} from "@/lib/store/ui/ui.selector";
+import {
+  addSnackbar,
+  setSignInPageLoading,
+  ViewportSize,
+} from "@/lib/store/ui/ui.slice";
 import {
   resetPasswordSchema,
   signInSchema,
@@ -35,10 +42,20 @@ const EmailSignIn = () => {
   const loading = useAppSelector(selectSignInPageLoading);
   const dispatch = useAppDispatch();
   const session = useSession();
+  const size = useAppSelector(selectViewportWidth);
+  const [inputSize, setInputSize] = useState(InputSize.MEDIUM);
+  const [buttonSize, setButtonSize] = useState(ButtonSize.LARGE);
 
   useEffect(() => {
     dispatch(setSignInPageLoading(false));
   }, []);
+
+  useEffect(() => {
+    setInputSize(size < ViewportSize.SM ? InputSize.SMALL : InputSize.MEDIUM);
+    setButtonSize(
+      size < ViewportSize.SM ? ButtonSize.SMALL : ButtonSize.NORMAL
+    );
+  }, [size]);
 
   const trySignInWithCredentials = async (formData: FormData) => {
     dispatch(setSignInPageLoading(true));
@@ -136,7 +153,7 @@ const EmailSignIn = () => {
             name="email"
             type="email"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -146,7 +163,7 @@ const EmailSignIn = () => {
             name="name"
             type="text"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -155,7 +172,7 @@ const EmailSignIn = () => {
             label="Hasło"
             name="password"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -164,7 +181,7 @@ const EmailSignIn = () => {
             label="Powtórz hasło"
             name="passwordRepeat"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={passwordRepet}
             onChange={(e) => setPasswordRepet(e.target.value)}
             required
@@ -173,7 +190,7 @@ const EmailSignIn = () => {
           <Button
             type="submit"
             style={ButtonStyle.SOLID}
-            size={ButtonSize.NORMAL}
+            size={buttonSize}
             disabled={
               email && username && password && passwordRepet && !loading
                 ? false
@@ -196,7 +213,7 @@ const EmailSignIn = () => {
             type="email"
             name="email"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -205,7 +222,7 @@ const EmailSignIn = () => {
               label="Hasło"
               name="password"
               style={InputStyle.HERO}
-              size={InputSize.MEDIUM}
+              size={inputSize}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -214,7 +231,7 @@ const EmailSignIn = () => {
             <Button
               type="submit"
               style={ButtonStyle.SOLID}
-              size={ButtonSize.NORMAL}
+              size={buttonSize}
               disabled={email && password && !loading ? false : true}
             >
               {loading ? (
@@ -235,7 +252,7 @@ const EmailSignIn = () => {
             type="email"
             name="email"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -243,7 +260,7 @@ const EmailSignIn = () => {
             label="Nowe hasło"
             name="password"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -252,7 +269,7 @@ const EmailSignIn = () => {
             label="Powtórz hasło"
             name="passwordRepeat"
             style={InputStyle.HERO}
-            size={InputSize.MEDIUM}
+            size={inputSize}
             value={passwordRepet}
             onChange={(e) => setPasswordRepet(e.target.value)}
             required
@@ -260,7 +277,7 @@ const EmailSignIn = () => {
           <Button
             type="submit"
             style={ButtonStyle.SOLID}
-            size={ButtonSize.NORMAL}
+            size={buttonSize}
             disabled={
               email && password && passwordRepet && !loading ? false : true
             }

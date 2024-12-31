@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
 
   .card {
     display: flex;
@@ -14,12 +15,8 @@
     padding: 40px;
     background-color: var(--background-light);
     border-radius: 10px;
-    gap: 25px;
+    gap: 40px;
     width: 600px;
-
-    & > h1 {
-      margin-bottom: 15px;
-    }
 
     .hole {
       width: 100%;
@@ -39,6 +36,37 @@
         gap: 10px;
         align-items: center;
         justify-content: center;
+      }
+    }
+  }
+}
+
+@media (max-width: "768px") {
+  .container {
+    .card {
+      width: 580px;
+    }
+  }
+}
+
+@media (max-width: "600px") {
+  .container {
+    padding-top: 75px;
+
+    .card {
+      gap: 20px;
+      width: 100%;
+      padding: 40px 0;
+      background: var(--background-light);
+      margin-bottom: 100px;
+      border-radius: 0;
+
+      h1 {
+        color: var(--primary);
+      }
+
+      .hole {
+        background: none;
       }
     }
   }

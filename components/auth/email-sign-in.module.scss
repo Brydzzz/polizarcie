@@ -16,12 +16,29 @@
     gap: 20px;
   }
 
-  .switch:hover {
-    cursor: pointer;
+  .switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    text-align: center;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .highlight {
     color: var(--primary);
     text-decoration: underline;
+  }
+}
+
+@media (max-width: "768px") {
+  .container {
+    width: 100%;
+    .form {
+      width: min(100%, 300px);
+    }
   }
 }
