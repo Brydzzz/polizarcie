@@ -3,7 +3,7 @@
 import { getUserByEmail } from "@/lib/db/users";
 import { setPreviousSessionStatus } from "@/lib/store/cache/cache.slice";
 import { AppStore, makeStore } from "@/lib/store/store";
-import { addSnackbar } from "@/lib/store/ui/ui.slice";
+import { addSnackbar, updateViewportWidth } from "@/lib/store/ui/ui.slice";
 import {
   setCurrentUser,
   setCurrentUserLoading,
@@ -27,6 +27,15 @@ const StoreProvider = ({ children }: Props) => {
     persistorRef.current = persistStore(storeRef.current);
   }
   const session = useSession();
+
+  const handleViewportResize = () => {
+    storeRef.current?.dispatch(updateViewportWidth(document.body.clientWidth));
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleViewportResize);
+    handleViewportResize();
+  }, []);
 
   useEffect(() => {
     const exec = async () => {

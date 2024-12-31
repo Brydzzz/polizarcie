@@ -27,3 +27,13 @@ export const selectSignInPageLoading = createSelector(
   [selectSignInPageOptions],
   (signInPageOptions) => signInPageOptions.loading
 );
+
+export const selectViewportOptions = createSelector(
+  [selectUiReducer],
+  (uiReducer) => uiReducer.viewport
+);
+
+export const selectViewportWidth = createSelector(
+  [selectViewportOptions],
+  (viewportOptions) => viewportOptions.width
+);

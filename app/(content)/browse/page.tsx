@@ -10,8 +10,10 @@ import type { Filters } from "@/components/modals/filter-modal.component";
 import FilterModal, {
   facultyOptions,
 } from "@/components/modals/filter-modal.component";
-import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
@@ -29,7 +31,7 @@ const SearchPage = () => {
   const [restaurants, updateRestaurants] = useState<RestaurantFull[]>([]);
   const [input, setInput] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const size = useViewportSize();
+  const size = useAppSelector(selectViewportWidth);
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
@@ -80,6 +82,11 @@ const SearchPage = () => {
             : InputSize.SMALL
         }
         value={input}
+        cssStyle={
+          size <= ViewportSize.XS
+            ? { width: "min(500px, calc(100vw - 40px))" }
+            : undefined
+        }
         onChange={(e) => setInput(e.target.value)}
         onCancelButtonClick={() => setInput("")}
         filters

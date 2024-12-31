@@ -1,6 +1,8 @@
 "use client";
 
-import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { MouseEventHandler, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonStyle } from "../button/button.types";
@@ -161,7 +163,7 @@ const FilterModal = ({
   const [facultyDistance, setFacultyDistance] = useState(
     filters.facultyDistance
   );
-  const size = useViewportSize();
+  const size = useAppSelector(selectViewportWidth);
 
   const handleApply = () => {
     const updatedFilters: Filters = {

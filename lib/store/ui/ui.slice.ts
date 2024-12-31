@@ -9,6 +9,14 @@ export type SnackbarData = {
   type: "success" | "error" | "warning" | "information";
 };
 
+export enum ViewportSize {
+  XS = 600,
+  SM = 768,
+  MD = 992,
+  LG = 1200,
+  XL = 1920,
+}
+
 type UiState = {
   restaurantPage: {
     view: "menu" | "reviews";
@@ -17,6 +25,9 @@ type UiState = {
     loading: boolean;
   };
   snackbars: SnackbarData[];
+  viewport: {
+    width: number;
+  };
 };
 
 const INITIAL_STATE: UiState = {
@@ -27,6 +38,9 @@ const INITIAL_STATE: UiState = {
     loading: false,
   },
   snackbars: [],
+  viewport: {
+    width: 0,
+  },
 };
 
 export const UiSlice = createSlice({
@@ -54,6 +68,9 @@ export const UiSlice = createSlice({
     removeSnackbar(state, action: DispatchAction<SnackbarData["id"]>) {
       state.snackbars = state.snackbars.filter((s) => s.id !== action.payload);
     },
+    updateViewportWidth(state, action: DispatchAction<number>) {
+      state.viewport.width = action.payload;
+    },
   },
 });
 
@@ -62,6 +79,7 @@ export const {
   setSignInPageLoading,
   addSnackbar,
   removeSnackbar,
+  updateViewportWidth,
 } = UiSlice.actions;
 
 export const UiReducer = UiSlice.reducer;

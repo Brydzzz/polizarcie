@@ -1,6 +1,8 @@
 "use client";
 
-import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import Link from "next/link";
 import { LegacyRef, useRef, useState } from "react";
 import MatchDropdown from "../dropdowns/match-dropdown.component";
@@ -8,9 +10,9 @@ import UserDropdown from "../dropdowns/user-dropdown.component";
 import styles from "./main-header.module.scss";
 
 const MainHeader = () => {
-  const size = useViewportSize();
-  const [menuVisible, setMenuVisible] = useState(false);
   const menuRef = useRef<HTMLDivElement>();
+  const size = useAppSelector(selectViewportWidth);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const toggleMenuVisible = (toggle?: boolean) => {
     if (toggle === undefined) {

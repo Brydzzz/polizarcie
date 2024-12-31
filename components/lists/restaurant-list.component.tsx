@@ -1,7 +1,9 @@
 "use client";
 
-import useViewportSize, { ViewportSize } from "@/hooks/use-viewport-size";
 import { RestaurantFull } from "@/lib/db/restaurants";
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import RestaurantCard from "../cards/restaurant-card.component";
 import styles from "./restaurant-list.module.scss";
 
@@ -10,7 +12,7 @@ type Props = {
 };
 
 const RestaurantList = ({ data }: Props) => {
-  const size = useViewportSize();
+  const size = useAppSelector(selectViewportWidth);
 
   return (
     <div
