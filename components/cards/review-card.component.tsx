@@ -44,26 +44,26 @@ const REVIEW_PARTS: ReviewParts = {
   restaurant: {
     header: (data, mode) => (
       <>
-        <Link
-          href={`/restaurant/${data.subject.slug}`}
-          className={styles.title}
-        >
-          {data.subject.name}
-        </Link>
+        <span className={styles.subject}>
+          <i className="fa-solid fa-l"></i>&nbsp;
+          <Link href={`/restaurant/${data.subject.slug}`}>
+            <b>{data.subject.name}</b>
+          </Link>
+        </span>
         {mode === "view" && (
-          <>
-            <StarInput value={data.stars} max={5} starSize={"18pt"} disabled />
+          <div className={styles.score}>
             <span
               className={styles.amountSpent}
             >{`Cena na osobę: ${data.amountSpent} zł`}</span>
-          </>
+            <StarInput value={data.stars} max={5} starSize={"12pt"} disabled />
+          </div>
         )}
       </>
     ),
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.censoredContent}</p>
+          <p>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -93,18 +93,23 @@ const REVIEW_PARTS: ReviewParts = {
   dish: {
     header: (data, mode) => (
       <>
-        <Link href={`#`} className={styles.title}>
-          {data.subject.name}
-        </Link>
+        <span className={styles.subject}>
+          <i className="fa-solid fa-l"></i>&nbsp;
+          <Link href={`#`}>
+            <b>{data.subject.name}</b>
+          </Link>
+        </span>
         {mode === "view" && (
-          <StarInput value={data.stars} max={5} starSize={"18pt"} disabled />
+          <div className={styles.score}>
+            <StarInput value={data.stars} max={5} starSize={"12pt"} disabled />
+          </div>
         )}
       </>
     ),
     content: (data, mode, store) => (
       <>
         {mode === "view" ? (
-          <p className={styles.content}>{data.censoredContent}</p>
+          <p>{data.censoredContent}</p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -238,36 +243,34 @@ const ReviewCard = <Type extends keyof ReviewType>({
 
   return (
     <div className={`${styles.container} ${hidden ? styles.hidden : ""}`}>
-      <div className={styles.spaceBetween}>
-        <div className={styles.stack}>
-          {REVIEW_PARTS[type].header(data, mode)}
-        </div>
-        <div className={styles.stack}>
-          <span className={styles.date}>
-            {parseDate(createdDate)}
-            {updatedDate.getTime() !== createdDate.getTime() && (
-              <>
-                <br />
-                <span className={styles.updated}>
-                  zmodyfikowano:&nbsp;{parseDate(updatedDate)}
-                </span>
-              </>
-            )}
-          </span>
-          <Link
-            href={`#`}
-            className={`${styles.user} ${
-              user?.id === author.id ? styles.highlighted : ""
-            }`}
-          >
-            {author.name}
-          </Link>
-        </div>
+      <div className={styles.header}>
+        <Link
+          href={`#`}
+          className={`${styles.author} ${
+            user?.id === author.id ? styles.highlighted : ""
+          }`}
+        >
+          <i className="fa-solid fa-user"></i>
+          {author.name}
+        </Link>
+        <div className={styles.authorPlaceholder} />
+        {REVIEW_PARTS[type].header(data, mode)}
+        <span className={styles.date}>
+          {parseDate(createdDate)}
+          {updatedDate.getTime() !== createdDate.getTime() && (
+            <>
+              <br />
+              <span className={styles.updated}>
+                zmodyfikowano:&nbsp;{parseDate(updatedDate)}
+              </span>
+            </>
+          )}
+        </span>
       </div>
       <div className={styles.content}>
         {REVIEW_PARTS[type].content(data, mode, store)}
       </div>
-      {mode === "view" && (
+      {mode === "view" && data.baseData.images.length > 0 && (
         <div className={styles.images}>
           {data.baseData.images.map((image, i) => (
             <ModalableImage
@@ -324,20 +327,20 @@ const ReviewCard = <Type extends keyof ReviewType>({
           </>
         )}
         <div className={styles.expander}></div>
-        <span>
+        <div className={styles.likes}>
           <i
             onClick={canLike ? handleLikeReview : undefined}
             className={`fa-solid fa-thumbs-up ${styles.positive}`}
-          ></i>
-          {likes}
-        </span>
-        <span>
+          >
+            <span>{likes}</span>
+          </i>
           <i
             onClick={canLike ? handleDislikeReview : undefined}
             className={`fa-solid fa-thumbs-down ${styles.negative}`}
-          ></i>
-          {dislikes}
-        </span>
+          >
+            <span>{dislikes}</span>
+          </i>
+        </div>
       </div>
       {loading && <LoaderBlur />}
     </div>
