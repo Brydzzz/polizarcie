@@ -8,13 +8,9 @@ const DishCard = ({ data }: Props) => {
   const { name, description, priceZl, priceGr } = data;
   return (
     <div className={styles.container}>
-      <div className={styles.details}>
-        <p className={styles.name}>{name}</p>
-        <p className={styles.description}>{description}</p>
-      </div>
-      <div className={styles.right}>
-        <p className={styles.price}>{`${priceZl}.${priceGr} zł`}</p>
-      </div>
+      <span className={styles.name}>{name}</span>
+      <p className={styles.description}>{description}</p>
+      <div className={styles.price}>{`${priceZl}.${priceGr} zł`}</div>
     </div>
   );
 };

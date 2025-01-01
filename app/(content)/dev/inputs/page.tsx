@@ -171,7 +171,7 @@ const FiltersPage = () => {
           size={InputSize.LARGE}
           filters
         />
-        <HeartInput liked={heart} onChange={setHeart} />
+        <HeartInput value={heart} onChange={setHeart} />
         <Switch
           label="Switch"
           checked={isToggled}

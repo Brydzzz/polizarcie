@@ -1,8 +1,13 @@
 "use client";
 
 import HeartInput from "@/components/inputs/heart-input.component";
-import { addToLiked, checkIfRestLikedByUser, removeLike } from "@/lib/db/users";
-import { useAppSelector } from "@/lib/store/hooks";
+import {
+  addRestaurantToLiked,
+  isRestaurantLiked,
+  removeRestaurantFromLiked,
+} from "@/lib/db/users";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { useEffect, useState } from "react";
 type Props = {
@@ -12,36 +17,48 @@ type Props = {
 const RestaurantLiked = ({ restId }: Props) => {
   const [liked, setLiked] = useState<boolean>(false);
   const user = useAppSelector(selectCurrentUser);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const update = async () => {
       if (!user) {
         return false;
       }
-      const data = await checkIfRestLikedByUser(user.id, restId);
+      const data = await isRestaurantLiked(restId);
       setLiked(data);
       return data;
     };
     update();
-    console.log(user);
   }, [user]);
-  useEffect(() => {
-    const update = async () => {
-      if (!user) {
-        return false;
+
+  const handleChange = async (newValue: boolean) => {
+    setLiked(newValue);
+    if (!user) {
+      return false;
+    }
+    const check = await isRestaurantLiked(restId);
+    try {
+      if (newValue && !check) {
+        await addRestaurantToLiked(restId);
+      } else if (!newValue && check) {
+        await removeRestaurantFromLiked(restId);
       }
-      const check = await checkIfRestLikedByUser(user.id, restId);
-      if (liked && !check) {
-        addToLiked(user?.id, restId);
-      } else if (!liked && check) {
-        removeLike(user?.id, restId);
-      }
-    };
-    update();
-  }, [liked]);
+    } catch (error) {
+      dispatch(
+        addSnackbar({ message: (error as Error).message, type: "error" })
+      );
+      setLiked(!newValue);
+    }
+  };
+
   return user ? (
-    <HeartInput liked={liked} heartSize="30pt" onChange={setLiked} />
+    <HeartInput
+      value={liked}
+      heartSize="30pt"
+      onChange={(v) => handleChange(v)}
+    />
   ) : (
-    <HeartInput liked={liked} heartSize="30pt" disabled />
+    <HeartInput value={liked} heartSize="30pt" disabled />
   );
 };
 

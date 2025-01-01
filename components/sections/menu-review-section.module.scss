@@ -1,7 +1,7 @@
 .menuReviewSection {
   width: 100%;
 
-  & > .changeSection {
+  .changeSection {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -10,7 +10,24 @@
     margin-bottom: 20px;
   }
 
-  & > .section {
+  .multiSection {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 50px;
+  }
+
+  .section {
     margin-top: 60px;
+
+    & > h2 {
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 24pt;
+      margin-bottom: 50px;
+      color: var(--primary);
+      border-bottom: 5px solid var(--background-light);
+    }
   }
 }

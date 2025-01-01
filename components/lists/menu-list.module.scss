@@ -12,18 +12,27 @@
   .dishCategory {
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
     margin-bottom: 40px;
     padding: 0px 20px;
     row-gap: 15px;
-    & > p {
+
+    & > h3 {
       font-family: "Gluten";
-      font-size: 34pt;
+      font-size: 28pt;
+      margin-bottom: 20px;
+      font-weight: normal;
+      text-align: center;
     }
+
     .dishList {
+      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      align-items: center;
       row-gap: 20px;
     }
   }

@@ -5,6 +5,7 @@ import { createImages, deleteImages } from "@/lib/db/images";
 import { linkImagesToReview } from "@/lib/db/reviews/base-reviews";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
@@ -18,6 +19,7 @@ import { transferWithJSON } from "@/utils/misc";
 import { signIn } from "next-auth/react";
 import { ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
+import { ButtonSize } from "../button/button.types";
 import TextArea from "../inputs/generic-textarea.component";
 import ImageInput from "../inputs/image-input.component";
 import SliderInput from "../inputs/slider-input.component";
@@ -96,6 +98,7 @@ const AddReview = <Type extends keyof ReviewType>({
   >();
   const currentUser = useAppSelector(selectCurrentUser);
   const userLoading = useAppSelector(selectUserLoading);
+  const size = useAppSelector(selectViewportWidth);
   const store = useReviewStore(type);
   const [files, setFiles] = useState<File[] | undefined>();
   const [loading, setLoading] = useState(false);
@@ -166,7 +169,12 @@ const AddReview = <Type extends keyof ReviewType>({
         <div className={styles.right}>
           {!userLoading &&
             (currentUser ? (
-              <Button type="submit">Prześlij</Button>
+              <Button
+                type="submit"
+                size={size < 450 ? ButtonSize.SMALL : ButtonSize.NORMAL}
+              >
+                Prześlij
+              </Button>
             ) : (
               <Button type="button" onClick={() => signIn()}>
                 Zaloguj się aby przesłać

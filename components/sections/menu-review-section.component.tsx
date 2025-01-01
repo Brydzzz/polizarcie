@@ -1,7 +1,10 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { selectRestaurantPageView } from "@/lib/store/ui/ui.selector";
-import { setRestaurantPageView } from "@/lib/store/ui/ui.slice";
+import {
+  selectRestaurantPageView,
+  selectViewportWidth,
+} from "@/lib/store/ui/ui.selector";
+import { setRestaurantPageView, ViewportSize } from "@/lib/store/ui/ui.slice";
 import { ReactNode, useEffect, useRef } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
@@ -14,6 +17,7 @@ type Props = {
 const MenuReviewSection = ({ reviewList, menuList }: Props) => {
   const view = useAppSelector(selectRestaurantPageView);
   const dispatch = useAppDispatch();
+  const size = useAppSelector(selectViewportWidth);
 
   useEffect(() => {
     return () => {
@@ -44,25 +48,46 @@ const MenuReviewSection = ({ reviewList, menuList }: Props) => {
 
   return (
     <div className={styles.menuReviewSection}>
-      <div className={styles.changeSection}>
-        <Button
-          style={view === "menu" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
-          size={ButtonSize.LARGE}
-          onClick={handleMenuClick}
-        >
-          Menu
-        </Button>
-        <Button
-          style={view === "reviews" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
-          size={ButtonSize.LARGE}
-          onClick={handleReviewsClick}
-        >
-          Opinie
-        </Button>
-      </div>
-      <div ref={sectionRef} className={styles.section}>
-        {view === "menu" ? menuList : reviewList}
-      </div>
+      {size < ViewportSize.LG ? (
+        <>
+          <div className={styles.changeSection}>
+            <Button
+              style={view === "menu" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
+              size={
+                size < ViewportSize.XS ? ButtonSize.NORMAL : ButtonSize.LARGE
+              }
+              onClick={handleMenuClick}
+            >
+              Menu
+            </Button>
+            <Button
+              style={
+                view === "reviews" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP
+              }
+              size={
+                size < ViewportSize.XS ? ButtonSize.NORMAL : ButtonSize.LARGE
+              }
+              onClick={handleReviewsClick}
+            >
+              Opinie
+            </Button>
+          </div>
+          <div ref={sectionRef} className={styles.section}>
+            {view === "menu" ? menuList : reviewList}
+          </div>
+        </>
+      ) : (
+        <div className={styles.multiSection}>
+          <div ref={sectionRef} className={styles.section}>
+            <h2>Menu</h2>
+            {menuList}
+          </div>
+          <div ref={sectionRef} className={styles.section}>
+            <h2>Opinie</h2>
+            {reviewList}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
