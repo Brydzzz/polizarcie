@@ -17,16 +17,6 @@ export async function getUserById(id: User["id"]) {
   });
 }
 
-export async function addToLiked(userId: User["id"], restId: Restaurant["id"]) {
-  return await prisma.userFavoriteRestaurant.create({
-    data: {
-      userId: userId,
-      restaurantId: restId,
-      rankingPosition: 10,
-    },
-  });
-}
-
 export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
   return await prisma.user.findFirst({
     where: {
@@ -142,26 +132,42 @@ export async function getUnmatchedUsers(
     },
   });
 }
-export async function removeLike(userId: User["id"], restId: Restaurant["id"]) {
+
+export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) unauthorized();
+  return await prisma.userFavoriteRestaurant.create({
+    data: {
+      userId: currentUser.id,
+      restaurantId: restaurantId,
+      rankingPosition: 10,
+    },
+  });
+}
+
+export async function removeRestaurantFromLiked(
+  restaurantId: Restaurant["id"]
+) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) unauthorized();
   return await prisma.userFavoriteRestaurant.delete({
     where: {
       userId_restaurantId: {
-        userId: userId,
-        restaurantId: restId,
+        userId: currentUser.id,
+        restaurantId: restaurantId,
       },
     },
   });
 }
 
-export async function checkIfRestLikedByUser(
-  userId: User["id"],
-  restId: Restaurant["id"]
-) {
+export async function isRestaurantLiked(restaurantId: Restaurant["id"]) {
+  const currentUser = await getCurrentUser();
+  if (!currentUser) unauthorized();
   return (
     (await prisma.userFavoriteRestaurant.findFirst({
       where: {
-        userId: userId,
-        restaurantId: restId,
+        userId: currentUser.id,
+        restaurantId: restaurantId,
       },
     })) != null
   );

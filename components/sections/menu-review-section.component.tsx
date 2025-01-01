@@ -53,7 +53,9 @@ const MenuReviewSection = ({ reviewList, menuList }: Props) => {
           <div className={styles.changeSection}>
             <Button
               style={view === "menu" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP}
-              size={ButtonSize.LARGE}
+              size={
+                size < ViewportSize.XS ? ButtonSize.NORMAL : ButtonSize.LARGE
+              }
               onClick={handleMenuClick}
             >
               Menu
@@ -62,7 +64,9 @@ const MenuReviewSection = ({ reviewList, menuList }: Props) => {
               style={
                 view === "reviews" ? ButtonStyle.SOLID : ButtonStyle.BACKDROP
               }
-              size={ButtonSize.LARGE}
+              size={
+                size < ViewportSize.XS ? ButtonSize.NORMAL : ButtonSize.LARGE
+              }
               onClick={handleReviewsClick}
             >
               Opinie

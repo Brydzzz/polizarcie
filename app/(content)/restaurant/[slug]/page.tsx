@@ -64,20 +64,19 @@ const RestaurantPage = async ({ params }: Props) => {
   ];
 
   return (
-    <main className={styles.restaurantPage}>
-      <div className={styles.header}>
+    <div className={styles.container}>
+      <header className={styles.header}>
         <Link href="/browse">
-          <i
-            className="fa-solid fa-arrow-left"
-            style={{ color: "var(--primary-light)", fontSize: "40pt" }}
-          ></i>
+          <i className="fa-solid fa-arrow-left"></i>
         </Link>
-        <p>{restaurant.name}</p>
-        <span>
-          <RestaurantLiked restId={restaurant.id} />
-        </span>
-      </div>
-      <div className={styles.content}>
+        <div>
+          <h1>{restaurant.name}</h1>
+          <span>
+            <RestaurantLiked restId={restaurant.id} />
+          </span>
+        </div>
+      </header>
+      <main className={styles.content}>
         <div className={styles.info}>
           <div className={styles.column}>
             <div className={styles.mapContainer}>
@@ -97,7 +96,7 @@ const RestaurantPage = async ({ params }: Props) => {
               ></StarInput>
               <p>{restaurant.averageStars || 0}</p>
             </div>
-            <div className={styles.info}>
+            <div className={styles.data}>
               <h2>Adres:</h2>
               <p>{restaurant.address?.name}</p>
               <h2>Opis:</h2>
@@ -137,8 +136,8 @@ const RestaurantPage = async ({ params }: Props) => {
             ></ReviewList>
           }
         ></MenuReviewSection>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 };
 

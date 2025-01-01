@@ -5,7 +5,7 @@ import styles from "./heart-input.module.scss";
 type Props = {
   id?: string;
   name?: string;
-  liked: boolean;
+  value: boolean;
   onChange?: (liked: boolean) => void;
   disabled?: boolean;
   heartSize?: string;
@@ -14,25 +14,33 @@ type Props = {
 const HeartInput = ({
   id,
   name,
-  liked,
+  value,
   onChange,
   disabled,
   heartSize,
 }: Props) => {
   const handleClick = () => {
     if (disabled) return;
-    if (onChange) onChange(!liked);
+    if (onChange) onChange(!value);
   };
 
   return (
     <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
-      <div style={{ fontSize: heartSize }} onClick={() => handleClick()}>
-        {liked ? (
+      <input
+        id={id}
+        type="checkbox"
+        value={value ? "true" : "false"}
+        name={name}
+        className={styles.invisible}
+        disabled
+      />
+      <span style={{ fontSize: heartSize }} onClick={() => handleClick()}>
+        {value ? (
           <i className="fa-solid fa-heart"></i>
         ) : (
           <i className="fa-regular fa-heart"></i>
         )}
-      </div>
+      </span>
     </div>
   );
 };

@@ -3,10 +3,8 @@
   font-size: 18pt;
   color: var(--primary);
 
-  .heart {
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
   }
 
   .invisible {
@@ -14,11 +12,10 @@
   }
 
   &.disabled {
-    .heart {
-      &:hover {
-        cursor: initial;
-      }
+    &:hover {
+      cursor: initial;
     }
+
     color: var(--disabled);
   }
 }
