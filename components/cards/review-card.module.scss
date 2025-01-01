@@ -219,6 +219,12 @@
     width: 100%;
 
     .header {
+      .author {
+        max-height: 40px;
+        max-width: 160px;
+        text-align: left;
+      }
+
       .date {
         background-color: var(--background);
         top: -20px;

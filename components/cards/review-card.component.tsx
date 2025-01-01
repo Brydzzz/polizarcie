@@ -263,7 +263,9 @@ const ReviewCard = <Type extends keyof ReviewType>({
             <>
               <br />
               <span className={styles.updated}>
-                zmodyfikowano:&nbsp;{parseDate(updatedDate)}
+                {size < 600 ? "edyt:" : "edytowano:"}
+                &nbsp;
+                {parseDate(updatedDate)}
               </span>
             </>
           )}

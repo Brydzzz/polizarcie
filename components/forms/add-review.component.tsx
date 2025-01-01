@@ -151,8 +151,11 @@ const AddReview = <Type extends keyof ReviewType>({
 
   return (
     <div id={id} className={styles.container}>
-      <h2>{subject?.name}</h2>
-      <h3>Dodaj swoją opinię</h3>
+      <h2>
+        Dodaj swoją opinię&nbsp;
+        <span>{currentUser?.name}</span>
+      </h2>
+      <h3>{subject?.name}</h3>
       <form action={submit} className={styles.form}>
         {FIELDS[type].inputs(store)}
         <ImageInput
