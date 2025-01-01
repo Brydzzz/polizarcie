@@ -48,7 +48,7 @@ const MenuReviewSection = ({ reviewList, menuList }: Props) => {
 
   return (
     <div className={styles.menuReviewSection}>
-      {size < ViewportSize.LG ? (
+      {size < 1100 ? (
         <>
           <div className={styles.changeSection}>
             <Button
