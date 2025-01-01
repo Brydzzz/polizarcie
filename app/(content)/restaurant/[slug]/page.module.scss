@@ -154,6 +154,11 @@
     .header {
       & > div {
         width: 100%;
+        gap: 10px;
+
+        & > h1 {
+          font-size: 20pt;
+        }
       }
     }
 
@@ -173,6 +178,7 @@
           .rating {
             width: 100%;
             justify-content: center;
+            transform: scale(0.8);
           }
         }
 
