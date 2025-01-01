@@ -6,6 +6,7 @@ import { deleteReview, hideReview } from "@/lib/db/reviews/base-reviews";
 import { addOrReplaceLikeForReview } from "@/lib/db/reviews/review-likes";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { updateReviewsUpdate } from "@/lib/store/reviews/reviews.slice";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { parseDate } from "@/utils/date-time";
@@ -144,6 +145,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const [mode, setMode] = useState<Mode>("view");
   const user = useAppSelector(selectCurrentUser);
   const dispatch = useAppDispatch();
+  const size = useAppSelector(selectViewportWidth);
   const store = useReviewStore(type);
   const { has: canEdit } = useHasPermission(
     user,
@@ -278,7 +280,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
               src={image.path}
               width={50}
               height={50}
-              alt={image.title || "zdjęcie"}
+              alt={"zdjęcie"}
             />
           ))}
         </div>
