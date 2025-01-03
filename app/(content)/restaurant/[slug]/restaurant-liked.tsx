@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 type Props = {
   restId: string;
 };
-/* TODO: make it so that liked restaurants are added and first free ranking spot */
 const RestaurantLiked = ({ restId }: Props) => {
   const [liked, setLiked] = useState<boolean>(false);
   const user = useAppSelector(selectCurrentUser);
