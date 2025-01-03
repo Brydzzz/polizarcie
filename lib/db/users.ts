@@ -60,6 +60,7 @@ export async function getUsersMatchedWith(userId: User["id"]) {
   return await prisma.user.findMany({
     where: {
       id: { not: userId },
+      meetingStatus: true,
       OR: [
         {
           userOneMatch: {
@@ -85,6 +86,17 @@ export async function getUsersMatchedWith(userId: User["id"]) {
     },
     include: {
       medias: true,
+    },
+  });
+}
+
+export async function turnOnMeeting(userId: User["id"]) {
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      meetingStatus: true,
     },
   });
 }
