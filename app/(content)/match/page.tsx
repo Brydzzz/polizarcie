@@ -48,13 +48,16 @@ const MatchPage = () => {
       ? await getUnmatchedSimilarUser(
           user,
           users.map((usr) => usr.id)
-        ) : await getUnmatchedUser(
+        )
+      : await getUnmatchedUser(
           user,
           users.map((usr) => usr.id)
         );
     console.log(data);
     if (!data) return;
-    const rests = algo ? await getSimilarRestsLike(user.id, data.id) : await getTopLikedRests(data.id) :
+    const rests = algo
+      ? await getSimilarRestsLike(user.id, data.id)
+      : await getTopLikedRests(data.id);
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
     }
@@ -70,12 +73,12 @@ const MatchPage = () => {
     reloadUser();
   }, [status]);
   useEffect(() => {
-    const reloadEnv = async() => {
+    const reloadEnv = async () => {
       setFirst(false);
-      setDec(0)
-    }
+      setDec(0);
+    };
     reloadEnv();
-  },[algo])
+  }, [algo]);
   useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
@@ -149,9 +152,17 @@ const MatchPage = () => {
         <div className={styles.container}>
           <div>
             {!first && users[0] ? (
-              <MatchCard data={users[0]} likedRests={likedRests[0]} />
+              <MatchCard
+                data={users[0]}
+                likedRests={likedRests[0]}
+                algo={algo}
+              />
             ) : first && users[1] ? (
-              <MatchCard data={users[1]} likedRests={likedRests[1]} />
+              <MatchCard
+                data={users[1]}
+                likedRests={likedRests[1]}
+                algo={algo}
+              />
             ) : null}
           </div>
           {users[1] || (users[0] && !first) ? (
@@ -182,25 +193,45 @@ const MatchPage = () => {
           <div className={styles.back}>
             <div className={styles.card}>
               {users[0] && first ? (
-                <MatchCard data={users[0]} likedRests={likedRests[0]} />
+                <MatchCard
+                  data={users[0]}
+                  likedRests={likedRests[0]}
+                  algo={algo}
+                />
               ) : null}
             </div>
             <div className={styles.card}>
               {users[2] ? (
                 <div className={styles.card}>
-                  <MatchCard data={users[2]} likedRests={likedRests[2]} />
+                  <MatchCard
+                    data={users[2]}
+                    likedRests={likedRests[2]}
+                    algo={algo}
+                  />
                 </div>
               ) : users[1] && !first ? (
-                <MatchCard data={users[1]} likedRests={likedRests[1]} />
+                <MatchCard
+                  data={users[1]}
+                  likedRests={likedRests[1]}
+                  algo={algo}
+                />
               ) : null}
             </div>
           </div>
         ) : (
           <div className={styles.oneCard}>
             {users[2] && first ? (
-              <MatchCard data={users[2]} likedRests={likedRests[2]} />
+              <MatchCard
+                data={users[2]}
+                likedRests={likedRests[2]}
+                algo={algo}
+              />
             ) : users[1] && !first ? (
-              <MatchCard data={users[1]} likedRests={likedRests[1]} />
+              <MatchCard
+                data={users[1]}
+                likedRests={likedRests[1]}
+                algo={algo}
+              />
             ) : null}
           </div>
         )}
