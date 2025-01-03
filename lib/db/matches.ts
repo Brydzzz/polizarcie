@@ -41,24 +41,6 @@ export async function getPendingRequestsFor(
   });
 }
 
-// export async function getPendingRequestFor(
-//   userId: User["id"],
-//   excludeIds: User["id"][]
-// ) {
-//   return await prisma.match.findFirst({
-//     where: {
-//       userTwoId: userId,
-//       value: MatchRequest.PENDING,
-//       userTwo: {
-//         AND: [{ id: { not: { in: excludeIds } } }, { id: { not: userId } }],
-//       },
-//     },
-//     include: {
-//       userOne: true,
-//     },
-//   });
-// }
-
 export async function DenyMatchRequest(
   userOneId: Match["userOneId"],
   userTwoId: Match["userTwoId"]

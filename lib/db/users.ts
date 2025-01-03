@@ -111,7 +111,6 @@ export async function getUsersMatchedWith(userId: User["id"]) {
   return await prisma.user.findMany({
     where: {
       id: { not: userId },
-      meetingStatus: true,
       OR: [
         {
           userOneMatch: {
@@ -141,6 +140,20 @@ export async function getUsersMatchedWith(userId: User["id"]) {
   });
 }
 
+export async function getUsersPendingWith(userId: User["id"]) {
+  return await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+
+      userTwoMatch: {
+        some: {
+          userOneId: userId,
+          value: MatchRequest.PENDING,
+        },
+      },
+    },
+  });
+}
 export async function turnOnMeeting(userId: User["id"]) {
   return await prisma.user.update({
     where: {
@@ -322,7 +335,6 @@ export async function getSimilarRestsLike(
   newUserId: User["id"]
 ) {
   const liked = await prisma.restaurant.findMany({
-    take: 3,
     where: {
       AND: [
         {
@@ -385,7 +397,6 @@ export async function getSimilarRestsForUsers(
   return await Promise.all(
     usersIDs.map(async (userId) => {
       const userTopLiked = await prisma.restaurant.findMany({
-        take: 3,
         where: {
           AND: [
             {
