@@ -1,9 +1,24 @@
+@import url("https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&family=Gluten:wght@100..900&display=swap");
+
 /* TODO maybe implement animations? */
 
 .main {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
+  & > .switch {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20pt;
+    margin-right: 20%;
+    & > .prompt {
+      margin-top: 5pt;
+      margin-right: 10%;
+      font-family: "Gluten", sans-serif;
+      align-self: flex-start;
+      text-align: start;
+    }
+  }
   & > .container {
     opacity: 1;
     width: 100%;

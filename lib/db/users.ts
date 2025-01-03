@@ -23,7 +23,58 @@ export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
       id: { not: user.id },
       preferredGender: user.gender,
       gender: user.preferredGender,
+      meetingStatus: true,
       AND: [
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          id: { notIn: excludeIds },
+        },
+      ],
+    },
+  });
+}
+
+export async function getUnmatchedSimilarUser(
+  user: User,
+  excludeIds: User["id"][]
+) {
+  return await prisma.user.findFirst({
+    where: {
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
+      meetingStatus: true,
+      AND: [
+        {
+          favoriteRestaurants: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
         {
           userOneMatch: {
             none: {
@@ -101,7 +152,7 @@ export async function turnOnMeeting(userId: User["id"]) {
   });
 }
 
-export async function getUnmatchedUsers(
+export async function getUnmatchedSimilarUsers(
   user: User,
   excludeIds: User["id"][],
   howMany: number
@@ -112,7 +163,15 @@ export async function getUnmatchedUsers(
       id: { not: user.id },
       preferredGender: user.gender,
       gender: user.preferredGender,
+      meetingStatus: true,
       AND: [
+        {
+          favoriteRestaurants: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
         {
           userOneMatch: {
             none: {
@@ -187,6 +246,7 @@ export async function isRestaurantLiked(restaurantId: Restaurant["id"]) {
 
 export async function getTopLikedRests(userId: User["id"]) {
   const liked = await prisma.restaurant.findMany({
+    take: 3,
     where: {
       favoriteAmong: {
         some: {
@@ -206,10 +266,46 @@ export async function getTopLikedRests(userId: User["id"]) {
   });
 }
 
+export async function getSimilarRestsLike(
+  ogUserId: User["id"],
+  newUserId: User["id"]
+) {
+  const liked = await prisma.restaurant.findMany({
+    take: 3,
+    where: {
+      AND: [
+        {
+          favoriteAmong: {
+            some: {
+              userId: ogUserId,
+            },
+          },
+        },
+        {
+          favoriteAmong: {
+            some: {
+              userId: newUserId,
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      favoriteAmong: true,
+    },
+  });
+  return liked.sort((a, b) => {
+    const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    return aRanking - bRanking;
+  });
+}
+
 export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
   return await Promise.all(
     usersIDs.map(async (userId) => {
       const userTopLiked = await prisma.restaurant.findMany({
+        take: 3,
         where: {
           favoriteAmong: {
             some: {
@@ -217,6 +313,45 @@ export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
               rankingPosition: { in: [1, 2, 3] },
             },
           },
+        },
+        include: {
+          favoriteAmong: true,
+        },
+      });
+      return userTopLiked.sort((a, b) => {
+        const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        return aRanking - bRanking;
+      });
+    })
+  );
+}
+
+export async function getSimilarRestsForUsers(
+  ogUserId: User["id"],
+  usersIDs: User["id"][]
+) {
+  return await Promise.all(
+    usersIDs.map(async (userId) => {
+      const userTopLiked = await prisma.restaurant.findMany({
+        take: 3,
+        where: {
+          AND: [
+            {
+              favoriteAmong: {
+                some: {
+                  userId: ogUserId,
+                },
+              },
+            },
+            {
+              favoriteAmong: {
+                some: {
+                  userId: userId,
+                },
+              },
+            },
+          ],
         },
         include: {
           favoriteAmong: true,

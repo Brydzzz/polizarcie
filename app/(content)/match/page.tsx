@@ -6,6 +6,7 @@ import {
   ButtonStyle,
 } from "@/components/button/button.types";
 import MatchCard from "@/components/cards/match-card-component";
+import Switch from "@/components/inputs/switch.component";
 import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
 import { matchNoWith, matchYesWith } from "@/lib/db/matches";
@@ -23,11 +24,9 @@ import {
 } from "@/lib/store/user/user.selector";
 import { setCurrentUser } from "@/lib/store/user/user.slice";
 import { Restaurant, User } from "@prisma/client";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchPage = () => {
-  const router = useRouter();
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
   const [first, setFirst] = useState<Boolean>(false);
@@ -114,6 +113,14 @@ const MatchPage = () => {
   ) : user ? (
     user.meetingStatus ? (
       <main className={styles.main}>
+        <div className={styles.switch}>
+          {algo ? (
+            <p className={styles.prompt}>Niech los zadecyduje...</p>
+          ) : (
+            <p className={styles.prompt}>Może mam z kimś coś wspólnego?</p>
+          )}
+          <Switch checked={algo} onChange={handleSwitch} />
+        </div>
         <div className={styles.container}>
           <div>
             {!first && users[0] ? (
