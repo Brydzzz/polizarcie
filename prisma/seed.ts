@@ -2,9 +2,15 @@ import { prisma } from "@/prisma";
 import { hashPassword } from "@/utils/misc";
 import { DishType, Gender, Role } from "@prisma/client";
 import slugify from "slugify";
+import { addresses } from "./temp_adresses";
+import fs from 'fs';
+import csv from 'csv-parser';
+
 
 async function initData() {
   // TODO add some actual database initialization
+
+  /*
   const addresses = [
     {
       id: "1",
@@ -37,6 +43,15 @@ async function initData() {
       yCoords: 52.220232,
     },
   ];
+  
+  for (const address of addresses) {
+    await prisma.address.upsert({
+      where: { id: address.id },
+      update: address,
+      create: address,
+    });
+  }*/
+
   for (const address of addresses) {
     await prisma.address.upsert({
       where: { id: address.id },
@@ -135,6 +150,60 @@ async function initData() {
     });
   }
 
+
+  const csvFilePath = "./prisma/restaurants.csv";
+
+  const restaurantPromises: any[] = [];
+
+  await new Promise<void>((resolve, reject) => {
+    fs.createReadStream(csvFilePath)
+      .pipe(csv({ separator: ';' }))
+      .on('data', (row) => {
+        restaurantPromises.push(
+          prisma.restaurant.upsert({
+            where: {
+              name: row.name,
+            },
+            update: { id: row.id },
+            create: {
+              id: row.id,
+              name: row.name,
+              slug: slugify(row.name, { lower: true }),
+              addressId: row.addressId,
+              description: row.description,
+              openingTimeMon: row.openingTimeMon,
+              openingTimeTue: row.openingTimeTue,
+              openingTimeWen: row.openingTimeWen,
+              openingTimeThu: row.openingTimeThu,
+              openingTimeFri: row.openingTimeFri,
+              openingTimeSat: row.openingTimeSat,
+              openingTimeSun: row.openingTimeSun,
+              closingTimeMon: row.closingTimeMon,
+              closingTimeTue: row.closingTimeTue,
+              closingTimeWen: row.closingTimeWen,
+              closingTimeThu: row.closingTimeThu,
+              closingTimeFri: row.closingTimeFri,
+              closingTimeSat: row.closingTimeSat,
+              closingTimeSun: row.closingTimeSun,
+            },
+          })
+        );
+      })
+      .on('end', async () => {
+        console.log('CSV restaurants successfully processed');
+        try {
+          await Promise.all(restaurantPromises);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .on('error', reject);
+  });
+
+  const restaurants = await prisma.restaurant.findMany();
+  //console.log(restaurants);
+  /*
   await prisma.restaurant.upsert({
     where: {
       name: "Marszałkowski bar mleczny",
@@ -271,7 +340,48 @@ async function initData() {
       name: "Amman Kebab",
     },
   });
+  */
 
+
+  const csvFilePath = "./prisma/restaurants.csv";
+
+  fs.createReadStream(csvFilePath)
+  .pipe(csv({ separator: ';' }))
+    .on('data', async (row) => {
+      console.log(row);
+      await prisma.restaurant.upsert({
+        where: {
+          name: row.name,
+        },
+        update: { id: row.id },
+        create: {
+          id: row.id,
+          name: row.name,
+          slug: slugify(row.name, { lower: true }),
+          addressId: row.addressId,
+          description: row.description,
+          openingTimeMon: row.openingTimeMon,
+          openingTimeTue: row.openingTimeTue,
+          openingTimeWen: row.openingTimeWen,
+          openingTimeThu: row.openingTimeThu,
+          openingTimeFri: row.openingTimeFri,
+          openingTimeSat: row.openingTimeSat,
+          openingTimeSun: row.openingTimeSun,
+          closingTimeMon: row.closingTimeMon,
+          closingTimeTue: row.closingTimeTue,
+          closingTimeWen: row.closingTimeWen,
+          closingTimeThu: row.closingTimeThu,
+          closingTimeFri: row.closingTimeFri,
+          closingTimeSat: row.closingTimeSat,
+          closingTimeSun: row.closingTimeSun,
+        },
+      });
+    })
+  .on('end', () => {
+    console.log('CSV restaurants successfully processed');
+  });
+
+  
   const dishes = [
     {
       id: "1",
@@ -374,6 +484,7 @@ async function initData() {
     },
   ];
   for (const dish of dishes) {
+    console.log(dish);
     await prisma.dish.upsert({
       where: { id: dish.id },
       update: dish,
