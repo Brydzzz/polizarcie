@@ -343,45 +343,9 @@ async function initData() {
   */
 
 
-  const csvFilePath = "./prisma/restaurants.csv";
 
-  fs.createReadStream(csvFilePath)
-  .pipe(csv({ separator: ';' }))
-    .on('data', async (row) => {
-      console.log(row);
-      await prisma.restaurant.upsert({
-        where: {
-          name: row.name,
-        },
-        update: { id: row.id },
-        create: {
-          id: row.id,
-          name: row.name,
-          slug: slugify(row.name, { lower: true }),
-          addressId: row.addressId,
-          description: row.description,
-          openingTimeMon: row.openingTimeMon,
-          openingTimeTue: row.openingTimeTue,
-          openingTimeWen: row.openingTimeWen,
-          openingTimeThu: row.openingTimeThu,
-          openingTimeFri: row.openingTimeFri,
-          openingTimeSat: row.openingTimeSat,
-          openingTimeSun: row.openingTimeSun,
-          closingTimeMon: row.closingTimeMon,
-          closingTimeTue: row.closingTimeTue,
-          closingTimeWen: row.closingTimeWen,
-          closingTimeThu: row.closingTimeThu,
-          closingTimeFri: row.closingTimeFri,
-          closingTimeSat: row.closingTimeSat,
-          closingTimeSun: row.closingTimeSun,
-        },
-      });
-    })
-  .on('end', () => {
-    console.log('CSV restaurants successfully processed');
-  });
 
-  
+  /*
   const dishes = [
     {
       id: "1",
@@ -490,7 +454,7 @@ async function initData() {
       update: dish,
       create: dish,
     });
-  }
+  }*/
 }
 
 initData()
