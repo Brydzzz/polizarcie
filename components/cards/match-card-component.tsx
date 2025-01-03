@@ -6,10 +6,10 @@ import UserCard from "./user-desc-card-component";
 type Props = {
   data: Partial<User>;
   likedRests: Partial<Restaurant>[];
+  algo: Boolean;
 };
 
-const MatchCard = ({ data, likedRests }: Props) => {
-  const { id } = data;
+const MatchCard = ({ data, likedRests, algo }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.photoBox}>
@@ -29,10 +29,10 @@ const MatchCard = ({ data, likedRests }: Props) => {
       </div>
       <div className={styles.details}>
         <div className={styles.restaurants}>
-          <p> Lubię jeść: </p>
+          {algo ? <p>Łączy nas: </p> : <p> Lubię jeść: </p>}
           {likedRests ? (
             <ul>
-              {likedRests.map((rest, idx) => (
+              {likedRests.slice(0, 3).map((rest, idx) => (
                 <p key={idx}>
                   {idx + 1}. {rest.name || null}
                 </p>

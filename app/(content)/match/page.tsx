@@ -6,12 +6,17 @@ import {
   ButtonStyle,
 } from "@/components/button/button.types";
 import MatchCard from "@/components/cards/match-card-component";
+import Switch from "@/components/inputs/switch.component";
 import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
 import { matchNoWith, matchYesWith } from "@/lib/db/matches";
 import {
+  getSimilarRestsForUsers,
+  getSimilarRestsLike,
   getTopLikedRests,
   getTopLikedRestsForUsers,
+  getUnmatchedSimilarUser,
+  getUnmatchedSimilarUsers,
   getUnmatchedUser,
   getUnmatchedUsers,
   turnOnMeeting,
@@ -23,11 +28,9 @@ import {
 } from "@/lib/store/user/user.selector";
 import { setCurrentUser } from "@/lib/store/user/user.slice";
 import { Restaurant, User } from "@prisma/client";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchPage = () => {
-  const router = useRouter();
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
   const [first, setFirst] = useState<Boolean>(false);
@@ -38,14 +41,23 @@ const MatchPage = () => {
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
   const dispatch = useAppDispatch();
+
   const pushUnmatchedUser = async () => {
     if (!user) return;
-    const data = await getUnmatchedUser(
-      user,
-      users.map((usr) => usr.id)
-    );
+    const data = algo
+      ? await getUnmatchedSimilarUser(
+          user,
+          users.map((usr) => usr.id)
+        )
+      : await getUnmatchedUser(
+          user,
+          users.map((usr) => usr.id)
+        );
+    console.log(data);
     if (!data) return;
-    const rests = await getTopLikedRests(data.id);
+    const rests = algo
+      ? await getSimilarRestsLike(user.id, data.id)
+      : await getTopLikedRests(data.id);
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
     }
@@ -61,18 +73,33 @@ const MatchPage = () => {
     reloadUser();
   }, [status]);
   useEffect(() => {
+    const reloadEnv = async () => {
+      setFirst(false);
+      setDec(0);
+    };
+    reloadEnv();
+  }, [algo]);
+  useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
-      const data = await getUnmatchedUsers(user, [], 4);
+      const data = algo
+        ? await getUnmatchedSimilarUsers(user, [], 4)
+        : await getUnmatchedUsers(user, [], 4);
       setUsers(data);
       if (data) {
-        const rests = await getTopLikedRestsForUsers(data.map((usr) => usr.id));
+        const rests = algo
+          ? await getSimilarRestsForUsers(
+              user.id,
+              data.map((usr) => usr.id)
+            )
+          : await getTopLikedRestsForUsers(data.map((usr) => usr.id));
         if (rests) {
           setLikedRests(rests);
         }
       }
     };
     initUsers();
+    console.log(users);
   }, [user, loading, algo]);
   const handleSwitch = () => {
     setAlgo(!algo);
@@ -114,12 +141,28 @@ const MatchPage = () => {
   ) : user ? (
     user.meetingStatus ? (
       <main className={styles.main}>
+        <div className={styles.switch}>
+          {algo ? (
+            <p className={styles.prompt}>Niech los zadecyduje...</p>
+          ) : (
+            <p className={styles.prompt}>Może mam z kimś coś wspólnego?</p>
+          )}
+          <Switch checked={algo} onChange={handleSwitch} />
+        </div>
         <div className={styles.container}>
           <div>
             {!first && users[0] ? (
-              <MatchCard data={users[0]} likedRests={likedRests[0]} />
+              <MatchCard
+                data={users[0]}
+                likedRests={likedRests[0]}
+                algo={algo}
+              />
             ) : first && users[1] ? (
-              <MatchCard data={users[1]} likedRests={likedRests[1]} />
+              <MatchCard
+                data={users[1]}
+                likedRests={likedRests[1]}
+                algo={algo}
+              />
             ) : null}
           </div>
           {users[1] || (users[0] && !first) ? (
@@ -150,25 +193,45 @@ const MatchPage = () => {
           <div className={styles.back}>
             <div className={styles.card}>
               {users[0] && first ? (
-                <MatchCard data={users[0]} likedRests={likedRests[0]} />
+                <MatchCard
+                  data={users[0]}
+                  likedRests={likedRests[0]}
+                  algo={algo}
+                />
               ) : null}
             </div>
             <div className={styles.card}>
               {users[2] ? (
                 <div className={styles.card}>
-                  <MatchCard data={users[2]} likedRests={likedRests[2]} />
+                  <MatchCard
+                    data={users[2]}
+                    likedRests={likedRests[2]}
+                    algo={algo}
+                  />
                 </div>
               ) : users[1] && !first ? (
-                <MatchCard data={users[1]} likedRests={likedRests[1]} />
+                <MatchCard
+                  data={users[1]}
+                  likedRests={likedRests[1]}
+                  algo={algo}
+                />
               ) : null}
             </div>
           </div>
         ) : (
           <div className={styles.oneCard}>
             {users[2] && first ? (
-              <MatchCard data={users[2]} likedRests={likedRests[2]} />
+              <MatchCard
+                data={users[2]}
+                likedRests={likedRests[2]}
+                algo={algo}
+              />
             ) : users[1] && !first ? (
-              <MatchCard data={users[1]} likedRests={likedRests[1]} />
+              <MatchCard
+                data={users[1]}
+                likedRests={likedRests[1]}
+                algo={algo}
+              />
             ) : null}
           </div>
         )}
