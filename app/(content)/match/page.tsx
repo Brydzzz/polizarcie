@@ -11,8 +11,12 @@ import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
 import { matchNoWith, matchYesWith } from "@/lib/db/matches";
 import {
+  getSimilarRestsForUsers,
+  getSimilarRestsLike,
   getTopLikedRests,
   getTopLikedRestsForUsers,
+  getUnmatchedSimilarUser,
+  getUnmatchedSimilarUsers,
   getUnmatchedUser,
   getUnmatchedUsers,
   turnOnMeeting,
@@ -37,14 +41,20 @@ const MatchPage = () => {
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
   const dispatch = useAppDispatch();
+
   const pushUnmatchedUser = async () => {
     if (!user) return;
-    const data = await getUnmatchedUser(
-      user,
-      users.map((usr) => usr.id)
-    );
+    const data = algo
+      ? await getUnmatchedSimilarUser(
+          user,
+          users.map((usr) => usr.id)
+        ) : await getUnmatchedUser(
+          user,
+          users.map((usr) => usr.id)
+        );
+    console.log(data);
     if (!data) return;
-    const rests = await getTopLikedRests(data.id);
+    const rests = algo ? await getSimilarRestsLike(user.id, data.id) : await getTopLikedRests(data.id) :
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
     }
@@ -60,18 +70,33 @@ const MatchPage = () => {
     reloadUser();
   }, [status]);
   useEffect(() => {
+    const reloadEnv = async() => {
+      setFirst(false);
+      setDec(0)
+    }
+    reloadEnv();
+  },[algo])
+  useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
-      const data = await getUnmatchedUsers(user, [], 4);
+      const data = algo
+        ? await getUnmatchedSimilarUsers(user, [], 4)
+        : await getUnmatchedUsers(user, [], 4);
       setUsers(data);
       if (data) {
-        const rests = await getTopLikedRestsForUsers(data.map((usr) => usr.id));
+        const rests = algo
+          ? await getSimilarRestsForUsers(
+              user.id,
+              data.map((usr) => usr.id)
+            )
+          : await getTopLikedRestsForUsers(data.map((usr) => usr.id));
         if (rests) {
           setLikedRests(rests);
         }
       }
     };
     initUsers();
+    console.log(users);
   }, [user, loading, algo]);
   const handleSwitch = () => {
     setAlgo(!algo);

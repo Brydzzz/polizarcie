@@ -168,10 +168,61 @@ export async function getUnmatchedSimilarUsers(
         {
           favoriteRestaurants: {
             some: {
-              userId: user.id,
+              restaurant: {
+                favoriteAmong: {
+                  some: {
+                    userId: user.id,
+                  },
+                },
+              },
             },
           },
         },
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          id: { notIn: excludeIds },
+        },
+      ],
+    },
+  });
+}
+
+export async function getUnmatchedUsers(
+  user: User,
+  excludeIds: User["id"][],
+  howMany: number
+) {
+  return await prisma.user.findMany({
+    take: howMany,
+    where: {
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
+      meetingStatus: true,
+      AND: [
         {
           userOneMatch: {
             none: {
