@@ -23,7 +23,7 @@ const BigMapView = ({ data }: Props) => {
   const mapInstance = useRef<Map | null>(null);
   const vectorSource = useRef(new VectorSource());
 
-  const iconSVG = `<svg width="40px" aspect-ratio="1" fill="rgb(198, 41, 41)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"/></svg>`;
+  const iconSVG = `<svg width="60pt" aspect-ratio="1" fill="rgb(198, 41, 41)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"/></svg>`;
   const defaultCenter = [21.009993, 52.220656]; // Fallback coordinates
   const center = data[0]?.address
     ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
@@ -72,7 +72,7 @@ const BigMapView = ({ data }: Props) => {
           new Style({
             image: new Icon({
               src: "data:image/svg+xml;utf8," + iconSVG,
-              scale: 0.6,
+              scale: 0.35,
             }),
           })
         );
