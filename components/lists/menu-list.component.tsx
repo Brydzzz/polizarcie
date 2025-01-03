@@ -7,6 +7,7 @@ type Props = {
 
 const MenuList = ({ data }: Props) => {
   const dishTypeOrder = [
+    DishType.TOP,
     DishType.STARTER,
     DishType.SOUP,
     DishType.MAIN_DISH,
@@ -17,6 +18,7 @@ const MenuList = ({ data }: Props) => {
   ];
 
   const dishTypeDict = new Map<DishType, string>([
+    [DishType.TOP, "Najpopularniejsze"],
     [DishType.STARTER, "Przystawki"],
     [DishType.SOUP, "Zupy"],
     [DishType.MAIN_DISH, "Dania Główne"],
