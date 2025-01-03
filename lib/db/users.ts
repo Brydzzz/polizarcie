@@ -271,11 +271,20 @@ export async function getUnmatchedUsers(
 export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
   const currentUser = await getCurrentUser();
   if (!currentUser) unauthorized();
+  const currentHighest = await prisma.userFavoriteRestaurant.findFirst({
+    where: {
+      userId: currentUser.id,
+    },
+    orderBy: {
+      rankingPosition: "desc",
+    },
+  });
+  const pos = currentHighest ? currentHighest.rankingPosition + 1 : 1;
   return await prisma.userFavoriteRestaurant.create({
     data: {
       userId: currentUser.id,
       restaurantId: restaurantId,
-      rankingPosition: 10,
+      rankingPosition: pos + 1,
     },
   });
 }
