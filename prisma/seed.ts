@@ -201,7 +201,7 @@ async function initData() {
       .on('error', reject);
   });
 
-  const restaurants = await prisma.restaurant.findMany();
+  //const restaurants = await prisma.restaurant.findMany();
   //console.log(restaurants);
   /*
   await prisma.restaurant.upsert({
@@ -343,7 +343,31 @@ async function initData() {
   */
 
 
+  const csvFilePath2 = "./prisma/dishes.csv";
 
+  fs.createReadStream(csvFilePath2)
+  .pipe(csv({ separator: ';' }))
+    .on('data', async (row) => {
+      console.log(row);
+      await prisma.dish.upsert({
+        where: {
+          id: row.id,
+        },
+        update: { id: row.id },
+        create: {
+          id: row.id,
+          name: row.name,
+          description: row.description,
+          priceZl: parseInt(row.priceZl, 10),
+          priceGr: parseInt(row.priceGr, 10),
+          restaurantId: row.restaurantId,
+          type: DishType[row.type as keyof typeof DishType],
+        },
+      });
+    })
+  .on('end', () => {
+    console.log('CSV restaurants successfully processed');
+  });
 
   /*
   const dishes = [
