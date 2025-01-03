@@ -115,9 +115,10 @@ async function initData() {
   await new Promise<void>((resolve, reject) => {
     fs.createReadStream(csvFilePath)
       .pipe(csv({ separator: ';' }))
-      .on('data', (row) => {
+      .on('data', async (row) => {
         restaurantPromises.push(
-          prisma.restaurant.upsert({
+          //console.log(row);
+          await prisma.restaurant.upsert({
             where: {
               name: row.name,
             },
@@ -163,7 +164,7 @@ async function initData() {
   fs.createReadStream(csvFilePath2)
   .pipe(csv({ separator: ';' }))
     .on('data', async (row) => {
-      console.log(row);
+      //console.log(row);
       await prisma.dish.upsert({
         where: {
           id: row.id,
