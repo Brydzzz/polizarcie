@@ -2,11 +2,8 @@
 .main {
   display: flex;
   flex-direction: column;
-  & > .prompt {
-    padding-left: 20pt;
-    margin-top: 10pt;
-    font-size: 20pt;
-    font-family: "Gluten", sans-serif;
+  & > .header {
+    margin-left: 20pt;
   }
   & > .requests {
     display: flex;
@@ -20,15 +17,50 @@
       padding-bottom: 7pt;
     }
   }
-  & > .contacts {
+  & > .bottom {
     margin-left: 20pt;
-    margin-right: 20pt;
     display: flex;
-    flex-direction: column;
-    width: 60%;
-    & > .contact {
-      padding-top: 5pt;
-      padding-bottom: 5pt;
+    flex-direction: row;
+
+    & > .contacts {
+      margin-right: 20pt;
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+      & > .contactsList {
+        border: 2px solid var(--background-dark);
+        background-color: var(--background-medium);
+        border-radius: 6px;
+        padding: 3pt;
+        padding-left: 5pt;
+        padding-right: 10pt;
+        margin-top: 7pt;
+        & > .contact {
+          padding-top: 5pt;
+          padding-bottom: 5pt;
+        }
+      }
+    }
+    & > .pendings {
+      margin-left: 20pt;
+      margin-right: 20pt;
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+      & > .pendingList {
+        border: 2px solid var(--background-dark);
+        background-color: var(--background-medium);
+        padding: 3pt;
+        padding-left: 10pt;
+        padding-right: 5pt;
+        padding-bottom: 10pt;
+        border-radius: 6px;
+        margin-top: 7pt;
+        & > .pend {
+          padding-top: 5pt;
+          padding-top: 5pt;
+        }
+      }
     }
   }
 }
@@ -43,4 +75,11 @@
     display: flex;
     justify-content: center;
   }
+}
+
+.prompt {
+  padding-left: 20pt;
+  margin-top: 10pt;
+  font-size: 20pt;
+  font-family: "Gluten", sans-serif;
 }

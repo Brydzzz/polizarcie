@@ -1,10 +1,11 @@
 "use client";
-import ContactCard from "@/components/cards/contact-card.component.tsx";
+import ContactCard from "@/components/cards/contact-card.component";
 import MatchRequestCard from "@/components/cards/match-request.component";
+import OurPendingCard from "@/components/cards/our-pending-card.component";
 import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
 import { getPendingRequestsFor } from "@/lib/db/matches";
-import { getUsersMatchedWith } from "@/lib/db/users";
+import { getUsersMatchedWith, getUsersPendingWith } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
 import {
   selectCurrentUser,
@@ -21,6 +22,7 @@ const MatchRequestPage = () => {
   const [contacts, setContacts] = useState<
     Array<Partial<User & { medias: Partial<UserMedia>[] }>>
   >([]);
+  const [pendings, setPendings] = useState<Partial<User[]>>([]);
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
   useEffect(() => {
@@ -30,31 +32,23 @@ const MatchRequestPage = () => {
       setRequests(data);
     };
     fetchReqs();
-    console.log(requests);
   }, [user, decision]);
 
-  // useEffect(() => {
-  //   const fetchReq = async () => {
-  //     if (!user) return;
-  //     const data = await getPendingRequestFor(
-  //       user?.id,
-  //       requests
-  //         .map((request) => request.userOne?.id)
-  //         .filter((id) => id !== undefined) as string[]
-  //     );
-  //     if (data) {
-  //       setRequests((requests) => [...requests, data]);
-  //     }
-  //   };
-  //   fetchReq();
-  //   console.log(requests);
-  // }, [decision]);
+  useEffect(() => {
+    const fetchReqs = async () => {
+      if (!user) return;
+      const data = await getUsersPendingWith(user?.id);
+      console.log(data);
+      setPendings(data);
+    };
+    console.log(pendings);
+    fetchReqs();
+  }, [user]);
 
   useEffect(() => {
     const fetchMatches = async () => {
       if (!user) return;
       const data = await getUsersMatchedWith(user.id);
-      console.log(data);
       setContacts(data);
     };
     fetchMatches();
@@ -64,8 +58,10 @@ const MatchRequestPage = () => {
     <LoaderBlur />
   ) : user ? (
     <main className={styles.main}>
-      <div className={styles.prompt}>
-        <p>Zainteresowani wspólnym pożeraniem: </p>
+      <div className={styles.header}>
+        <div className={styles.prompt}>
+          <p>Zainteresowani wspólnym pożeraniem: </p>
+        </div>
       </div>
       <div className={styles.requests} onClick={() => setDec(!decision)}>
         {requests.map((req, idx) =>
@@ -76,21 +72,41 @@ const MatchRequestPage = () => {
           ) : null
         )}
       </div>
-      <div className={styles.prompt}>
-        <p>Kontakty: </p>
-      </div>
-      <div className={styles.contacts}>
-        {contacts.map((cont, idx) =>
-          cont.medias ? (
-            <div className={styles.contact} key={idx}>
-              <ContactCard data={cont} medias={cont.medias} />
+      <div className={styles.bottom}>
+        <div className={styles.contacts}>
+          <div className={styles.prompt}>
+            <p>Kontakty: </p>
+          </div>
+          {contacts.length > 1 ? (
+            <div className={styles.contactsList}>
+              {contacts.map((cont, idx) =>
+                cont.medias ? (
+                  <div className={styles.contact} key={idx}>
+                    <ContactCard data={cont} medias={cont.medias} />
+                  </div>
+                ) : (
+                  <div className={styles.contact} key={idx}>
+                    <ContactCard data={cont} medias={[]} />
+                  </div>
+                )
+              )}
             </div>
-          ) : (
-            <div className={styles.contact} key={idx}>
-              <ContactCard data={cont} medias={[]} />
+          ) : null}
+        </div>
+        <div className={styles.pendings}>
+          <div className={styles.prompt}>
+            <p>Oczekujące: </p>
+          </div>
+          {pendings.length > 1 ? (
+            <div className={styles.pendingList}>
+              {pendings.map((pend, idx) => (
+                <div className={styles.pend} key={idx}>
+                  {pend ? <OurPendingCard data={pend} /> : null}
+                </div>
+              ))}
             </div>
-          )
-        )}
+          ) : null}
+        </div>
       </div>
     </main>
   ) : (
