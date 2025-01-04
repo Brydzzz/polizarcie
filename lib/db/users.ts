@@ -2,7 +2,7 @@
 
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { MatchRequest, Restaurant, User } from "@prisma/client";
+import { MatchRequest, Restaurant, User, Gender } from "@prisma/client";
 import { unauthorized } from "next/navigation";
 import {
   clearUserPasswordCache,
@@ -262,4 +262,16 @@ export async function cancelPasswordChange() {
   const currentUser = await getCurrentUser();
   if (!currentUser) unauthorized();
   return await clearUserPasswordCache(currentUser.id);
+}
+
+export async function saveUserSettings(id: User["id"], settings: { name: string | null, description: string | null, gender: Gender | null }) {
+  const data: { name?: string, email?: string, description?: string, gender?: Gender } = {};
+  if (settings.name !== null) data.name = settings.name;
+  if (settings.description !== null) data.description = settings.description;
+  if (settings.gender !== null) data.gender = settings.gender;
+
+  return await prisma.user.update({
+    where: { id: id },
+    data: data,
+  });
 }
