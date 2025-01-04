@@ -36,9 +36,6 @@ import Switch from "@/components/inputs/switch.component";
 const UserSettings = () => {
 
     const dispatch = useAppDispatch();
-
-    const [text1, setText1] = useState("test");
-    const [checkbox, setCheckbox] = useState(false);
     const [isToggled, setIsToggled] = useState(false);
 
     const [files, setFiles] = useState<File[] | undefined>();
@@ -156,27 +153,6 @@ const UserSettings = () => {
           required
           maxLength={NAME_CHAR_LIMIT}
         />
-          {/* <label htmlFor="name" className={styles.label}>Name</label>
-          <input
-            type="text"
-            id="name"
-            className={styles.inputText}
-            value={name}
-            style={{ color: nameColor }}
-            maxLength={NAME_CHAR_LIMIT} // Add maxLength attribute
-            onChange={(e) => {
-              if (isFirstChange) {
-                setUsername(e.target.value.slice(-1));
-                setIsFirstChange(false);
-              } else {
-                setUsername(e.target.value);
-              }
-              setNameColor('black');
-            }}
-            onBlur={(e) => {
-              setUsername(e.target.value);
-            }}
-          /> */}
         </div>
         <div className={styles.formGroup}>
         <TextArea
@@ -184,17 +160,6 @@ const UserSettings = () => {
           value={bio}
           onChange={(e) => setBio(e.target.value)}
         />
-          {/* <label htmlFor="bio" className={styles.label}>Bio</label>
-          <textarea
-            id="bio"
-            className={styles.textarea}
-            value={bio}
-            style={{ color: bioColor }}
-            onChange={(e) => {
-              setBio(e.target.value);
-              setBioColor('black');
-            }}
-          /> */}
         </div>
         <div className={styles.formGroup}>
         <SelectBox
@@ -220,18 +185,6 @@ const UserSettings = () => {
             },
           ]}
         />
-          {/* <label htmlFor="gender" className={styles.label}>Gender</label>
-          <select
-            id="gender"
-            className={styles.select}
-            value={gender}
-            onChange={(e) => setGender(e.target.value as Gender)}
-          >
-            <option value={Gender.NOT_SET}>Not Set</option>
-            <option value={Gender.FEMALE}>Female</option>
-            <option value={Gender.MALE}>Male</option>
-            <option value={Gender.NON_BINARY}>Non-Binary</option>
-          </select> */}
         </div>
         <div className={styles.formGroup}>
         <ImageInput
