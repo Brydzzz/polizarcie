@@ -81,23 +81,23 @@ const UserSettings = () => {
   }
 
   const handleSave = async () => {
-    if (!facebook.startsWith("https://www.facebook.com/profile.php?id=")) {
+    if (facebook && !facebook.startsWith("https://www.facebook.com/profile.php?id=")) {
         dispatch(addSnackbar({ message: "Invalid Facebook URL", type: "error" }));
         return;
     }
-    if (!instagram.startsWith("https://www.instagram.com/")) {
+    if (instagram && !instagram.startsWith("https://www.instagram.com/")) {
         dispatch(addSnackbar({ message: "Invalid Instagram URL", type: "error" }));
         return;
     }
-    if (!snapchat.startsWith("https://www.snapchat.com/add/")) {
+    if (snapchat && !snapchat.startsWith("https://www.snapchat.com/add/")) {
         dispatch(addSnackbar({ message: "Invalid Snapchat URL", type: "error" }));
         return;
     }
-    if (!twitter.startsWith("https://x.com/")) {
+    if (twitter && !twitter.startsWith("https://x.com/")) {
         dispatch(addSnackbar({ message: "Invalid Twitter/X URL", type: "error" }));
         return;
     }
-    if (!tiktok.startsWith("https://www.tiktok.com/@")) {
+    if (tiktok && !tiktok.startsWith("https://www.tiktok.com/@")) {
         dispatch(addSnackbar({ message: "Invalid TikTok URL", type: "error" }));
         return;
     }
