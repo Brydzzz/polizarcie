@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 type Props = {
   restId: string;
 };
-
 const RestaurantLiked = ({ restId }: Props) => {
   const [liked, setLiked] = useState<boolean>(false);
   const user = useAppSelector(selectCurrentUser);

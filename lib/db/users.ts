@@ -23,7 +23,58 @@ export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
       id: { not: user.id },
       preferredGender: user.gender,
       gender: user.preferredGender,
+      meetingStatus: true,
       AND: [
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          id: { notIn: excludeIds },
+        },
+      ],
+    },
+  });
+}
+
+export async function getUnmatchedSimilarUser(
+  user: User,
+  excludeIds: User["id"][]
+) {
+  return await prisma.user.findFirst({
+    where: {
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
+      meetingStatus: true,
+      AND: [
+        {
+          favoriteRestaurants: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
         {
           userOneMatch: {
             none: {
@@ -89,6 +140,89 @@ export async function getUsersMatchedWith(userId: User["id"]) {
   });
 }
 
+export async function getUsersPendingWith(userId: User["id"]) {
+  return await prisma.user.findMany({
+    where: {
+      id: { not: userId },
+
+      userTwoMatch: {
+        some: {
+          userOneId: userId,
+          value: MatchRequest.PENDING,
+        },
+      },
+    },
+  });
+}
+export async function turnOnMeeting(userId: User["id"]) {
+  return await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      meetingStatus: true,
+    },
+  });
+}
+
+export async function getUnmatchedSimilarUsers(
+  user: User,
+  excludeIds: User["id"][],
+  howMany: number
+) {
+  return await prisma.user.findMany({
+    take: howMany,
+    where: {
+      id: { not: user.id },
+      preferredGender: user.gender,
+      gender: user.preferredGender,
+      meetingStatus: true,
+      AND: [
+        {
+          favoriteRestaurants: {
+            some: {
+              restaurant: {
+                favoriteAmong: {
+                  some: {
+                    userId: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          userOneMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          userTwoMatch: {
+            none: {
+              OR: [
+                { userOneId: user.id },
+                { userTwoId: user.id },
+                { userOneId: { in: excludeIds } },
+                { userTwoId: { in: excludeIds } },
+              ],
+            },
+          },
+        },
+        {
+          id: { notIn: excludeIds },
+        },
+      ],
+    },
+  });
+}
+
 export async function getUnmatchedUsers(
   user: User,
   excludeIds: User["id"][],
@@ -100,6 +234,7 @@ export async function getUnmatchedUsers(
       id: { not: user.id },
       preferredGender: user.gender,
       gender: user.preferredGender,
+      meetingStatus: true,
       AND: [
         {
           userOneMatch: {
@@ -136,11 +271,20 @@ export async function getUnmatchedUsers(
 export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
   const currentUser = await getCurrentUser();
   if (!currentUser) unauthorized();
+  const currentHighest = await prisma.userFavoriteRestaurant.findFirst({
+    where: {
+      userId: currentUser.id,
+    },
+    orderBy: {
+      rankingPosition: "desc",
+    },
+  });
+  const pos = currentHighest ? currentHighest.rankingPosition + 1 : 1;
   return await prisma.userFavoriteRestaurant.create({
     data: {
       userId: currentUser.id,
       restaurantId: restaurantId,
-      rankingPosition: 10,
+      rankingPosition: pos + 1,
     },
   });
 }
@@ -175,6 +319,7 @@ export async function isRestaurantLiked(restaurantId: Restaurant["id"]) {
 
 export async function getTopLikedRests(userId: User["id"]) {
   const liked = await prisma.restaurant.findMany({
+    take: 3,
     where: {
       favoriteAmong: {
         some: {
@@ -194,10 +339,45 @@ export async function getTopLikedRests(userId: User["id"]) {
   });
 }
 
+export async function getSimilarRestsLike(
+  ogUserId: User["id"],
+  newUserId: User["id"]
+) {
+  const liked = await prisma.restaurant.findMany({
+    where: {
+      AND: [
+        {
+          favoriteAmong: {
+            some: {
+              userId: ogUserId,
+            },
+          },
+        },
+        {
+          favoriteAmong: {
+            some: {
+              userId: newUserId,
+            },
+          },
+        },
+      ],
+    },
+    include: {
+      favoriteAmong: true,
+    },
+  });
+  return liked.sort((a, b) => {
+    const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+    return aRanking - bRanking;
+  });
+}
+
 export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
   return await Promise.all(
     usersIDs.map(async (userId) => {
       const userTopLiked = await prisma.restaurant.findMany({
+        take: 3,
         where: {
           favoriteAmong: {
             some: {
@@ -205,6 +385,44 @@ export async function getTopLikedRestsForUsers(usersIDs: User["id"][]) {
               rankingPosition: { in: [1, 2, 3] },
             },
           },
+        },
+        include: {
+          favoriteAmong: true,
+        },
+      });
+      return userTopLiked.sort((a, b) => {
+        const aRanking = a.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        const bRanking = b.favoriteAmong[0]?.rankingPosition ?? Infinity;
+        return aRanking - bRanking;
+      });
+    })
+  );
+}
+
+export async function getSimilarRestsForUsers(
+  ogUserId: User["id"],
+  usersIDs: User["id"][]
+) {
+  return await Promise.all(
+    usersIDs.map(async (userId) => {
+      const userTopLiked = await prisma.restaurant.findMany({
+        where: {
+          AND: [
+            {
+              favoriteAmong: {
+                some: {
+                  userId: ogUserId,
+                },
+              },
+            },
+            {
+              favoriteAmong: {
+                some: {
+                  userId: userId,
+                },
+              },
+            },
+          ],
         },
         include: {
           favoriteAmong: true,
