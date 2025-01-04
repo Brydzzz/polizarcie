@@ -88,6 +88,23 @@ const UserSettings = () => {
         dispatch(addSnackbar({ message: "Invalid Facebook URL", type: "error" }));
         return;
     }
+    if (!instagram.startsWith("https://www.instagram.com/")) {
+        dispatch(addSnackbar({ message: "Invalid Instagram URL", type: "error" }));
+        return;
+    }
+    if (!snapchat.startsWith("https://www.snapchat.com/add/")) {
+        dispatch(addSnackbar({ message: "Invalid Snapchat URL", type: "error" }));
+        return;
+    }
+    if (!twitter.startsWith("https://x.com/")) {
+        dispatch(addSnackbar({ message: "Invalid Twitter/X URL", type: "error" }));
+        return;
+    }
+    if (!tiktok.startsWith("https://www.tiktok.com/@")) {
+        dispatch(addSnackbar({ message: "Invalid TikTok URL", type: "error" }));
+        return;
+    }
+    
     const userSettings = {
       name: name || null,
       description: bio || null,
@@ -250,7 +267,7 @@ const UserSettings = () => {
         </div>
         <div className={styles.formGroup}>
         <Input
-          label="Twitter"
+          label="Twitter/X"
           value={twitter}
           onChange={(e) => setUserTwitter(e.target.value)}
           maxLength={NAME_CHAR_LIMIT}
