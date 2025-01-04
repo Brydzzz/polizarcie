@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/prisma";
+import { UserMedia } from "@prisma/client";
 import { getCurrentUser } from "@/utils/users";
 import { MatchRequest, Restaurant, User, Gender } from "@prisma/client";
 import { unauthorized } from "next/navigation";
@@ -275,3 +276,55 @@ export async function saveUserSettings(id: User["id"], settings: { name: string 
     data: data,
   });
 }
+
+export async function getUserMedias(id: User["id"]) {
+  return await prisma.userMedia.findMany({
+    where: {
+      userId: id,
+    },
+  });
+}
+
+async function saveMedia(id: User["id"], type: UserMedia["type"], link: string) {
+  return await prisma.userMedia.upsert({
+    where: {
+      id: `${id}-${type}`,
+    },
+    update: {
+      link: link,
+    },
+    create: {
+      id: `${id}-${type}`,
+      userId: id,
+      type: type,
+      link: link,
+    },
+  });
+}
+
+export async function saveUserMedias(id: User["id"], medias: { type: UserMedia["type"], link: string }[]) {
+  return await Promise.all(
+    medias
+      .filter(media => media.link.trim() !== "")
+      .map(media => saveMedia(id, media.type, media.link))
+  );
+}
+
+
+
+// export async function saveUserMedias(id: User["id"], medias: { link: string, type: string }[]) {
+//   const data = medias.map(media => {
+//     return {
+//       userId: id,
+//       link: media.link,
+//       type: media.type,
+//     };
+//   });
+//   return
+
+//   // return await prisma.userMedia.createMany({
+//   //   data: data,
+//   // });
+// }
+
+
