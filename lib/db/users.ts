@@ -310,6 +310,15 @@ export async function saveUserMedias(id: User["id"], medias: { type: UserMedia["
   );
 }
 
+export async function saveProfileImagePath(id: User["id"], paths: string[]) {
+  return await prisma.user.update({
+    where: { id: id },
+    data: {
+      image: paths[0],
+    },
+  });
+}
+
 
 
 // export async function saveUserMedias(id: User["id"], medias: { link: string, type: string }[]) {
