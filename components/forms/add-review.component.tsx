@@ -16,8 +16,9 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import { transferWithJSON } from "@/utils/misc";
+import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
-import { ReactNode, useEffect, useState } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonSize } from "../button/button.types";
 import TextArea from "../inputs/generic-textarea.component";
@@ -31,16 +32,32 @@ type Props<Type extends keyof ReviewType> = {
   id?: string;
   type: Type;
   subjectId: ReviewType[Type]["subject"]["id"];
+  modal?: boolean;
+  onClick?: MouseEventHandler;
+  onSubmit?: () => void;
 };
 
 type Fields = {
   [Key in keyof ReviewType]: {
+    header: (
+      currentUser: User | undefined,
+      subject: ReviewType[Key]["subject"] | undefined
+    ) => ReactNode;
     inputs: (store: ReturnType<typeof useReviewStore<Key>>) => ReactNode;
   };
 };
 
-const FIELDS: Fields = {
+const PARTS: Fields = {
   restaurant: {
+    header: (currentUser, subject) => (
+      <>
+        <h2>
+          Dodaj swoją opinię&nbsp;
+          <span>{currentUser?.name}</span>
+        </h2>
+        <h3>{subject?.name}</h3>
+      </>
+    ),
     inputs: (store) => (
       <>
         <div className={styles.left}>
@@ -66,6 +83,15 @@ const FIELDS: Fields = {
     ),
   },
   dish: {
+    header: (currentUser, subject) => (
+      <>
+        <h2>
+          Dodaj swoją opinię&nbsp;
+          <span>{currentUser?.name}</span>
+        </h2>
+        <h3>{subject?.name}</h3>
+      </>
+    ),
     inputs: (store) => (
       <>
         <div className={styles.left}>
@@ -84,12 +110,29 @@ const FIELDS: Fields = {
       </>
     ),
   },
+  response: {
+    header: (currentUser, subject) => (
+      <h3>Odpowiedz&nbsp;{subject?.author.name}</h3>
+    ),
+    inputs: (store) => (
+      <>
+        <TextArea
+          label="Odpowiedź"
+          value={store.getState("content")}
+          onChange={(e) => store.setState("content", e.target.value)}
+        />
+      </>
+    ),
+  },
 };
 
 const AddReview = <Type extends keyof ReviewType>({
   id,
   type,
   subjectId,
+  modal,
+  onClick,
+  onSubmit,
 }: Props<Type>) => {
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
   const dispatch = useAppDispatch();
@@ -137,6 +180,8 @@ const AddReview = <Type extends keyof ReviewType>({
         await linkImagesToReview(result.id, imagesPaths);
       }
       dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
+      store.reset();
+      if (onSubmit) onSubmit();
     } catch (error) {
       dispatch(
         addSnackbar({ message: (error as Error).message, type: "error" })
@@ -144,23 +189,19 @@ const AddReview = <Type extends keyof ReviewType>({
     }
     try {
     } catch (error) {}
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
     dispatch(updateReviewsUpdate());
     setLoading(false);
   };
 
   return (
-    <div id={id} className={styles.container}>
-      <h2>
-        Dodaj swoją opinię&nbsp;
-        <span>{currentUser?.name}</span>
-      </h2>
-      <h3>{subject?.name}</h3>
+    <div
+      id={id}
+      className={`${styles.container} ${modal ? styles.modal : ""}`}
+      onClick={onClick}
+    >
+      {PARTS[type].header(currentUser, subject)}
       <form action={submit} className={styles.form}>
-        {FIELDS[type].inputs(store)}
+        {PARTS[type].inputs(store)}
         <ImageInput
           label="Zdjęcia"
           multiple

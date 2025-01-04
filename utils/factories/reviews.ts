@@ -1,4 +1,8 @@
 import {
+  BaseReviewFull,
+  getBaseReviewById,
+} from "@/lib/db/reviews/base-reviews";
+import {
   createDishReview,
   DishReviewCreator,
   DishReviewFull,
@@ -7,6 +11,15 @@ import {
   getDishReviewsByDishId,
   updateDishReview,
 } from "@/lib/db/reviews/dish-reviews";
+import {
+  createResponseReview,
+  getResponseReviewById,
+  getResponseReviewsByAuthorId,
+  getResponseReviewsByReviewId,
+  ResponseReviewCreator,
+  ResponseReviewFull,
+  updateResponseReview,
+} from "@/lib/db/reviews/response-reviews";
 import {
   createRestaurantReview,
   getRestaurantReviewById,
@@ -20,6 +33,7 @@ import {
   BaseReview,
   Dish,
   DishReview,
+  ResponseReview,
   Restaurant,
   RestaurantReview,
 } from "@prisma/client";
@@ -39,6 +53,12 @@ export type ReviewType = {
     data: DishReview;
     creatorData: DishReviewCreator;
     fullData: DishReviewFull;
+  };
+  response: {
+    subject: BaseReviewFull["baseData"];
+    data: ResponseReview;
+    creatorData: ResponseReviewCreator;
+    fullData: ResponseReviewFull;
   };
 };
 
@@ -82,8 +102,16 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
     getById: getDishReviewById,
     getBySubjectId: getDishReviewsByDishId,
     getByAuthorId: getDishReviewsByAuthorId,
-    getSubject: async (id) => await getDishById(id),
+    getSubject: getDishById,
     create: createDishReview,
     edit: updateDishReview,
+  },
+  response: {
+    getById: getResponseReviewById,
+    getBySubjectId: getResponseReviewsByReviewId,
+    getByAuthorId: getResponseReviewsByAuthorId,
+    getSubject: getBaseReviewById,
+    create: createResponseReview,
+    edit: updateResponseReview,
   },
 };

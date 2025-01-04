@@ -168,6 +168,16 @@
       align-items: center;
     }
 
+    .responsesButton {
+      padding-right: 5px;
+      user-select: none;
+
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
     i {
       position: relative;
       display: flex;
@@ -209,7 +219,15 @@
       &.edit {
         --color: var(--edit);
       }
+      &.information {
+        --color: var(--info);
+      }
     }
+  }
+
+  &.response {
+    min-width: 525px;
+    max-width: 525px;
   }
 }
 
@@ -217,6 +235,9 @@
   .container {
     min-width: 350px;
     width: 100%;
+    &.response {
+      min-width: 275px;
+    }
 
     .header {
       .author {

@@ -4,18 +4,16 @@ import { hasPermission } from "@/lib/permissions";
 import { getProfanityGuard } from "@/lib/profanity";
 import { prisma } from "@/prisma";
 import { getCurrentUser } from "@/utils/users";
-import { BaseReview, Restaurant, RestaurantReview, User } from "@prisma/client";
+import { BaseReview, Dish, ResponseReview, User } from "@prisma/client";
 import { forbidden, unauthorized } from "next/navigation";
 import { BaseReviewFull, getBaseReviewById } from "./base-reviews";
 
-export type RestaurantReviewCreator = Pick<
-  RestaurantReview,
-  "amountSpent" | "content" | "subjectId" | "stars"
+export type ResponseReviewCreator = Pick<
+  ResponseReview,
+  "content" | "subjectId"
 >;
-export type RestaurantReviewFull = RestaurantReview &
-  BaseReviewFull & {
-    subject: Restaurant;
-  };
+export type ResponseReviewFull = ResponseReview &
+  BaseReviewFull & { subject: BaseReview };
 
 const FULL_INCLUDE_PRESET = {
   baseData: {
@@ -27,10 +25,10 @@ const FULL_INCLUDE_PRESET = {
   subject: true,
 };
 
-export async function getRestaurantReviewById(
-  id: BaseReview["id"]
-): Promise<RestaurantReviewFull | null> {
-  const result = await prisma.restaurantReview.findFirst({
+export async function getResponseReviewById(
+  id: ResponseReview["id"]
+): Promise<ResponseReviewFull | null> {
+  const result = await prisma.responseReview.findFirst({
     where: {
       id: id,
     },
@@ -46,18 +44,18 @@ export async function getRestaurantReviewById(
   return result;
 }
 
-export async function getRestaurantReviewsByRestaurantId(
-  id: Restaurant["id"],
+export async function getResponseReviewsByReviewId(
+  id: Dish["id"],
   take: number,
   skip?: number
-): Promise<RestaurantReviewFull[]> {
-  let result: RestaurantReviewFull[] = [];
+): Promise<ResponseReviewFull[]> {
+  let result: ResponseReviewFull[] = [];
   let toTake = take;
   let toSkip = skip || 0;
   const currentUser = (await getCurrentUser()) || undefined;
   if (currentUser) {
     const amountOwn = (
-      await prisma.restaurantReview.aggregate({
+      await prisma.responseReview.aggregate({
         where: {
           baseData: {
             authorId: currentUser.id,
@@ -69,7 +67,7 @@ export async function getRestaurantReviewsByRestaurantId(
       })
     )._count.id;
     if (amountOwn > toSkip) {
-      const own = await prisma.restaurantReview.findMany({
+      const own = await prisma.responseReview.findMany({
         where: {
           subjectId: id,
           baseData: {
@@ -101,7 +99,7 @@ export async function getRestaurantReviewsByRestaurantId(
   }
   toSkip = Math.max(0, toSkip);
   if (toTake > 0) {
-    const notOwn = await prisma.restaurantReview.findMany({
+    const notOwn = await prisma.responseReview.findMany({
       where: {
         subjectId: id,
         baseData: {
@@ -135,13 +133,13 @@ export async function getRestaurantReviewsByRestaurantId(
   );
 }
 
-export async function getRestaurantReviewsByAuthorId(
+export async function getResponseReviewsByAuthorId(
   id: User["id"],
   take: number,
   skip?: number
-): Promise<RestaurantReviewFull[]> {
+): Promise<ResponseReviewFull[]> {
   const currentUser = (await getCurrentUser()) || undefined;
-  const result = await prisma.restaurantReview.findMany({
+  const result = await prisma.responseReview.findMany({
     where: {
       baseData: {
         authorId: id,
@@ -170,95 +168,36 @@ export async function getRestaurantReviewsByAuthorId(
   );
 }
 
-export async function createRestaurantReview(data: RestaurantReviewCreator) {
+export async function createResponseReview(data: ResponseReviewCreator) {
   const currentUser = await getCurrentUser();
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "create")) forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  const review = await prisma.baseReview.create({
+  return await prisma.baseReview.create({
     data: {
       authorId: currentUser.id,
-      restaurantReview: {
+      responseReview: {
         create: {
           subjectId: data.subjectId,
-          amountSpent: data.amountSpent,
           content: data.content,
           censoredContent: censoredContent,
-          stars: data.stars,
         },
       },
     },
   });
-  updateRestaurantStats(data.subjectId);
-  return review;
 }
 
-export async function updateRestaurantReview(data: RestaurantReview) {
+export async function updateResponseReview(data: ResponseReview) {
   const baseReview = (await getBaseReviewById(data.id)) || undefined;
   const currentUser = await getCurrentUser();
   if (currentUser == null) unauthorized();
   if (!hasPermission(currentUser, "reviews", "edit", baseReview)) forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  const review = await prisma.restaurantReview.update({
+  return await prisma.responseReview.update({
     where: { id: data.id },
     data: {
-      amountSpent: data.amountSpent,
       content: data.content,
       censoredContent: censoredContent,
-      stars: data.stars,
     },
   });
-  updateRestaurantStats(data.subjectId);
-  return review;
-}
-
-export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
-  return await prisma.restaurantReview.aggregate({
-    _avg: {
-      stars: true,
-    },
-    where: {
-      subjectId: id,
-    },
-  });
-}
-
-export async function getRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
-  return await prisma.restaurantReview.aggregate({
-    _avg: {
-      amountSpent: true,
-    },
-    where: {
-      subjectId: id,
-    },
-  });
-}
-
-export async function updateRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
-  const updatedAvgAmountSpent = await getRestaurantAvgAmountSpentById(id);
-  const newAmountSpent = Number(
-    updatedAvgAmountSpent._avg.amountSpent?.toFixed(2)
-  );
-  return await prisma.restaurant.update({
-    where: { id: id },
-    data: {
-      averageAmountSpent: newAmountSpent,
-    },
-  });
-}
-
-export async function updateRestaurantAvgStarsById(id: Restaurant["id"]) {
-  const updatedAvgStars = await getRestaurantAvgStarsById(id);
-  const newAvgStars = Number(updatedAvgStars._avg.stars?.toFixed(2));
-  return await prisma.restaurant.update({
-    where: { id: id },
-    data: {
-      averageStars: newAvgStars,
-    },
-  });
-}
-
-export async function updateRestaurantStats(id: Restaurant["id"]) {
-  await updateRestaurantAvgAmountSpentById(id);
-  await updateRestaurantAvgStarsById(id);
 }

@@ -146,19 +146,21 @@ model Image {
 }
 
 model BaseReview {
-    id          String       @id @default(cuid())
-    author      User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    id          String           @id @default(cuid())
+    author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
     authorId    String
-    createdDate DateTime     @default(now())
-    hidden      Boolean      @default(false)
-    likes       Int          @default(0)
-    dislikes    Int          @default(0)
+    createdDate DateTime         @default(now())
+    hidden      Boolean          @default(false)
+    likes       Int              @default(0)
+    dislikes    Int              @default(0)
     likeObjects ReviewLike[]
     images      Image[]
+    responses   ResponseReview[] @relation(name: "response")
 
     // Possible dependents
     restaurantReview RestaurantReview?
     dishReview       DishReview?
+    responseReview   ResponseReview?   @relation(name: "dependent")
 }
 
 model RestaurantReview {
@@ -186,6 +188,18 @@ model DishReview {
     content         String
     censoredContent String
     stars           Int
+}
+
+model ResponseReview {
+    // Required to work as review
+    id              String     @id
+    baseData        BaseReview @relation(fields: [id], references: [id], onDelete: Cascade, name: "dependent")
+    updatedDate     DateTime   @updatedAt
+    subject         BaseReview @relation(fields: [subjectId], references: [id], onDelete: Cascade, name: "response")
+    subjectId       String
+    // Custom for review
+    content         String
+    censoredContent String
 }
 
 model ReviewLike {

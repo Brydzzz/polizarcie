@@ -52,6 +52,26 @@
       width: 100%;
     }
   }
+
+  &.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: 100%;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 100;
+    border-radius: 0;
+
+    .form {
+      max-width: 500px;
+    }
+  }
 }
 
 @media (max-width: "600px") {

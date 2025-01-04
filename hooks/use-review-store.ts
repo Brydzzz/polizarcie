@@ -19,6 +19,10 @@ const storeDefaults: {
     stars: 3,
     content: "",
   },
+  response: {
+    subjectId: "",
+    content: "",
+  },
 };
 
 type Store<Type extends keyof ReviewType> = {
@@ -67,7 +71,14 @@ const useReviewStore = <Type extends keyof ReviewType>(type: Type) => {
       ) as ReviewType[Type]["creatorData"];
   };
 
-  return { getKeys, getState, setState, getCreator };
+  const reset = () => {
+    Object.entries(storeDefaults[type]).forEach(([key, value]) => {
+      const keyHelper = key as keyof ReviewType[Type]["creatorData"];
+      dict[keyHelper][1](value);
+    });
+  };
+
+  return { getKeys, getState, setState, getCreator, reset };
 };
 
 export default useReviewStore;
