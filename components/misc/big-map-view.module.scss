@@ -14,7 +14,47 @@
   border-radius: 4px;
   padding: 10px;
   background-color: var(--background);
+  border: 5px solid var(--background-light);
   pointer-events: none;
-  transform: translate(-50%, -100%);
   display: none; // Initially hidden
+  min-width: 190px;
+  width: 100%;
+  height: min-content;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 5px;
+    width: 100%;
+
+    .name {
+      font-size: 16pt;
+      font-weight: normal;
+      display: -webkit-box;
+      color: var(--primary);
+      --lines-number: 10;
+      line-clamp: var(--lines-number);
+      -webkit-line-clamp: var(--lines-number);
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .address {
+      font-size: 10pt;
+      display: -webkit-box;
+      --lines-number: 2;
+      line-clamp: var(--lines-number);
+      -webkit-line-clamp: var(--lines-number);
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price {
+      text-align: right;
+      font-size: 10pt;
+    }
+  }
 }

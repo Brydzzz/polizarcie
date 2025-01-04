@@ -1,5 +1,6 @@
 "use client";
 import { RestaurantFull } from "@/lib/db/restaurants";
+import Link from "next/link";
 import { defaults as defaultControls } from "ol/control";
 import { pointerMove, primaryAction, touchOnly } from "ol/events/condition";
 import Point from "ol/geom/Point";
@@ -12,7 +13,7 @@ import { OSM } from "ol/source.js";
 import VectorSource from "ol/source/Vector";
 import { Icon, Style } from "ol/style";
 import { useEffect, useRef, useState } from "react";
-import RestaurantCard from "../cards/restaurant-card.component";
+import StarInput from "../inputs/star-input.component";
 import styles from "./big-map-view.module.scss";
 
 type Props = {
@@ -60,7 +61,6 @@ const BigMapView = ({ data }: Props) => {
 
   useEffect(() => {
     if (!mapInstance.current) return;
-
     vectorSource.current.clear();
 
     const markers: Feature<Point>[] = [];
@@ -84,14 +84,20 @@ const BigMapView = ({ data }: Props) => {
         markers.push(marker);
       }
     });
+
     vectorSource.current.addFeatures(markers);
+
+    // Compute the new center from the first restaurant or fallback
+    const newCenter = data[0]?.address
+      ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
+      : defaultCenter;
     const view = mapInstance.current.getView();
-    view.setCenter(center);
+    view.setCenter(newCenter);
     view.setZoom(16);
 
     const popupOverlay = new Overlay({
       element: popupRef.current!,
-      offset: [10, 10],
+      offset: [5, 10],
     });
     mapInstance.current.addOverlay(popupOverlay);
 
@@ -140,7 +146,6 @@ const BigMapView = ({ data }: Props) => {
             setPopupContent(restaurant);
             const coordinate = event.coordinate;
             popupOverlay.setPosition(coordinate);
-            // mapInstance.current?.getView().setCenter(coordinate);
             if (popupRef.current) popupRef.current.style.display = "block";
           }
         } else {
@@ -165,14 +170,41 @@ const BigMapView = ({ data }: Props) => {
         }
       }
     });
-  }),
-    [data];
+  }, [data]);
 
   return (
     <div className={styles.container}>
       <div className={styles.map} ref={mapRef} />
       <div ref={popupRef} className={styles.popup} style={{ display: "none" }}>
-        {popupContent && <RestaurantCard data={popupContent}></RestaurantCard>}
+        {popupContent && (
+          <Link href={`/restaurant/${popupContent.slug}`}>
+            <div className={`${styles.container}`}>
+              <h3 className={styles.name}>{popupContent.name}</h3>
+              {popupContent.averageStars && (
+                <div className={styles.stars}>
+                  <StarInput
+                    max={5}
+                    value={popupContent.averageStars}
+                    starSize="12pt"
+                    disabled
+                  />
+                </div>
+              )}
+              <span className={styles.address}>
+                {popupContent.address?.name}
+              </span>
+              {popupContent.averageAmountSpent && (
+                <span className={styles.price}>
+                  Średnia cena:{" "}
+                  <b>
+                    {popupContent.averageAmountSpent.toFixed(2)}
+                    &nbsp;zł
+                  </b>
+                </span>
+              )}
+            </div>
+          </Link>
+        )}
       </div>
     </div>
   );
