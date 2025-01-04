@@ -122,7 +122,12 @@ const CardPage = () => {
           <UserCard key={i} data={usr} socials={false}></UserCard>
         ))}
         {TEST_USER2.map((usr2, i) => (
-          <MatchCard key={i} data={usr2} likedRests={[]}></MatchCard>
+          <MatchCard
+            key={i}
+            data={usr2}
+            likedRests={[]}
+            algo={false}
+          ></MatchCard>
         ))}
         {TEST_LINK.map((lin, i) => (
           <LinkCard key={i} data={lin}></LinkCard>
