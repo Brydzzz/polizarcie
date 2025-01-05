@@ -1,7 +1,6 @@
 //'use client';
 
 import React from 'react';
-import MainHeader from '../../../components/headers/main-header.component';
 import UserCard from '@/components/cards/user-desc-card-component';
 import styles from './page.module.scss';
 import {
@@ -38,7 +37,6 @@ const ProfilePage = async () => {
     return (
         <>
         <div>
-            <MainHeader />
             <div className={styles.container}>
                 <div className={styles.imageContainer}>
                     <ClientSupabaseImage src={user?.image ?? undefined} />
