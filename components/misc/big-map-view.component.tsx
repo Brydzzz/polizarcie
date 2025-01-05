@@ -39,6 +39,7 @@ const BigMapView = ({ data }: Props) => {
     image: new Icon({
       src: "location-pin-icon.svg",
       scale: 0.35,
+      anchor: [0, 0],
     }),
   });
 
