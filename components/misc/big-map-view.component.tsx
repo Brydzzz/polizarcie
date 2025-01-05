@@ -74,16 +74,16 @@ const BigMapView = ({ data }: Props) => {
       image: new CircleStyle({
         radius: Math.min(size * 5, 20),
         fill: new Fill({
-          color: "rgba(198, 41, 41, 0.8)",
+          color: "rgba(198, 41, 41, 0.95)",
         }),
         stroke: new Stroke({
-          color: "#fff",
-          width: 2,
+          color: "rgba(215, 19, 19, 0.5)",
+          width: 6,
         }),
       }),
       text: new Text({
         text: size.toString(),
-        font: "12px sans-serif",
+        font: "12px Chivo",
         fill: new Fill({ color: "#fff" }),
         stroke: new Stroke({ color: "#000", width: 1 }),
       }),
