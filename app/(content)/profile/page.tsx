@@ -15,7 +15,7 @@ import { getCurrentUser } from '@/utils/users';
 //import { getUserMediaById } from '@/lib/db/users';
 import { User, UserMedia } from "@prisma/client";
 import { getUserMedias } from '@/lib/db/users';
-
+import ClientSupabaseImage from './profile-image';
 
 const ProfilePage = async () => {
     const restaurant = await getRestaurantById("1");
@@ -41,8 +41,7 @@ const ProfilePage = async () => {
             <MainHeader />
             <div className={styles.container}>
                 <div className={styles.imageContainer}>
-                    {/**/}
-                    <img src="/default_profile.png" alt="Profile" />
+                    <ClientSupabaseImage src={user?.image ?? undefined} />
                 </div>
                 <div className={styles.userCardContainer}>
                     <UserCard data={data} socials={true} />
