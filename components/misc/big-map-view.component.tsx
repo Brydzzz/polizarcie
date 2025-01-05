@@ -31,14 +31,13 @@ const BigMapView = ({ data }: Props) => {
   const popupOverlayRef = useRef<Overlay | null>(null);
   const [popupContent, setPopupContent] = useState<RestaurantFull | null>(null);
 
-  const iconSVG = `<svg width="60pt" aspect-ratio="1" fill="rgb(198, 41, 41)" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M384 192c0 87.4-117 243-168.3 307.2c-12.3 15.3-35.1 15.3-47.4 0C117 435 0 279.4 0 192C0 86 86 0 192 0S384 86 384 192z"/></svg>`;
   const defaultCenter = [21.009993, 52.220656]; // Fallback coordinates
   const center = data[0]?.address
     ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
     : defaultCenter;
   const markerStyle = new Style({
     image: new Icon({
-      src: "data:image/svg+xml;utf8," + iconSVG,
+      src: "location-pin-icon.svg",
       scale: 0.35,
     }),
   });
@@ -88,6 +87,70 @@ const BigMapView = ({ data }: Props) => {
         stroke: new Stroke({ color: "#000", width: 1 }),
       }),
     });
+  };
+
+  const handlePointerMove = (event: MapBrowserEvent<any>) => {
+    if (pointerMove(event) && !touchOnly(event)) {
+      const feature = mapInstance.current?.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature
+      );
+      if (feature) {
+        const features = feature.get("features");
+        if (features && features.length === 1) {
+          const restaurant = features[0].get("restaurant");
+          if (restaurant) {
+            displayPopup(restaurant, event);
+          }
+        }
+      } else {
+        hidePopup();
+      }
+    }
+  };
+
+  const handleSingleClick = (event: MapBrowserEvent<any>) => {
+    if (primaryAction(event)) {
+      const feature = mapInstance.current?.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature
+      );
+      if (feature) {
+        const features = feature.get("features");
+        if (features.length === 1) {
+          const restaurant = features[0].get("restaurant");
+          touchOnly(event)
+            ? displayPopup(restaurant, event)
+            : redirectToRestaurant(restaurant.slug);
+        } else {
+          const view = mapInstance.current?.getView();
+          const featurePoint = feature.getGeometry() as Point;
+          view?.animate({
+            center: featurePoint.getCoordinates(),
+            zoom: view.getZoom()! + 1,
+            duration: 250,
+          });
+        }
+      } else {
+        hidePopup();
+      }
+    }
+  };
+
+  const handleDblClick = (event: MapBrowserEvent<any>) => {
+    if (touchOnly(event)) {
+      const feature = mapInstance.current?.forEachFeatureAtPixel(
+        event.pixel,
+        (feature) => feature
+      );
+      if (feature) {
+        const features = feature.get("features");
+        if (features.length === 1) {
+          const restaurant = features[0].get("restaurant");
+          redirectToRestaurant(restaurant.slug);
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -154,69 +217,9 @@ const BigMapView = ({ data }: Props) => {
     view.setCenter(newCenter);
     view.setZoom(16);
 
-    mapInstance.current.on("pointermove", (event) => {
-      if (pointerMove(event) && !touchOnly(event)) {
-        const feature = mapInstance.current?.forEachFeatureAtPixel(
-          event.pixel,
-          (feature) => feature
-        );
-        if (feature) {
-          const features = feature.get("features");
-          if (features && features.length === 1) {
-            const restaurant = features[0].get("restaurant");
-            if (restaurant) {
-              displayPopup(restaurant, event);
-            }
-          }
-        } else {
-          hidePopup();
-        }
-      }
-    });
-
-    mapInstance.current.on("singleclick", (event) => {
-      if (primaryAction(event)) {
-        const feature = mapInstance.current?.forEachFeatureAtPixel(
-          event.pixel,
-          (feature) => feature
-        );
-        if (feature) {
-          const features = feature.get("features");
-          if (features.length === 1) {
-            const restaurant = features[0].get("restaurant");
-            touchOnly(event)
-              ? displayPopup(restaurant, event)
-              : redirectToRestaurant(restaurant.slug);
-          } else {
-            const view = mapInstance.current?.getView();
-            const featurePoint = feature.getGeometry() as Point;
-            view?.animate({
-              center: featurePoint.getCoordinates(),
-              zoom: view.getZoom()! + 1,
-              duration: 250,
-            });
-          }
-        } else {
-          hidePopup();
-        }
-      }
-    });
-
-    mapInstance.current.on("dblclick", (event) => {
-      if (touchOnly(event)) {
-        const feature = mapInstance.current?.forEachFeatureAtPixel(
-          event.pixel,
-          (feature) => feature
-        );
-        if (feature) {
-          const features = feature.get("features");
-          if (features.length === 1) {
-            const restaurant = features[0].get("restaurant");
-            redirectToRestaurant(restaurant.slug);
-          }
-        }
-      }
-    });
+    mapInstance.current.on("pointermove", handlePointerMove);
+    mapInstance.current.on("singleclick", handleSingleClick);
+    mapInstance.current.on("dblclick", handleDblClick);
   }, [data]);
 
   return (
