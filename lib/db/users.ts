@@ -265,12 +265,14 @@ export async function cancelPasswordChange() {
   return await clearUserPasswordCache(currentUser.id);
 }
 
-export async function saveUserSettings(id: User["id"], settings: { name: string | null, description: string | null, gender: Gender | null, meetingStatus: boolean | null }) {
-  const data: { name?: string, email?: string, description?: string, gender?: Gender, meetingStatus?: boolean } = {};
+export async function saveUserSettings(id: User["id"], settings: { name: string | null, description: string | null, gender: Gender | null, preferredGender: Gender | null, meetingStatus: boolean | null}) {
+  const data: { name?: string, description?: string, gender?: Gender, preferredGender?: Gender, meetingStatus?: boolean } = {};
   if (settings.name !== null) data.name = settings.name;
   if (settings.description !== null) data.description = settings.description;
   if (settings.gender !== null) data.gender = settings.gender;
+  if (settings.preferredGender !== null) data.preferredGender = settings.preferredGender;
   if (settings.meetingStatus !== null) data.meetingStatus = settings.meetingStatus;
+
 
   return await prisma.user.update({
     where: { id: id },

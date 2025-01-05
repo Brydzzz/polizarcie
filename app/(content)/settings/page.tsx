@@ -36,10 +36,10 @@ import { set } from 'ol/transform';
 
 const UserSettings = () => {
 
-    const dispatch = useAppDispatch();
-    const [isToggled, setIsToggled] = useState(false);
-
-    const [files, setFiles] = useState<File[] | undefined>();
+  const dispatch = useAppDispatch();
+  const [isToggledMeeting, setIsToggledMeeting] = useState(false);
+  const [isToggledCensorship, setIsToggledCensorship] = useState(false);
+  const [files, setFiles] = useState<File[] | undefined>();
 
   const user = useAppSelector(selectCurrentUser);
 
@@ -54,6 +54,7 @@ const UserSettings = () => {
 
   const [bio, setBio] = useState('');
   const [gender, setGender] = useState<Gender>(Gender.NOT_SET); // Add gender state
+  const [genderMeeting, setGenderMeeting] = useState<Gender>(Gender.NOT_SET);
   const NAME_CHAR_LIMIT = 50; // Add character limit constant
 
   useEffect(() => {
@@ -62,6 +63,7 @@ const UserSettings = () => {
         setUsername(user.name || '');
         setBio(user.description || '');
         setGender((user.gender as Gender) || Gender.NOT_SET); // Initialize gender state
+        setGenderMeeting((user.preferredGender as Gender) || Gender.NOT_SET);
 
         const userMedias = await getUserMedias(user.id);
         setUserFacebook(userMedias.find(media => media.type === 'FACEBOOK')?.link || '');
@@ -69,7 +71,7 @@ const UserSettings = () => {
         setUserSnapchat(userMedias.find(media => media.type === 'SNAPCHAT')?.link || '');
         setUserTwitter(userMedias.find(media => media.type === 'TWITTER')?.link || '');
         setUserTiktok(userMedias.find(media => media.type === 'TIKTOK')?.link || '');
-        setIsToggled(user.meetingStatus || false);
+        setIsToggledMeeting(user.meetingStatus || false);
 
         console.log('Facebook media:', facebook);
         console.log('User medias:', userMedias);
@@ -108,8 +110,9 @@ const UserSettings = () => {
     const userSettings = {
       name: name || null,
       description: bio || null,
-      gender: gender || Gender.NOT_SET, // Add gender to user settings
-      meetingStatus: isToggled,
+      gender: gender || Gender.NOT_SET,
+      meetingStatus: isToggledMeeting,
+      preferredGender: genderMeeting,
     };
 
     try {
@@ -197,6 +200,13 @@ const UserSettings = () => {
             onChange={(v) => setFiles(v && Object.values(v))}
           />
         </div>
+        <div className={styles.formGroup}>
+        <Switch
+          label="Filtr wiadomości niecenzuralnych"
+          checked={isToggledCensorship}
+          onChange={setIsToggledCensorship}
+        ></Switch>
+        </div>
         <h1 className={styles.title}>Social</h1>
         <div className={styles.formGroup}>
         <Input
@@ -238,12 +248,36 @@ const UserSettings = () => {
           maxLength={NAME_CHAR_LIMIT}
         />
         </div>
+        <div className={styles.formGroup}>
         <Switch
           label="Randkowanie"
-          checked={isToggled}
-          onChange={setIsToggled}
+          checked={isToggledMeeting}
+          onChange={setIsToggledMeeting}
         ></Switch>
-        
+        </div>
+        <SelectBox
+          label="Preferowana płeć"
+          value={genderMeeting}
+          onChange={(e) => setGenderMeeting(e.target.value as Gender)}
+          options={[
+            {
+              name: "Dowolna",
+              value: Gender.NOT_SET,
+            },
+            {
+              name: "Kobieta",
+              value: Gender.FEMALE,
+            },
+            {
+              name: "Mężczyzna",
+              value: Gender.MALE,
+            },
+            {
+                name: "Niebinarny",
+                value: Gender.NON_BINARY,
+            },
+          ]}
+        />
         <button type="submit" className={styles.saveButton}>Save Changes</button>
       </form>
     </div>
