@@ -10,8 +10,7 @@ import {
   linkImagesToRestaurant,
 } from "@/lib/db/restaurants";
 import { useAppDispatch } from "@/lib/store/hooks";
-import { addSnackbar } from "@/lib/store/ui/ui.slice";
-import { transferWithJSON } from "@/utils/misc";
+import { blobToDataURL, makeRequest } from "@/utils/misc";
 import { useState } from "react";
 
 const SupabaseImages = () => {
@@ -21,26 +20,35 @@ const SupabaseImages = () => {
 
   const invoke = () => {
     const exec = async () => {
-      const rest = await transferWithJSON(getRestaurantById, ["1"]);
       try {
-        if (rest) await deleteImages(rest.images.map((image) => image.path));
+        const rest = await makeRequest(getRestaurantById, ["1"], dispatch);
+        if (rest)
+          await makeRequest(
+            deleteImages,
+            [rest.images.map((image) => image.path)],
+            dispatch
+          );
         if (!files) return;
-        const paths = await createImages(
-          files.map((file) => ({
-            info: {
-              path: file.name,
-              title: "Example image",
-            },
-            imageBody: file,
-          }))
+
+        const paths = await makeRequest(
+          createImages,
+          [
+            await Promise.all(
+              files.map(async (file) => ({
+                info: {
+                  path: file.name,
+                  title: "Example image",
+                },
+                imageDataUrl: await blobToDataURL(file),
+              }))
+            ),
+          ],
+          dispatch
         );
-        await linkImagesToRestaurant("1", paths);
+        await makeRequest(linkImagesToRestaurant, ["1", paths], dispatch);
+
         setPreviewPaths(paths);
-      } catch (error) {
-        dispatch(
-          addSnackbar({ message: (error as Error).message, type: "error" })
-        );
-      }
+      } catch (error) {}
     };
     exec();
   };

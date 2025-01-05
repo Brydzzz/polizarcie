@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/prisma";
+import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
-import { forbidden, unauthorized } from "next/navigation";
 import { hasPermission } from "../../permissions";
 import { getBaseReviewById } from "./base-reviews";
 
@@ -11,15 +11,16 @@ export async function addOrReplaceLikeForReview(
   like: boolean
 ) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   const baseReview = await getBaseReviewById(reviewId);
+  if (baseReview instanceof PoliError) return baseReview;
   if (!baseReview) return null;
   if (
     !hasPermission(currentUser, "reviews", "like", {
       authorId: baseReview.authorId,
     })
   )
-    forbidden();
+    return forbidden();
   const previous = (
     await prisma.reviewLike.findFirst({
       where: {
@@ -69,15 +70,16 @@ export async function addOrReplaceLikeForReview(
 
 export async function removeLikeForReview(reviewId: string) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   const baseReview = await getBaseReviewById(reviewId);
+  if (baseReview instanceof PoliError) return baseReview;
   if (!baseReview) return null;
   if (
     !hasPermission(currentUser, "reviews", "like", {
       authorId: baseReview.authorId,
     })
   )
-    forbidden();
+    return forbidden();
   const previous =
     (
       await prisma.reviewLike.findFirst({

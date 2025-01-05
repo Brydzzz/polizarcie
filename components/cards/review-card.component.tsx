@@ -14,6 +14,7 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
+import { makeRequest } from "@/utils/misc";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
 import AddReview from "../forms/add-review.component";
@@ -217,7 +218,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
         await func();
         // updating data in review
         if (update) {
-          const result = await funcs.getById(data.id);
+          const result = await makeRequest(funcs.getById, [data.id], dispatch);
           if (!result) {
             dispatch(addSnackbar({ message: "Wystąpił błąd", type: "error" }));
             console.log("Updated review could not be found in the db");
@@ -225,11 +226,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
         }
         if (successMessage)
           dispatch(addSnackbar({ message: successMessage, type: "success" }));
-      } catch (error) {
-        dispatch(
-          addSnackbar({ message: (error as Error).message, type: "error" })
-        );
-      }
+      } catch (error) {}
       setLoading(false);
     };
 
@@ -241,11 +238,11 @@ const ReviewCard = <Type extends keyof ReviewType>({
     };
     setData(newData); // optimistic editing
     setMode("view");
-    await funcs.edit(newData);
+    await makeRequest(funcs.edit, [newData], dispatch);
   });
   const handleDeleteReview = handleAndUpdate(
     async () => {
-      await deleteReview(data.id);
+      await makeRequest(deleteReview, [data.id], dispatch);
       dispatch(updateReviewsUpdate());
     },
     false,
@@ -253,17 +250,17 @@ const ReviewCard = <Type extends keyof ReviewType>({
   );
   const handleHideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: true });
-    await hideReview(data.id, true);
+    await makeRequest(hideReview, [data.id, true], dispatch);
   });
   const handleUnhideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: false });
-    await hideReview(data.id, false);
+    await makeRequest(hideReview, [data.id, false], dispatch);
   });
   const handleLikeReview = handleAndUpdate(async () => {
-    await addOrReplaceLikeForReview(data.id, true);
+    await makeRequest(addOrReplaceLikeForReview, [data.id, true], dispatch);
   });
   const handleDislikeReview = handleAndUpdate(async () => {
-    await addOrReplaceLikeForReview(data.id, false);
+    await makeRequest(addOrReplaceLikeForReview, [data.id, false], dispatch);
   });
 
   return (
@@ -287,7 +284,8 @@ const ReviewCard = <Type extends keyof ReviewType>({
           {REVIEW_PARTS[type].header(data, mode)}
           <span className={styles.date}>
             {parseDate(createdDate)}
-            {updatedDate.getTime() !== createdDate.getTime() && (
+            {new Date(updatedDate).getTime() !==
+              new Date(createdDate).getTime() && (
               <>
                 <br />
                 <span className={styles.updated}>
@@ -371,7 +369,9 @@ const ReviewCard = <Type extends keyof ReviewType>({
               <i
                 className={`fa-solid fa-comment-dots ${styles.information}`}
                 onClick={() => setShowResponses(!showResponses)}
-              ></i>
+              >
+                <span>{data.baseData.responsesAmount}</span>
+              </i>
             </>
           )}
 
@@ -408,7 +408,10 @@ const ReviewCard = <Type extends keyof ReviewType>({
             )
               setShowRespondModal(false);
           }}
-          onSubmit={() => setShowRespondModal(false)}
+          onSubmit={async () => {
+            setShowRespondModal(false);
+            await handleAndUpdate(async () => {})();
+          }}
         />
       )}
     </>

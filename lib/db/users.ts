@@ -1,9 +1,9 @@
 "use server";
 
 import { prisma } from "@/prisma";
+import { unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { MatchRequest, Restaurant, User } from "@prisma/client";
-import { unauthorized } from "next/navigation";
 import {
   clearUserPasswordCache,
   updateUserPasswordFromCache,
@@ -270,7 +270,7 @@ export async function getUnmatchedUsers(
 
 export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   const currentHighest = await prisma.userFavoriteRestaurant.findFirst({
     where: {
       userId: currentUser.id,
@@ -293,7 +293,7 @@ export async function removeRestaurantFromLiked(
   restaurantId: Restaurant["id"]
 ) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   return await prisma.userFavoriteRestaurant.delete({
     where: {
       userId_restaurantId: {
@@ -306,7 +306,7 @@ export async function removeRestaurantFromLiked(
 
 export async function isRestaurantLiked(restaurantId: Restaurant["id"]) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   return (
     (await prisma.userFavoriteRestaurant.findFirst({
       where: {
@@ -458,7 +458,7 @@ export async function updateUserLastVerificationMail(id: User["id"]) {
 
 export async function confirmPasswordChange() {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   const result = await updateUserPasswordFromCache(currentUser.id);
   if (result) await clearUserPasswordCache(currentUser.id);
   return result;
@@ -466,6 +466,6 @@ export async function confirmPasswordChange() {
 
 export async function cancelPasswordChange() {
   const currentUser = await getCurrentUser();
-  if (!currentUser) unauthorized();
+  if (!currentUser) return unauthorized();
   return await clearUserPasswordCache(currentUser.id);
 }

@@ -3,10 +3,10 @@
 import { Filters } from "@/components/modals/filter-modal.component";
 import { prisma } from "@/prisma";
 import { getDistance } from "@/utils/coordinates/distance";
+import { forbidden, unauthorized } from "@/utils/misc";
 import { isRestaurantOpen } from "@/utils/restaurants";
 import { getCurrentUser } from "@/utils/users";
 import { Address, Image, Restaurant } from "@prisma/client";
-import { forbidden, unauthorized } from "next/navigation";
 import { hasPermission } from "../permissions";
 import { getImagesByPaths } from "./images";
 
@@ -187,14 +187,14 @@ export async function linkImagesToRestaurant(
 ) {
   // permission check
   const user = await getCurrentUser();
-  if (user == null) unauthorized();
+  if (user == null) return unauthorized();
   const images = await getImagesByPaths(imagePaths);
   if (
     !images.every((image) => {
       return hasPermission(user, "images", "delete", image);
     })
   )
-    forbidden();
+    return forbidden();
 
   // Try to connect
   return await prisma.restaurant.update({

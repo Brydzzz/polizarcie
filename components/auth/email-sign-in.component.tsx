@@ -20,9 +20,10 @@ import {
   signInSchema,
   signUpSchema,
 } from "@/lib/zod/users";
-import { throwParsedIfZodError } from "@/utils/misc";
+import { makeRequest, throwParsedZodError } from "@/utils/misc";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { ZodError } from "zod";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import Input from "../inputs/generic-input.component";
@@ -61,18 +62,18 @@ const EmailSignIn = () => {
     dispatch(setSignInPageLoading(true));
     try {
       try {
-        await signInSchema.parseAsync({
+        const data = await signInSchema.parseAsync({
           email: formData.get("email"),
           password: formData.get("password"),
         });
+        await makeRequest(signInWithCredentials, [data], undefined);
       } catch (error) {
-        throwParsedIfZodError(error as Error);
+        if (error instanceof ZodError) throwParsedZodError(error, dispatch);
+        throw error;
       }
-      const err = await signInWithCredentials(formData);
-      if (err) throw new Error(err.error);
     } catch (error) {
       const message = (error as Error).message;
-      if (message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
+      if (message.startsWith("POLI_ERROR")) {
         const code = message.split(";")[1];
         switch (code) {
           case "401":
@@ -80,11 +81,14 @@ const EmailSignIn = () => {
               addSnackbar({ message: "Nieprawidłowe dane!", type: "error" })
             );
             break;
+          default:
+            dispatch(addSnackbar({ message: message, type: "error" }));
+            break;
         }
-      } else if (message.startsWith("NEXT_REDIRECT")) {
-        await session.update();
+      } else {
+        if (message.startsWith("NEXT_REDIRECT")) await session.update();
         throw error;
-      } else dispatch(addSnackbar({ message: message, type: "error" }));
+      }
     }
     dispatch(setSignInPageLoading(false));
   };
@@ -93,25 +97,29 @@ const EmailSignIn = () => {
     dispatch(setSignInPageLoading(true));
     try {
       try {
-        const { password, passwordRepeat } = await signUpSchema.parseAsync({
+        const data = await signUpSchema.parseAsync({
           email: formData.get("email"),
           name: formData.get("name"),
           password: formData.get("password"),
           passwordRepeat: formData.get("passwordRepeat"),
         });
-        if (password !== passwordRepeat)
-          throw new Error("Passwords did not match!");
+        if (data.password !== data.passwordRepeat) {
+          dispatch(
+            addSnackbar({ message: "Hasła nie są takie same!", type: "error" })
+          );
+          throw new Error("POLI_ERROR;;");
+        }
+        await makeRequest(signUpWithNodemailer, [data], dispatch);
       } catch (error) {
-        throwParsedIfZodError(error as Error);
+        if (error instanceof ZodError) throwParsedZodError(error, dispatch);
         throw error;
       }
-      const err = await signUpWithNodemailer(formData);
-      if (err) throw new Error(err.error);
     } catch (error) {
       const message = (error as Error).message;
-      if (message.startsWith("NEXT_REDIRECT")) {
+      if (!message.startsWith("POLI_ERROR")) {
+        if (message.startsWith("NEXT_REDIRECT")) await session.update();
         throw error;
-      } else dispatch(addSnackbar({ message: message, type: "error" }));
+      }
     }
     dispatch(setSignInPageLoading(false));
   };
@@ -120,25 +128,24 @@ const EmailSignIn = () => {
     dispatch(setSignInPageLoading(true));
     try {
       try {
-        const { password, passwordRepeat } =
-          await resetPasswordSchema.parseAsync({
-            email: formData.get("email"),
-            password: formData.get("password"),
-            passwordRepeat: formData.get("passwordRepeat"),
-          });
-        if (password !== passwordRepeat)
+        const data = await resetPasswordSchema.parseAsync({
+          email: formData.get("email"),
+          password: formData.get("password"),
+          passwordRepeat: formData.get("passwordRepeat"),
+        });
+        if (data.password !== data.passwordRepeat)
           throw new Error("Passwords did not match!");
+        await makeRequest(resetUserPassword, [data], undefined);
       } catch (error) {
-        throwParsedIfZodError(error as Error);
+        if (error instanceof ZodError) throwParsedZodError(error, dispatch);
         throw error;
       }
-      const err = await resetUserPassword(formData);
-      if (err) throw new Error(err.error);
     } catch (error) {
       const message = (error as Error).message;
-      if (message.startsWith("NEXT_REDIRECT")) {
+      if (!message.startsWith("POLI_ERROR")) {
+        if (message.startsWith("NEXT_REDIRECT")) await session.update();
         throw error;
-      } else dispatch(addSnackbar({ message: message, type: "error" }));
+      }
     }
     dispatch(setSignInPageLoading(false));
   };

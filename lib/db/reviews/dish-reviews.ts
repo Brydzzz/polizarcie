@@ -3,9 +3,9 @@
 import { hasPermission } from "@/lib/permissions";
 import { getProfanityGuard } from "@/lib/profanity";
 import { prisma } from "@/prisma";
+import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { Dish, DishReview, User } from "@prisma/client";
-import { forbidden, unauthorized } from "next/navigation";
 import { BaseReviewFull, getBaseReviewById } from "./base-reviews";
 
 export type DishReviewCreator = Pick<
@@ -26,7 +26,7 @@ const FULL_INCLUDE_PRESET = {
 
 export async function getDishReviewById(
   id: DishReview["id"]
-): Promise<DishReviewFull | null> {
+): Promise<DishReviewFull | null | PoliError> {
   const result = await prisma.dishReview.findFirst({
     where: {
       id: id,
@@ -36,9 +36,9 @@ export async function getDishReviewById(
   if (!result) return result;
   if (result.baseData.hidden) {
     const currentUser = await getCurrentUser();
-    if (!currentUser) unauthorized();
+    if (!currentUser) return unauthorized();
     if (!hasPermission(currentUser, "reviews", "viewHidden", result.baseData))
-      forbidden();
+      return forbidden();
   }
   return result;
 }
@@ -169,8 +169,8 @@ export async function getDishReviewsByAuthorId(
 
 export async function createDishReview(data: DishReviewCreator) {
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "create")) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "create")) return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
   return await prisma.baseReview.create({
     data: {
@@ -189,9 +189,11 @@ export async function createDishReview(data: DishReviewCreator) {
 
 export async function updateDishReview(data: DishReview) {
   const baseReview = (await getBaseReviewById(data.id)) || undefined;
+  if (baseReview instanceof PoliError) return baseReview;
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "edit", baseReview)) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "edit", baseReview))
+    return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
   return await prisma.dishReview.update({
     where: { id: data.id },

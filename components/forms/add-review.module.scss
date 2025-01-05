@@ -64,9 +64,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
     z-index: 100;
     border-radius: 0;
+    gap: 0;
+
+    & > h3 {
+      background-color: var(--background-light);
+      padding: 15px;
+      border-radius: 8px 8px 0 0;
+      color: var(--primary);
+    }
 
     .form {
       max-width: 500px;

@@ -146,16 +146,17 @@ model Image {
 }
 
 model BaseReview {
-    id          String           @id @default(cuid())
-    author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
-    authorId    String
-    createdDate DateTime         @default(now())
-    hidden      Boolean          @default(false)
-    likes       Int              @default(0)
-    dislikes    Int              @default(0)
-    likeObjects ReviewLike[]
-    images      Image[]
-    responses   ResponseReview[] @relation(name: "response")
+    id              String           @id @default(cuid())
+    author          User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    authorId        String
+    createdDate     DateTime         @default(now())
+    hidden          Boolean          @default(false)
+    likes           Int              @default(0)
+    dislikes        Int              @default(0)
+    likeObjects     ReviewLike[]
+    images          Image[]
+    responses       ResponseReview[] @relation(name: "response")
+    responsesAmount Int              @default(0)
 
     // Possible dependents
     restaurantReview RestaurantReview?

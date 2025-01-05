@@ -39,7 +39,7 @@ import {
 } from "@prisma/client";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
-import { transferWithJSON } from "../misc";
+import { PoliError, transferWithJSON } from "../misc";
 
 export type ReviewType = {
   restaurant: {
@@ -66,7 +66,7 @@ type ReviewFunctions = {
   [Key in keyof ReviewType]: {
     getById: (
       id: ReviewType[Key]["data"]["id"]
-    ) => Promise<ReviewType[Key]["fullData"] | null>;
+    ) => Promise<ReviewType[Key]["fullData"] | null | PoliError>;
     getBySubjectId: (
       id: ReviewType[Key]["subject"]["id"],
       take: number,
@@ -79,13 +79,13 @@ type ReviewFunctions = {
     ) => Promise<ReviewType[Key]["fullData"][]>;
     getSubject: (
       id: ReviewType[Key]["subject"]["id"]
-    ) => Promise<ReviewType[Key]["subject"] | null>;
+    ) => Promise<ReviewType[Key]["subject"] | null | PoliError>;
     create: (
       data: ReviewType[Key]["creatorData"]
-    ) => Promise<BaseReview | null>;
+    ) => Promise<BaseReview | null | PoliError>;
     edit: (
       data: ReviewType[Key]["data"]
-    ) => Promise<ReviewType[Key]["data"] | null>;
+    ) => Promise<ReviewType[Key]["data"] | null | PoliError>;
   };
 };
 

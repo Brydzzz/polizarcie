@@ -1,4 +1,4 @@
-import { randomString } from "@/utils/misc";
+import { badData, randomString } from "@/utils/misc";
 import { createClient } from "@supabase/supabase-js";
 import "server-only";
 import slugify from "slugify";
@@ -15,13 +15,13 @@ export async function uploadImages(
   // validating
   for (const { imageBody } of images) {
     if (imageBody.size >= 25000000)
-      throw new Error("Image size can not exceed 25MB.");
+      return badData("Image size can not exceed 25MB.");
 
     let sizeOf = require("buffer-image-size");
     let dimensions = sizeOf(Buffer.from(await imageBody.arrayBuffer()));
 
     if (dimensions.width >= 2500 || dimensions.height >= 2500)
-      throw new Error("Image dimensions can not exceed 2500px.");
+      return badData("Image dimensions can not exceed 2500px.");
   }
 
   //uploading
@@ -39,6 +39,7 @@ export async function uploadImages(
 
     if (error) {
       await removeImages(paths); // remove previous images, operation failed
+      throw error;
       throw new Error(
         `An error occurred while trying to upload file '${path}': ${error?.message}`
       );

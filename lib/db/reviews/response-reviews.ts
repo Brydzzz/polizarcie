@@ -3,9 +3,9 @@
 import { hasPermission } from "@/lib/permissions";
 import { getProfanityGuard } from "@/lib/profanity";
 import { prisma } from "@/prisma";
+import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { BaseReview, Dish, ResponseReview, User } from "@prisma/client";
-import { forbidden, unauthorized } from "next/navigation";
 import { BaseReviewFull, getBaseReviewById } from "./base-reviews";
 
 export type ResponseReviewCreator = Pick<
@@ -27,7 +27,7 @@ const FULL_INCLUDE_PRESET = {
 
 export async function getResponseReviewById(
   id: ResponseReview["id"]
-): Promise<ResponseReviewFull | null> {
+): Promise<ResponseReviewFull | null | PoliError> {
   const result = await prisma.responseReview.findFirst({
     where: {
       id: id,
@@ -37,9 +37,9 @@ export async function getResponseReviewById(
   if (!result) return result;
   if (result.baseData.hidden) {
     const currentUser = await getCurrentUser();
-    if (!currentUser) unauthorized();
+    if (!currentUser) return unauthorized();
     if (!hasPermission(currentUser, "reviews", "viewHidden", result.baseData))
-      forbidden();
+      return forbidden();
   }
   return result;
 }
@@ -170,10 +170,10 @@ export async function getResponseReviewsByAuthorId(
 
 export async function createResponseReview(data: ResponseReviewCreator) {
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "create")) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "create")) return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  return await prisma.baseReview.create({
+  const result = await prisma.baseReview.create({
     data: {
       authorId: currentUser.id,
       responseReview: {
@@ -185,13 +185,26 @@ export async function createResponseReview(data: ResponseReviewCreator) {
       },
     },
   });
+  await prisma.baseReview.update({
+    where: {
+      id: data.subjectId,
+    },
+    data: {
+      responsesAmount: {
+        increment: 1,
+      },
+    },
+  });
+  return result;
 }
 
 export async function updateResponseReview(data: ResponseReview) {
   const baseReview = (await getBaseReviewById(data.id)) || undefined;
+  if (baseReview instanceof PoliError) return baseReview;
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "edit", baseReview)) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "edit", baseReview))
+    return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
   return await prisma.responseReview.update({
     where: { id: data.id },

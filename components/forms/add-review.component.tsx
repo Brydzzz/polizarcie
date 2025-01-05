@@ -15,7 +15,7 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { transferWithJSON } from "@/utils/misc";
+import { blobToDataURL, makeRequest } from "@/utils/misc";
 import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
@@ -25,7 +25,7 @@ import TextArea from "../inputs/generic-textarea.component";
 import ImageInput from "../inputs/image-input.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
-import LoaderBlur from "../misc/loader-blur.component";
+import Loader from "../misc/loader.component";
 import styles from "./add-review.module.scss";
 
 type Props<Type extends keyof ReviewType> = {
@@ -148,48 +148,61 @@ const AddReview = <Type extends keyof ReviewType>({
 
   useEffect(() => {
     const exec = async () => {
-      const result = await funcs.getSubject(subjectId);
-      setSubject(result || undefined);
+      try {
+        const result = await makeRequest(
+          funcs.getSubject,
+          [subjectId],
+          dispatch
+        );
+        setSubject(result || undefined);
+      } catch (error) {}
     };
     exec();
   }, []);
 
   const submit = async () => {
     setLoading(true);
+    let imagesPaths: string[] = [];
     try {
-      let imagesPaths: string[] = [];
       if (files) {
-        imagesPaths = await createImages(
-          files.map((file) => ({
-            info: {
-              path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
-              title: `${subjectId}`,
-            },
-            imageBody: file,
-          }))
+        imagesPaths = await makeRequest(
+          createImages,
+          [
+            await Promise.all(
+              files.map(async (file) => ({
+                info: {
+                  path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
+                  title: `${subjectId}`,
+                },
+                imageDataUrl: await blobToDataURL(file),
+              }))
+            ),
+          ],
+          dispatch
         );
       }
-      const result = await transferWithJSON(funcs.create, [
-        { ...store.getCreator(), subjectId: subjectId },
-      ]);
+      const result = await makeRequest(
+        funcs.create,
+        [{ ...store.getCreator(), subjectId: subjectId }],
+        dispatch
+      );
       if (!result) {
-        if (files) await deleteImages(imagesPaths);
-        throw new Error("Wystąpił błąd");
+        if (files) await makeRequest(deleteImages, [imagesPaths], dispatch);
+        dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
+        return;
       }
       if (files) {
-        await linkImagesToReview(result.id, imagesPaths);
+        await makeRequest(
+          linkImagesToReview,
+          [result.id, imagesPaths],
+          dispatch
+        );
       }
       dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
       store.reset();
       if (onSubmit) onSubmit();
-    } catch (error) {
-      dispatch(
-        addSnackbar({ message: (error as Error).message, type: "error" })
-      );
-    }
-    try {
+      dispatch(updateReviewsUpdate());
     } catch (error) {}
-    dispatch(updateReviewsUpdate());
     setLoading(false);
   };
 
@@ -213,8 +226,15 @@ const AddReview = <Type extends keyof ReviewType>({
               <Button
                 type="submit"
                 size={size < 450 ? ButtonSize.SMALL : ButtonSize.NORMAL}
+                disabled={loading}
               >
-                Prześlij
+                {loading ? (
+                  <>
+                    Przetwarzanie <Loader size="16pt" />
+                  </>
+                ) : (
+                  "Prześlij"
+                )}
               </Button>
             ) : (
               <Button type="button" onClick={() => signIn()}>
@@ -223,7 +243,6 @@ const AddReview = <Type extends keyof ReviewType>({
             ))}
         </div>
       </form>
-      {loading && <LoaderBlur />}
     </div>
   );
 };

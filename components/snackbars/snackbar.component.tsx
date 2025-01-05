@@ -13,18 +13,27 @@ const Snackbar = ({ id, message, timeout, type }: SnackbarData) => {
 
   useEffect(() => {
     let timeLeft = timeout;
-    if (type === "error" && message.startsWith("NEXT_HTTP_ERROR_FALLBACK")) {
-      const code = message.split(";")[1];
-      switch (code) {
-        case "401":
-          setParsedMessage(`${code} - Zaloguj się`);
-          break;
-        case "403":
-          setParsedMessage(`${code} - Nie jesteś upoważniony`);
-          break;
-        default:
-          setParsedMessage(`Błąd ${code}`);
-          break;
+    if (type === "error") {
+      if (message.startsWith("POLI_ERROR")) {
+        const code = message.split(";")[1];
+        switch (code) {
+          case "400":
+            setParsedMessage(`Złe dane - ${message.split(" - ")[1]}`);
+            break;
+          case "401":
+            setParsedMessage(`Zaloguj się`);
+            break;
+          case "403":
+            setParsedMessage(`Brak uprawnień`);
+            break;
+          default:
+            setParsedMessage(`Błąd ${code}`);
+            break;
+        }
+      } else if (
+        message.startsWith("An error occurred in the Server Components render.")
+      ) {
+        setParsedMessage("Błąd na serwerze");
       }
     }
     const anim = setInterval(() => {
