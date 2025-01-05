@@ -1,7 +1,64 @@
 import { ZodError } from "zod";
 import { invokeTransferWithJSON } from "./misc.server";
 
+import { AppDispatch } from "@/lib/store/store";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import * as crypto from "crypto";
+
+export class PoliError {
+  code: number;
+  message: string;
+  poliErrorTest: boolean = true;
+
+  constructor(code: number, message: string) {
+    this.code = code;
+    this.message = message;
+  }
+}
+
+export function unauthorized(): PoliError {
+  return new PoliError(401, "Unauthorized!");
+}
+
+export function forbidden(): PoliError {
+  return new PoliError(403, "Forbidden!");
+}
+
+export function badData(reason?: string) {
+  return new PoliError(400, `Bad data!${reason ? " - " + reason : ""}`);
+}
+
+export function internalServerError() {
+  return new PoliError(500, "Internal server error!");
+}
+
+export function badDataFromZodError(error: ZodError) {
+  return badData(error.issues.map((issue) => issue.message).join(", "));
+}
+
+export function throwParsedZodError(error: ZodError, dispatch?: AppDispatch) {
+  const poliError = badDataFromZodError(error);
+  if (dispatch)
+    dispatch(addSnackbar({ message: poliError.message, type: "error" }));
+  throw new Error(poliError.message);
+}
+
+export async function makeRequest<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Func extends (...args: any[]) => Promise<any>
+>(
+  func: Func,
+  args: Parameters<Func>,
+  dispatch?: AppDispatch
+): Promise<Exclude<Awaited<ReturnType<Func>>, PoliError>> {
+  const result = (await transferWithJSON(func, args)) as any;
+  if (result.poliErrorTest) {
+    const error = `POLI_ERROR;${result.code};${result.message}`;
+    if (dispatch) dispatch(addSnackbar({ message: error, type: "error" }));
+    throw new Error(error);
+  }
+  return result;
+}
 
 export async function transferWithJSON<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,24 +83,12 @@ export function randomString(length: number) {
 }
 
 export const blobToDataURL = (blob: Blob) => {
-  return new Promise<string | ArrayBuffer | null>((resolve) => {
+  return new Promise<string>((resolve) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
+    reader.onloadend = () => resolve(reader.result as string);
     reader.readAsDataURL(blob);
   });
 };
-
-export function parseZodError(error: Error) {
-  if (error instanceof ZodError) {
-    return { error: error.issues.map((issue) => issue.message).join(", ") };
-  }
-  return undefined;
-}
-
-export function throwParsedIfZodError(error: Error) {
-  const zodErr = parseZodError(error);
-  if (zodErr) throw new Error(zodErr.error);
-}
 
 const config = {
   iterations: 10000,

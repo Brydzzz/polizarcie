@@ -3,9 +3,9 @@
 import { hasPermission } from "@/lib/permissions";
 import { getProfanityGuard } from "@/lib/profanity";
 import { prisma } from "@/prisma";
+import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { BaseReview, Restaurant, RestaurantReview, User } from "@prisma/client";
-import { forbidden, unauthorized } from "next/navigation";
 import { BaseReviewFull, getBaseReviewById } from "./base-reviews";
 
 export type RestaurantReviewCreator = Pick<
@@ -29,7 +29,7 @@ const FULL_INCLUDE_PRESET = {
 
 export async function getRestaurantReviewById(
   id: BaseReview["id"]
-): Promise<RestaurantReviewFull | null> {
+): Promise<RestaurantReviewFull | null | PoliError> {
   const result = await prisma.restaurantReview.findFirst({
     where: {
       id: id,
@@ -39,9 +39,9 @@ export async function getRestaurantReviewById(
   if (!result) return result;
   if (result.baseData.hidden) {
     const currentUser = await getCurrentUser();
-    if (!currentUser) unauthorized();
+    if (!currentUser) return unauthorized();
     if (!hasPermission(currentUser, "reviews", "viewHidden", result.baseData))
-      forbidden();
+      return forbidden();
   }
   return result;
 }
@@ -172,8 +172,8 @@ export async function getRestaurantReviewsByAuthorId(
 
 export async function createRestaurantReview(data: RestaurantReviewCreator) {
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "create")) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "create")) return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
   const review = await prisma.baseReview.create({
     data: {
@@ -195,9 +195,11 @@ export async function createRestaurantReview(data: RestaurantReviewCreator) {
 
 export async function updateRestaurantReview(data: RestaurantReview) {
   const baseReview = (await getBaseReviewById(data.id)) || undefined;
+  if (baseReview instanceof PoliError) return baseReview;
   const currentUser = await getCurrentUser();
-  if (currentUser == null) unauthorized();
-  if (!hasPermission(currentUser, "reviews", "edit", baseReview)) forbidden();
+  if (currentUser == null) return unauthorized();
+  if (!hasPermission(currentUser, "reviews", "edit", baseReview))
+    return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
   const review = await prisma.restaurantReview.update({
     where: { id: data.id },
@@ -262,11 +264,3 @@ export async function updateRestaurantStats(id: Restaurant["id"]) {
   await updateRestaurantAvgAmountSpentById(id);
   await updateRestaurantAvgStarsById(id);
 }
-
-// export async function deleteRestaurantReview(
-//   reviewId: RestaurantReview["id"],
-//   restaurantId: Restaurant["id"]
-// ) {
-//   await deleteReview(reviewId);
-//   await updateRestaurantStats(restaurantId);
-// }

@@ -11,6 +11,7 @@ import {
   setSignInPageLoading,
   ViewportSize,
 } from "@/lib/store/ui/ui.slice";
+import { makeRequest } from "@/utils/misc";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import Button from "../button/button.component";
@@ -28,7 +29,7 @@ const ConfirmPasswordChangeButtons = () => {
   const confirm = async () => {
     dispatch(setSignInPageLoading(true));
     try {
-      const result = await confirmPasswordChange();
+      const result = await makeRequest(confirmPasswordChange, [], dispatch);
       if (!result)
         throw new Error("Wystąpił błąd, spróbuj zresetować hasło od nowa");
       dispatch(addSnackbar({ message: "Hasło zresetowane", type: "success" }));
@@ -44,7 +45,7 @@ const ConfirmPasswordChangeButtons = () => {
   const cancel = async () => {
     dispatch(setSignInPageLoading(true));
     try {
-      await cancelPasswordChange();
+      await makeRequest(cancelPasswordChange, [], dispatch);
       dispatch(addSnackbar({ message: "Anulowano zmianę", type: "success" }));
       redirect("/browse");
     } catch (error) {

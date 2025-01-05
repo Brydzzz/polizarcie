@@ -7,8 +7,8 @@ import {
   removeRestaurantFromLiked,
 } from "@/lib/db/users";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
-import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
+import { makeRequest } from "@/utils/misc";
 import { useEffect, useState } from "react";
 type Props = {
   restId: string;
@@ -23,9 +23,10 @@ const RestaurantLiked = ({ restId }: Props) => {
       if (!user) {
         return false;
       }
-      const data = await isRestaurantLiked(restId);
-      setLiked(data);
-      return data;
+      try {
+        const data = await makeRequest(isRestaurantLiked, [restId], dispatch);
+        setLiked(data);
+      } catch (error) {}
     };
     update();
   }, [user]);
@@ -35,17 +36,14 @@ const RestaurantLiked = ({ restId }: Props) => {
     if (!user) {
       return false;
     }
-    const check = await isRestaurantLiked(restId);
     try {
+      const check = await makeRequest(isRestaurantLiked, [restId], dispatch);
       if (newValue && !check) {
-        await addRestaurantToLiked(restId);
+        await makeRequest(addRestaurantToLiked, [restId], dispatch);
       } else if (!newValue && check) {
-        await removeRestaurantFromLiked(restId);
+        await makeRequest(removeRestaurantFromLiked, [restId], dispatch);
       }
     } catch (error) {
-      dispatch(
-        addSnackbar({ message: (error as Error).message, type: "error" })
-      );
       setLiked(!newValue);
     }
   };

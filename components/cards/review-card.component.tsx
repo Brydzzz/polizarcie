@@ -14,12 +14,15 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
+import { makeRequest } from "@/utils/misc";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
+import AddReview from "../forms/add-review.component";
 import ModalableImage from "../images/modalable-image.component";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
+import ReviewList from "../lists/review-list.component";
 import LoaderBlur from "../misc/loader-blur.component";
 import styles from "./review-card.module.scss";
 
@@ -131,6 +134,24 @@ const REVIEW_PARTS: ReviewParts = {
       </>
     ),
   },
+  response: {
+    header: (data, mode) => undefined,
+    content: (data, mode, store) => (
+      <>
+        {mode === "view" ? (
+          <p>{data.censoredContent}</p>
+        ) : (
+          <form className={styles.form}>
+            <TextArea
+              label="Opis"
+              value={store.getState("content")}
+              onChange={(e) => store.setState("content", e.target.value)}
+            />
+          </form>
+        )}
+      </>
+    ),
+  },
 };
 
 const ReviewCard = <Type extends keyof ReviewType>({
@@ -147,6 +168,9 @@ const ReviewCard = <Type extends keyof ReviewType>({
   const dispatch = useAppDispatch();
   const size = useAppSelector(selectViewportWidth);
   const store = useReviewStore(type);
+  const [showResponses, setShowResponses] = useState(false);
+  const [showRespondModal, setShowRespondModal] = useState(false);
+  const currentUser = useAppSelector(selectCurrentUser);
   const { has: canEdit } = useHasPermission(
     user,
     "reviews",
@@ -194,7 +218,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
         await func();
         // updating data in review
         if (update) {
-          const result = await funcs.getById(data.id);
+          const result = await makeRequest(funcs.getById, [data.id], dispatch);
           if (!result) {
             dispatch(addSnackbar({ message: "Wystąpił błąd", type: "error" }));
             console.log("Updated review could not be found in the db");
@@ -202,11 +226,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
         }
         if (successMessage)
           dispatch(addSnackbar({ message: successMessage, type: "success" }));
-      } catch (error) {
-        dispatch(
-          addSnackbar({ message: (error as Error).message, type: "error" })
-        );
-      }
+      } catch (error) {}
       setLoading(false);
     };
 
@@ -218,11 +238,11 @@ const ReviewCard = <Type extends keyof ReviewType>({
     };
     setData(newData); // optimistic editing
     setMode("view");
-    await funcs.edit(newData);
+    await makeRequest(funcs.edit, [newData], dispatch);
   });
   const handleDeleteReview = handleAndUpdate(
     async () => {
-      await deleteReview(data.id);
+      await makeRequest(deleteReview, [data.id], dispatch);
       dispatch(updateReviewsUpdate());
     },
     false,
@@ -230,124 +250,171 @@ const ReviewCard = <Type extends keyof ReviewType>({
   );
   const handleHideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: true });
-    await hideReview(data.id, true);
+    await makeRequest(hideReview, [data.id, true], dispatch);
   });
   const handleUnhideReview = handleAndUpdate(async () => {
     setData({ ...data, hidden: false });
-    await hideReview(data.id, false);
+    await makeRequest(hideReview, [data.id, false], dispatch);
   });
   const handleLikeReview = handleAndUpdate(async () => {
-    await addOrReplaceLikeForReview(data.id, true);
+    await makeRequest(addOrReplaceLikeForReview, [data.id, true], dispatch);
   });
   const handleDislikeReview = handleAndUpdate(async () => {
-    await addOrReplaceLikeForReview(data.id, false);
+    await makeRequest(addOrReplaceLikeForReview, [data.id, false], dispatch);
   });
 
   return (
-    <div className={`${styles.container} ${hidden ? styles.hidden : ""}`}>
-      <div className={styles.header}>
-        <Link
-          href={`#`}
-          className={`${styles.author} ${
-            user?.id === author.id ? styles.highlighted : ""
-          }`}
-        >
-          <i className="fa-solid fa-user"></i>
-          {author.name}
-        </Link>
-        <div className={styles.authorPlaceholder} />
-        {REVIEW_PARTS[type].header(data, mode)}
-        <span className={styles.date}>
-          {parseDate(createdDate)}
-          {updatedDate.getTime() !== createdDate.getTime() && (
-            <>
-              <br />
-              <span className={styles.updated}>
-                {size < 600 ? "edyt:" : "edytowano:"}
-                &nbsp;
-                {parseDate(updatedDate)}
-              </span>
-            </>
-          )}
-        </span>
-      </div>
-      <div className={styles.content}>
-        {REVIEW_PARTS[type].content(data, mode, store)}
-      </div>
-      {mode === "view" && data.baseData.images.length > 0 && (
-        <div className={styles.images}>
-          {data.baseData.images.map((image, i) => (
-            <ModalableImage
-              key={i}
-              src={image.path}
-              width={50}
-              height={50}
-              alt={"zdjęcie"}
-            />
-          ))}
-        </div>
-      )}
-      <div className={styles.buttons}>
-        {mode === "view" ? (
-          <>
-            {canEdit && (
-              <i
-                className={`fa-solid fa-pen-to-square ${styles.edit}`}
-                onClick={handleStartEditing}
-              ></i>
-            )}
-            {canHide && (
+    <>
+      <div
+        className={`${styles.container} ${hidden ? styles.hidden : ""} ${
+          type === "response" ? styles.response : ""
+        }`}
+      >
+        <div className={styles.header}>
+          <Link
+            href={`#`}
+            className={`${styles.author} ${
+              user?.id === author.id ? styles.highlighted : ""
+            }`}
+          >
+            <i className="fa-solid fa-user"></i>
+            {author.name}
+          </Link>
+          <div className={styles.authorPlaceholder} />
+          {REVIEW_PARTS[type].header(data, mode)}
+          <span className={styles.date}>
+            {parseDate(createdDate)}
+            {new Date(updatedDate).getTime() !==
+              new Date(createdDate).getTime() && (
               <>
-                {hidden ? (
-                  <i
-                    className={`fa-solid fa-eye ${styles.negative}`}
-                    onClick={handleUnhideReview}
-                  ></i>
-                ) : (
-                  <i
-                    className={`fa-solid fa-eye-slash ${styles.negative}`}
-                    onClick={handleHideReview}
-                  ></i>
-                )}
+                <br />
+                <span className={styles.updated}>
+                  {size < 600 ? "edyt:" : "edytowano:"}
+                  &nbsp;
+                  {parseDate(updatedDate)}
+                </span>
               </>
             )}
-            {canDelete && (
-              <i
-                className={`fa-solid fa-trash ${styles.negative}`}
-                onClick={handleDeleteReview}
-              ></i>
-            )}
-          </>
-        ) : (
-          <>
-            <i
-              className={`fa-solid fa-xmark ${styles.negative}`}
-              onClick={handleCancelEditing}
-            ></i>
-            <i
-              className={`fa-solid fa-check ${styles.positive}`}
-              onClick={handleConfirmEditing}
-            ></i>
-          </>
-        )}
-        <div className={styles.expander}></div>
-        <div className={styles.likes}>
-          <i
-            onClick={canLike ? handleLikeReview : undefined}
-            className={`fa-solid fa-thumbs-up ${styles.positive}`}
-          >
-            <span>{likes}</span>
-          </i>
-          <i
-            onClick={canLike ? handleDislikeReview : undefined}
-            className={`fa-solid fa-thumbs-down ${styles.negative}`}
-          >
-            <span>{dislikes}</span>
-          </i>
+          </span>
         </div>
+        <div className={styles.content}>
+          {REVIEW_PARTS[type].content(data, mode, store)}
+        </div>
+        {mode === "view" && data.baseData.images.length > 0 && (
+          <div className={styles.images}>
+            {data.baseData.images.map((image, i) => (
+              <ModalableImage
+                key={i}
+                src={image.path}
+                width={50}
+                height={50}
+                alt={"zdjęcie"}
+              />
+            ))}
+          </div>
+        )}
+        <div className={styles.buttons}>
+          {mode === "view" ? (
+            <>
+              {canEdit && (
+                <i
+                  className={`fa-solid fa-pen-to-square ${styles.edit}`}
+                  onClick={handleStartEditing}
+                ></i>
+              )}
+              {canHide && (
+                <>
+                  {hidden ? (
+                    <i
+                      className={`fa-solid fa-eye ${styles.negative}`}
+                      onClick={handleUnhideReview}
+                    ></i>
+                  ) : (
+                    <i
+                      className={`fa-solid fa-eye-slash ${styles.negative}`}
+                      onClick={handleHideReview}
+                    ></i>
+                  )}
+                </>
+              )}
+              {canDelete && (
+                <i
+                  className={`fa-solid fa-trash ${styles.negative}`}
+                  onClick={handleDeleteReview}
+                ></i>
+              )}
+            </>
+          ) : (
+            <>
+              <i
+                className={`fa-solid fa-xmark ${styles.negative}`}
+                onClick={handleCancelEditing}
+              ></i>
+              <i
+                className={`fa-solid fa-check ${styles.positive}`}
+                onClick={handleConfirmEditing}
+              ></i>
+            </>
+          )}
+          <div className={styles.expander}></div>
+          {type !== "response" && currentUser && (
+            <>
+              <i
+                className={`fa-solid fa-reply ${styles.information}`}
+                onClick={() => {
+                  setShowRespondModal(true);
+                  setShowResponses(true);
+                }}
+              ></i>
+              <i
+                className={`fa-solid fa-comment-dots ${styles.information}`}
+                onClick={() => setShowResponses(!showResponses)}
+              >
+                <span>{data.baseData.responsesAmount}</span>
+              </i>
+            </>
+          )}
+
+          <div className={styles.likes}>
+            <i
+              onClick={canLike ? handleLikeReview : undefined}
+              className={`fa-solid fa-thumbs-up ${styles.positive}`}
+            >
+              <span>{likes}</span>
+            </i>
+            <i
+              onClick={canLike ? handleDislikeReview : undefined}
+              className={`fa-solid fa-thumbs-down ${styles.negative}`}
+            >
+              <span>{dislikes}</span>
+            </i>
+          </div>
+        </div>
+        {loading && <LoaderBlur />}
       </div>
-      {loading && <LoaderBlur />}
-    </div>
+      {type !== "response" && showResponses && (
+        <ReviewList mode="responses" subjectId={data.baseData.id} />
+      )}
+      {showRespondModal && (
+        <AddReview
+          id={`add-response-${data.baseData.id}`}
+          type="response"
+          subjectId={data.baseData.id}
+          modal
+          onClick={(e) => {
+            if (
+              (e.target as HTMLElement).id ===
+              `add-response-${data.baseData.id}`
+            )
+              setShowRespondModal(false);
+          }}
+          onSubmit={async () => {
+            setShowRespondModal(false);
+            await handleAndUpdate(async () => {})();
+          }}
+        />
+      )}
+    </>
   );
 };
 

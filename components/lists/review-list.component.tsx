@@ -6,7 +6,7 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { User } from "@prisma/client";
+import { BaseReview, User } from "@prisma/client";
 import { ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
@@ -20,6 +20,7 @@ type ListMode = {
   subject: Omit<ModeListProps<keyof ReviewType>, "mode" | "modeSpecificId"> & {
     subjectId: string;
   };
+  responses: { subjectId: BaseReview["id"] };
 };
 
 type ModeListProps<Type extends keyof ReviewType> = {
@@ -105,7 +106,11 @@ const ModeReviewList = <Type extends keyof ReviewType>({
       {loading ? (
         <Loader />
       ) : (
-        morePossible && <Button onClick={loadMore}>Załaduj więcej</Button>
+        morePossible && (
+          <Button onClick={loadMore} size={ButtonSize.SMALL}>
+            Załaduj więcej
+          </Button>
+        )
       )}
       {mode === "subject" && (
         <AddReview
@@ -124,6 +129,7 @@ const TYPE_TRANSLATION: {
 } = {
   restaurant: "Restauracje",
   dish: "Dania",
+  response: "Odpowiedzi",
 };
 
 type AuthorsProps = { authorId: User["id"] };
@@ -171,6 +177,61 @@ const AuthorsReviewList = ({ authorId }: AuthorsProps) => {
   );
 };
 
+const ResponsesReviewList = ({ subjectId }: { subjectId: string }) => {
+  const amountPerFetch = 10;
+  const [morePossible, setMorePossible] = useState(true);
+  const funcs = REVIEW_FUNCTIONS_FACTORY["response"];
+  const [loading, setLoading] = useState(true);
+  const [reviews, setReviews] = useState<
+    ReviewType["response"]["fullData"][] | undefined
+  >();
+  const update = useAppSelector(selectReviewsUpdate);
+
+  useEffect(() => {
+    const exec = async () => {
+      setLoading(true);
+      const result = await funcs.getBySubjectId(subjectId, amountPerFetch);
+      if (result.length < amountPerFetch) setMorePossible(false);
+      setReviews(result);
+      setLoading(false);
+    };
+    exec();
+  }, [update]);
+
+  const loadMore = () => {
+    const exec = async () => {
+      setLoading(true);
+      const result = await funcs.getBySubjectId(
+        subjectId,
+        amountPerFetch,
+        reviews?.length
+      );
+      if (result.length < amountPerFetch) setMorePossible(false);
+      setReviews(reviews?.concat(result));
+      setLoading(false);
+    };
+    exec();
+  };
+
+  return (
+    <div className={styles.container}>
+      {reviews?.length === 0 && <p>Brak odpowiedzi</p>}
+      {reviews?.map((review) => (
+        <ReviewCard key={review.id} type="response" data={review} />
+      ))}
+      {loading ? (
+        <Loader />
+      ) : (
+        morePossible && (
+          <Button onClick={loadMore} size={ButtonSize.SMALL}>
+            Załaduj więcej
+          </Button>
+        )
+      )}
+    </div>
+  );
+};
+
 const LIST_NODE: {
   [Key in keyof ListMode]: (props: ListMode[Key]) => ReactNode;
 } = {
@@ -185,6 +246,7 @@ const LIST_NODE: {
       mode: "subject",
       modeSpecificId: props.subjectId,
     }),
+  responses: ResponsesReviewList,
 };
 
 type Props<Mode extends keyof ListMode> = { mode: Mode } & ListMode[Mode];

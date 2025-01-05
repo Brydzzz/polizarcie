@@ -11,10 +11,10 @@ import FilterModal, {
   facultyOptions,
 } from "@/components/modals/filter-modal.component";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { ViewportSize } from "@/lib/store/ui/ui.slice";
-import { transferWithJSON } from "@/utils/misc";
+import { makeRequest } from "@/utils/misc";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 
@@ -32,6 +32,7 @@ const SearchPage = () => {
   const [input, setInput] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const size = useAppSelector(selectViewportWidth);
+  const dispatch = useAppDispatch();
 
   const handleFilterChange = (newFilters: Filters) => {
     setFilters(newFilters);
@@ -49,7 +50,11 @@ const SearchPage = () => {
 
   useEffect(() => {
     const update = async () => {
-      const data = await transferWithJSON(getRestaurantsLike, [input, filters]);
+      const data = await makeRequest(
+        getRestaurantsLike,
+        [input, filters],
+        dispatch
+      );
       updateRestaurants(data);
       return data;
     };
