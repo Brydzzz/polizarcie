@@ -13,14 +13,20 @@ import { notFound } from 'next/navigation';
 import { getCurrentUser } from '@/utils/users';
 //import { getUserMediaById } from '@/lib/db/users';
 import { User, UserMedia } from "@prisma/client";
-import { getUserMedias } from '@/lib/db/users';
+import { getUserById, getUserMedias } from '@/lib/db/users';
 import ClientSupabaseImage from './profile-image';
 
-const ProfilePage = async () => {
-    const restaurant = await getRestaurantById("1");
-    const user = await getCurrentUser();
+type Props = {
+    params: Promise<{
+      slug: string;
+    }>;
+  };
+
+const ProfilePage = async ({ params }: Props) => {
+    const slug = (await params).slug;
+    const user = await getUserById(slug);
     
-    if (!restaurant || !user) notFound();
+    if (!user) notFound();
     const userMediaResult = await getUserMedias(user.id);
     const data: Partial<User & { medias: Partial<UserMedia>[] }> = {
         ...user,
@@ -32,7 +38,6 @@ const ProfilePage = async () => {
     //     medias: [
     //     ]
     // };
-    const menu = await getMenuByRestaurantId(restaurant.id);
 
     return (
         <>
