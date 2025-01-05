@@ -205,7 +205,9 @@ const EmailSignIn = () => {
             }
           >
             {loading ? (
-              <Loader size="16pt" />
+              <>
+                Przetwarzanie <Loader size="16pt" />
+              </>
             ) : (
               <>
                 Zarejestruj się <i className="fa-solid fa-arrow-right"></i>
@@ -242,7 +244,9 @@ const EmailSignIn = () => {
               disabled={email && password && !loading ? false : true}
             >
               {loading ? (
-                <Loader size="16pt" />
+                <>
+                  Przetwarzanie <Loader size="16pt" />
+                </>
               ) : (
                 <>
                   Zaloguj się <i className="fa-solid fa-arrow-right"></i>
@@ -290,7 +294,9 @@ const EmailSignIn = () => {
             }
           >
             {loading ? (
-              <Loader size="16pt" />
+              <>
+                Przetwarzanie <Loader size="16pt" />
+              </>
             ) : (
               <>
                 Wyślij link potwierdzający&nbsp;

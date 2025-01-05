@@ -160,7 +160,7 @@ const AddReview = <Type extends keyof ReviewType>({
     exec();
   }, []);
 
-  const submit = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
     let imagesPaths: string[] = [];
     try {
@@ -213,7 +213,7 @@ const AddReview = <Type extends keyof ReviewType>({
       onClick={onClick}
     >
       {PARTS[type].header(currentUser, subject)}
-      <form action={submit} className={styles.form}>
+      <form action={handleSubmit} className={styles.form}>
         {PARTS[type].inputs(store)}
         <ImageInput
           label="Zdjęcia"
@@ -224,7 +224,8 @@ const AddReview = <Type extends keyof ReviewType>({
           {!userLoading &&
             (currentUser ? (
               <Button
-                type="submit"
+                type="button"
+                onClick={() => handleSubmit()}
                 size={size < 450 ? ButtonSize.SMALL : ButtonSize.NORMAL}
                 disabled={loading}
               >
