@@ -9,6 +9,7 @@ import csv from 'csv-parser';
 
 async function initData() {
   // TODO add some actual database initialization
+  
 
   for (const address of addresses) {
     await prisma.address.upsert({

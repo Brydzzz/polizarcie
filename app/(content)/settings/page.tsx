@@ -17,6 +17,7 @@ import TextArea from "@/components/inputs/generic-textarea.component";
 import SelectBox from "@/components/inputs/generic-select.component";
 import ImageInput from "@/components/inputs/image-input.component";
 import Switch from "@/components/inputs/switch.component";
+import { set } from 'ol/transform';
 
 // Define Gender enum directly in the file
 // enum Gender {
@@ -68,6 +69,8 @@ const UserSettings = () => {
         setUserSnapchat(userMedias.find(media => media.type === 'SNAPCHAT')?.link || '');
         setUserTwitter(userMedias.find(media => media.type === 'TWITTER')?.link || '');
         setUserTiktok(userMedias.find(media => media.type === 'TIKTOK')?.link || '');
+        setIsToggled(user.meetingStatus || false);
+
         console.log('Facebook media:', facebook);
         console.log('User medias:', userMedias);
       }
@@ -106,6 +109,7 @@ const UserSettings = () => {
       name: name || null,
       description: bio || null,
       gender: gender || Gender.NOT_SET, // Add gender to user settings
+      meetingStatus: isToggled,
     };
 
     try {

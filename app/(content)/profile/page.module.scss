@@ -1,0 +1,32 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1022px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+}
+
+.imageContainer {
+    width: 200px;
+    height: 200px;
+    margin-right: 20px;
+    overflow: hidden;
+}
+
+.imageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.userCardContainer {
+    width: 800px;
+    margin: 0 auto;
+}
+
+.revievLikedsection {
+    width: 600px;
+    align-items: center;
+    margin: 0 auto;
+}
