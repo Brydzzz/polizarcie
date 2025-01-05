@@ -246,7 +246,6 @@ const UserSettings = () => {
         
         <button type="submit" className={styles.saveButton}>Save Changes</button>
       </form>
-      {user.id}
     </div>
   );
 };
