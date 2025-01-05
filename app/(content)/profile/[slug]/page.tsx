@@ -3,14 +3,8 @@
 import React from 'react';
 import UserCard from '@/components/cards/user-desc-card-component';
 import styles from './page.module.scss';
-import {
-  getMenuByRestaurantId,
-} from "@/lib/db/restaurants";
-import MenuList from "@/components/lists/menu-list.component";
 import ReviewList from "@/components/lists/review-list.component";
-import { getRestaurantById } from '@/lib/db/restaurants';
 import { notFound } from 'next/navigation';
-import { getCurrentUser } from '@/utils/users';
 //import { getUserMediaById } from '@/lib/db/users';
 import { User, UserMedia } from "@prisma/client";
 import { getUserById, getUserMedias } from '@/lib/db/users';
@@ -32,12 +26,6 @@ const ProfilePage = async ({ params }: Props) => {
         ...user,
         medias: userMediaResult || []
       };
-    // const userData = {
-    //     name: "John Doe",
-    //     description: "Software Engineer",
-    //     medias: [
-    //     ]
-    // };
 
     return (
         <>
