@@ -214,7 +214,7 @@ const ResponsesReviewList = ({ subjectId }: { subjectId: string }) => {
   };
 
   return (
-    <div className={styles.container} style={{ paddingLeft: "75px" }}>
+    <div className={styles.container}>
       {reviews?.length === 0 && <p>Brak odpowiedzi</p>}
       {reviews?.map((review) => (
         <ReviewCard key={review.id} type="response" data={review} />
