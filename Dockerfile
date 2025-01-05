@@ -7,7 +7,11 @@ COPY . .
 RUN apt-get update -y
 RUN apt-get install -y openssl
 
-RUN npm run update
+RUN npm install
+
+RUN npx prisma db push
+
+RUN npx tsx prisma/seed.ts
 
 RUN npm run build
 
