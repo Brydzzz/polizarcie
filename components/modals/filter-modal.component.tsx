@@ -40,6 +40,15 @@ export type Faculty = {
   y?: number;
 };
 
+export const sortOptions = [
+  { name: "Nazwa (Rosnąco)", value: "name-asc" },
+  { name: "Nazwa (Malejąco)", value: "name-desc" },
+  { name: "Ocena (Rosnąco)", value: "rating-asc" },
+  { name: "Ocena (Malejąco)", value: "rating-desc" },
+  { name: "Cena na osobę (Rosnąco)", value: "price-asc" },
+  { name: "Cena na osobę (Malejąco)", value: "price-desc" },
+];
+
 export const facultyOptions = [
   { name: "Wybierz", value: "none" },
   {
@@ -137,15 +146,6 @@ const FilterModal = ({
   onCancelButtonClick,
   onApplyButtonClick,
 }: Props) => {
-  const sortOptions = [
-    { name: "Nazwa (Rosnąco)", value: "name-asc" },
-    { name: "Nazwa (Malejąco)", value: "name-desc" },
-    { name: "Ocena (Rosnąco)", value: "rating-asc" },
-    { name: "Ocena (Malejąco)", value: "rating-desc" },
-    { name: "Cena na osobę (Rosnąco)", value: "price-asc" },
-    { name: "Cena na osobę (Malejąco)", value: "price-desc" },
-  ];
-
   const [priceRange, setPriceRange] = useState(filters.priceRange);
   const [isOpen, setIsOpen] = useState(filters.isOpen);
   const [minRating, setMinRating] = useState(filters.minRating);

@@ -9,18 +9,24 @@ import styles from "./restaurant-list.module.scss";
 
 type Props = {
   data: RestaurantFull[];
+  forceOneRow?: boolean;
+  forceCompact?: boolean;
 };
 
-const RestaurantList = ({ data }: Props) => {
+const RestaurantList = ({ data, forceOneRow, forceCompact }: Props) => {
   const size = useAppSelector(selectViewportWidth);
 
   return (
-    <div className={`${styles.container} ${size < 1080 ? styles.oneRow : ""}`}>
+    <div
+      className={`${styles.container} ${
+        forceOneRow || size < 1080 ? styles.oneRow : ""
+      }`}
+    >
       {data.map((restaurant) => (
         <RestaurantCard
           key={restaurant.id}
           data={restaurant}
-          mode={size < ViewportSize.XS ? "compact" : "normal"}
+          mode={forceCompact || size < ViewportSize.XS ? "compact" : "normal"}
           width={size < ViewportSize.XS ? size : undefined}
         />
       ))}
