@@ -20,6 +20,7 @@ import styles from "./search-section.module.scss";
 
 type Props = {
   forceCompactRestaurantList?: boolean;
+  forceOneRowRestaurantList?: boolean;
   forceSmallSearchBar?: boolean;
   forceSmallHeader?: boolean;
   onUpdateRestaurants?: (restaurants: RestaurantFull[]) => void;
@@ -27,6 +28,7 @@ type Props = {
 
 const SearchSection = ({
   forceCompactRestaurantList,
+  forceOneRowRestaurantList,
   forceSmallSearchBar,
   forceSmallHeader,
   onUpdateRestaurants,
@@ -159,6 +161,7 @@ const SearchSection = ({
       </div>
       <RestaurantList
         data={restaurants}
+        forceOneRow={forceOneRowRestaurantList}
         forceCompact={forceCompactRestaurantList}
       />
     </main>
