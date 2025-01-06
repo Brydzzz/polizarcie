@@ -9,6 +9,7 @@ import RestaurantList from "@/components/lists/restaurant-list.component";
 import type { Filters } from "@/components/modals/filter-modal.component";
 import FilterModal, {
   facultyOptions,
+  sortOptions,
 } from "@/components/modals/filter-modal.component";
 import { getRestaurantsLike, RestaurantFull } from "@/lib/db/restaurants";
 import { useAppSelector } from "@/lib/store/hooks";
@@ -124,6 +125,15 @@ const SearchSection = ({
             onCardClick={() => setFilters(filters_default)}
           ></FilterCard>
         )}
+        {filters.sortOption !== filters_default.sortOption && (
+          <FilterCard
+            name={"Sortuj"}
+            value={`${
+              sortOptions.find((f) => f.value === filters.sortOption)?.name
+            }`}
+            onCancelButtonClick={() => handleFilterCancel("sortOption")}
+          ></FilterCard>
+        )}
         {!(
           filters.priceRange.min === filters_default.priceRange.min &&
           filters.priceRange.max === filters_default.priceRange.max
@@ -148,7 +158,7 @@ const SearchSection = ({
             onCancelButtonClick={() => handleFilterCancel("isOpen")}
           ></FilterCard>
         )}
-        {filters.faculty.value !== "none" && (
+        {filters.faculty.value !== filters_default.faculty.value && (
           <FilterCard
             name={"Wydział"}
             value={`${
