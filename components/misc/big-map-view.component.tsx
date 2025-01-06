@@ -3,7 +3,7 @@ import { RestaurantFull } from "@/lib/db/restaurants";
 import { Restaurant } from "@prisma/client";
 import Link from "next/link";
 import { defaults as defaultControls } from "ol/control";
-import { pointerMove, primaryAction, touchOnly } from "ol/events/condition";
+import { primaryAction, touchOnly } from "ol/events/condition";
 import Point from "ol/geom/Point";
 import { Feature, Map, MapBrowserEvent, Overlay, View } from "ol/index.js";
 import { Tile as TileLayer } from "ol/layer.js";
@@ -31,10 +31,7 @@ const BigMapView = ({ data }: Props) => {
   const popupOverlayRef = useRef<Overlay | null>(null);
   const [popupContent, setPopupContent] = useState<RestaurantFull | null>(null);
 
-  const defaultCenter = [21.009993, 52.220656]; // Fallback coordinates
-  const center = data[0]?.address
-    ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
-    : defaultCenter;
+  const defaultCenter = [21.009993, 52.220656]; // Fallback coordinates - Gmach Główny PW
   const markerStyle = new Style({
     image: new Icon({
       src: "location-pin-icon.svg",
@@ -42,6 +39,12 @@ const BigMapView = ({ data }: Props) => {
       anchor: [0, 0],
     }),
   });
+
+  const getNewCenter = () => {
+    return data[0]?.address
+      ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
+      : defaultCenter;
+  };
 
   const redirectToRestaurant = (slug: Restaurant["slug"]) => {
     window.location.href = `/restaurant/${slug}`;
@@ -90,65 +93,65 @@ const BigMapView = ({ data }: Props) => {
   };
 
   const handlePointerMove = (event: MapBrowserEvent<any>) => {
-    if (pointerMove(event) && !touchOnly(event)) {
-      const feature = mapInstance.current?.forEachFeatureAtPixel(
-        event.pixel,
-        (feature) => feature
-      );
-      if (feature) {
-        const features = feature.get("features");
-        if (features && features.length === 1) {
-          const restaurant = features[0].get("restaurant");
-          if (restaurant) {
-            displayPopup(restaurant, event);
-          }
+    if (touchOnly(event)) return;
+
+    const feature = mapInstance.current?.forEachFeatureAtPixel(
+      event.pixel,
+      (feature) => feature
+    );
+    if (feature) {
+      const features = feature.get("features");
+      if (features && features.length === 1) {
+        const restaurant = features[0].get("restaurant");
+        if (restaurant) {
+          displayPopup(restaurant, event);
         }
-      } else {
-        hidePopup();
       }
+    } else {
+      hidePopup();
     }
   };
 
   const handleSingleClick = (event: MapBrowserEvent<any>) => {
-    if (primaryAction(event)) {
-      const feature = mapInstance.current?.forEachFeatureAtPixel(
-        event.pixel,
-        (feature) => feature
-      );
-      if (feature) {
-        const features = feature.get("features");
-        if (features.length === 1) {
-          const restaurant = features[0].get("restaurant");
-          touchOnly(event)
-            ? displayPopup(restaurant, event)
-            : redirectToRestaurant(restaurant.slug);
-        } else {
-          const view = mapInstance.current?.getView();
-          const featurePoint = feature.getGeometry() as Point;
-          view?.animate({
-            center: featurePoint.getCoordinates(),
-            zoom: view.getZoom()! + 1,
-            duration: 250,
-          });
-        }
+    if (!primaryAction(event)) return;
+
+    const feature = mapInstance.current?.forEachFeatureAtPixel(
+      event.pixel,
+      (feature) => feature
+    );
+    if (feature) {
+      const features = feature.get("features");
+      if (features.length === 1) {
+        const restaurant = features[0].get("restaurant");
+        touchOnly(event)
+          ? displayPopup(restaurant, event)
+          : redirectToRestaurant(restaurant.slug);
       } else {
-        hidePopup();
+        const view = mapInstance.current?.getView();
+        const featurePoint = feature.getGeometry() as Point;
+        view?.animate({
+          center: featurePoint.getCoordinates(),
+          zoom: view.getZoom()! + 1,
+          duration: 250,
+        });
       }
+    } else {
+      hidePopup();
     }
   };
 
   const handleDblClick = (event: MapBrowserEvent<any>) => {
-    if (touchOnly(event)) {
-      const feature = mapInstance.current?.forEachFeatureAtPixel(
-        event.pixel,
-        (feature) => feature
-      );
-      if (feature) {
-        const features = feature.get("features");
-        if (features.length === 1) {
-          const restaurant = features[0].get("restaurant");
-          redirectToRestaurant(restaurant.slug);
-        }
+    if (!touchOnly(event)) return;
+
+    const feature = mapInstance.current?.forEachFeatureAtPixel(
+      event.pixel,
+      (feature) => feature
+    );
+    if (feature) {
+      const features = feature.get("features");
+      if (features.length === 1) {
+        const restaurant = features[0].get("restaurant");
+        redirectToRestaurant(restaurant.slug);
       }
     }
   };
@@ -164,7 +167,7 @@ const BigMapView = ({ data }: Props) => {
 
       mapInstance.current = new Map({
         view: new View({
-          center: center,
+          center: getNewCenter(),
           zoom: 16,
           rotation: 0,
         }),
@@ -205,6 +208,7 @@ const BigMapView = ({ data }: Props) => {
     if (!mapInstance.current) return;
     vectorSource.current.clear();
 
+    // Add new restaurant markers
     const markers: Feature<Point>[] = [];
     data.forEach((restaurant) => {
       if (restaurant.address) {
@@ -219,15 +223,11 @@ const BigMapView = ({ data }: Props) => {
         markers.push(marker);
       }
     });
-
     vectorSource.current.addFeatures(markers);
 
-    // Compute the new center from the first restaurant or fallback
-    const newCenter = data[0]?.address
-      ? [Number(data[0].address.xCoords), Number(data[0].address.yCoords)]
-      : defaultCenter;
+    // Adjust the map view
     const view = mapInstance.current.getView();
-    view.setCenter(newCenter);
+    view.setCenter(getNewCenter());
     view.setZoom(16);
   }, [data]);
 
