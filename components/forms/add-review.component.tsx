@@ -15,32 +15,49 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { transferWithJSON } from "@/utils/misc";
+import { blobToDataURL, makeRequest } from "@/utils/misc";
+import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
-import { ReactNode, useEffect, useState } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonSize } from "../button/button.types";
 import TextArea from "../inputs/generic-textarea.component";
 import ImageInput from "../inputs/image-input.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
-import LoaderBlur from "../misc/loader-blur.component";
+import Loader from "../misc/loader.component";
 import styles from "./add-review.module.scss";
 
 type Props<Type extends keyof ReviewType> = {
   id?: string;
   type: Type;
   subjectId: ReviewType[Type]["subject"]["id"];
+  modal?: boolean;
+  onClick?: MouseEventHandler;
+  onSubmit?: () => void;
 };
 
 type Fields = {
   [Key in keyof ReviewType]: {
+    header: (
+      currentUser: User | undefined,
+      subject: ReviewType[Key]["subject"] | undefined
+    ) => ReactNode;
     inputs: (store: ReturnType<typeof useReviewStore<Key>>) => ReactNode;
   };
 };
 
-const FIELDS: Fields = {
+const PARTS: Fields = {
   restaurant: {
+    header: (currentUser, subject) => (
+      <>
+        <h2>
+          Dodaj swoją opinię&nbsp;
+          <span>{currentUser?.name}</span>
+        </h2>
+        <h3>{subject?.name}</h3>
+      </>
+    ),
     inputs: (store) => (
       <>
         <div className={styles.left}>
@@ -66,6 +83,15 @@ const FIELDS: Fields = {
     ),
   },
   dish: {
+    header: (currentUser, subject) => (
+      <>
+        <h2>
+          Dodaj swoją opinię&nbsp;
+          <span>{currentUser?.name}</span>
+        </h2>
+        <h3>{subject?.name}</h3>
+      </>
+    ),
     inputs: (store) => (
       <>
         <div className={styles.left}>
@@ -84,12 +110,29 @@ const FIELDS: Fields = {
       </>
     ),
   },
+  response: {
+    header: (currentUser, subject) => (
+      <h3>Odpowiedz&nbsp;{subject?.author.name}</h3>
+    ),
+    inputs: (store) => (
+      <>
+        <TextArea
+          label="Odpowiedź"
+          value={store.getState("content")}
+          onChange={(e) => store.setState("content", e.target.value)}
+        />
+      </>
+    ),
+  },
 };
 
 const AddReview = <Type extends keyof ReviewType>({
   id,
   type,
   subjectId,
+  modal,
+  onClick,
+  onSubmit,
 }: Props<Type>) => {
   const funcs = REVIEW_FUNCTIONS_FACTORY[type];
   const dispatch = useAppDispatch();
@@ -105,62 +148,73 @@ const AddReview = <Type extends keyof ReviewType>({
 
   useEffect(() => {
     const exec = async () => {
-      const result = await funcs.getSubject(subjectId);
-      setSubject(result || undefined);
+      try {
+        const result = await makeRequest(
+          funcs.getSubject,
+          [subjectId],
+          dispatch
+        );
+        setSubject(result || undefined);
+      } catch (error) {}
     };
     exec();
   }, []);
 
-  const submit = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
+    let imagesPaths: string[] = [];
     try {
-      let imagesPaths: string[] = [];
       if (files) {
-        imagesPaths = await createImages(
-          files.map((file) => ({
-            info: {
-              path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
-              title: `${subjectId}`,
-            },
-            imageBody: file,
-          }))
+        imagesPaths = await makeRequest(
+          createImages,
+          [
+            await Promise.all(
+              files.map(async (file) => ({
+                info: {
+                  path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
+                  title: `${subjectId}`,
+                },
+                imageDataUrl: await blobToDataURL(file),
+              }))
+            ),
+          ],
+          dispatch
         );
       }
-      const result = await transferWithJSON(funcs.create, [
-        { ...store.getCreator(), subjectId: subjectId },
-      ]);
+      const result = await makeRequest(
+        funcs.create,
+        [{ ...store.getCreator(), subjectId: subjectId }],
+        dispatch
+      );
       if (!result) {
-        if (files) await deleteImages(imagesPaths);
-        throw new Error("Wystąpił błąd");
+        if (files) await makeRequest(deleteImages, [imagesPaths], dispatch);
+        dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
+        return;
       }
       if (files) {
-        await linkImagesToReview(result.id, imagesPaths);
+        await makeRequest(
+          linkImagesToReview,
+          [result.id, imagesPaths],
+          dispatch
+        );
       }
       dispatch(addSnackbar({ message: "Dodano opinię", type: "success" }));
-    } catch (error) {
-      dispatch(
-        addSnackbar({ message: (error as Error).message, type: "error" })
-      );
-    }
-    try {
+      store.reset();
+      if (onSubmit) onSubmit();
+      dispatch(updateReviewsUpdate());
     } catch (error) {}
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-    dispatch(updateReviewsUpdate());
     setLoading(false);
   };
 
   return (
-    <div id={id} className={styles.container}>
-      <h2>
-        Dodaj swoją opinię&nbsp;
-        <span>{currentUser?.name}</span>
-      </h2>
-      <h3>{subject?.name}</h3>
-      <form action={submit} className={styles.form}>
-        {FIELDS[type].inputs(store)}
+    <div
+      id={id}
+      className={`${styles.container} ${modal ? styles.modal : ""}`}
+      onClick={onClick}
+    >
+      {PARTS[type].header(currentUser, subject)}
+      <form action={handleSubmit} className={styles.form}>
+        {PARTS[type].inputs(store)}
         <ImageInput
           label="Zdjęcia"
           multiple
@@ -170,10 +224,18 @@ const AddReview = <Type extends keyof ReviewType>({
           {!userLoading &&
             (currentUser ? (
               <Button
-                type="submit"
+                type="button"
+                onClick={() => handleSubmit()}
                 size={size < 450 ? ButtonSize.SMALL : ButtonSize.NORMAL}
+                disabled={loading}
               >
-                Prześlij
+                {loading ? (
+                  <>
+                    Przetwarzanie <Loader size="16pt" />
+                  </>
+                ) : (
+                  "Prześlij"
+                )}
               </Button>
             ) : (
               <Button type="button" onClick={() => signIn()}>
@@ -182,7 +244,6 @@ const AddReview = <Type extends keyof ReviewType>({
             ))}
         </div>
       </form>
-      {loading && <LoaderBlur />}
     </div>
   );
 };

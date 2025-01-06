@@ -4,6 +4,7 @@ import { sendVerificationMail } from "@/lib/auth";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectSignInPageLoading } from "@/lib/store/ui/ui.selector";
 import { addSnackbar, setSignInPageLoading } from "@/lib/store/ui/ui.slice";
+import { makeRequest } from "@/utils/misc";
 import { useEffect } from "react";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize, ButtonStyle } from "../button/button.types";
@@ -27,17 +28,16 @@ const MailResend = ({ userId, mode }: Props) => {
     if (!force && loading) return;
     dispatch(setSignInPageLoading(true));
     try {
-      const err = await sendVerificationMail(
-        userId,
-        mode === "reset" ? "/auth/confirm-password-change" : undefined
+      await makeRequest(
+        sendVerificationMail,
+        [
+          userId,
+          mode === "reset" ? "/auth/confirm-password-change" : undefined,
+        ],
+        dispatch
       );
-      if (err) throw new Error(err.error);
       dispatch(addSnackbar({ message: "Wysłano maila", type: "success" }));
-    } catch (error) {
-      dispatch(
-        addSnackbar({ message: (error as Error).message, type: "error" })
-      );
-    }
+    } catch (error) {}
     dispatch(setSignInPageLoading(false));
   };
 

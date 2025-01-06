@@ -13,7 +13,15 @@ type Props = {
   disabled?: boolean;
 } & Pick<ComponentProps<"button">, "type">;
 
-const Button = ({ children, onClick, style, color, size, disabled }: Props) => {
+const Button = ({
+  type,
+  children,
+  onClick,
+  style,
+  color,
+  size,
+  disabled,
+}: Props) => {
   return (
     <div className={styles.container}>
       <button
@@ -23,6 +31,7 @@ const Button = ({ children, onClick, style, color, size, disabled }: Props) => {
         `}
         onClick={onClick}
         disabled={disabled}
+        type={type}
       >
         {children}
       </button>

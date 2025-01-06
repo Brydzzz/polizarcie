@@ -52,6 +52,33 @@
       width: 100%;
     }
   }
+
+  &.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: 100%;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0008;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    border-radius: 0;
+    gap: 0;
+
+    & > h3 {
+      background-color: var(--background-light);
+      padding: 15px;
+      border-radius: 8px 8px 0 0;
+      color: var(--primary);
+    }
+
+    .form {
+      max-width: 500px;
+    }
+  }
 }
 
 @media (max-width: "600px") {

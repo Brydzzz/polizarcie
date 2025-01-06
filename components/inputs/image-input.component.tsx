@@ -61,7 +61,7 @@ const ImageInput = ({
     let newPreviewImages: string[] = [];
     for (const file of Object.values(files)) {
       const data = await blobToDataURL(file);
-      if (data) newPreviewImages.push(data as string);
+      newPreviewImages.push(data);
     }
     setPreviewImages(newPreviewImages);
     setNames(Object.values(files).map((file) => file.name));

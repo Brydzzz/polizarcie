@@ -266,7 +266,7 @@ const MatchPage = () => {
       </main>
     )
   ) : (
-    <main className={styles.main}>
+    <main className={styles.main2}>
       <div className={styles.login}>
         <LoginNeeded />
       </div>

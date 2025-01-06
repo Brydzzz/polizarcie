@@ -1,10 +1,16 @@
 "use server";
 
 import { signIn } from "@/auth";
-import { parseZodError, verifyPassword } from "@/utils/misc";
+import {
+  badData,
+  badDataFromZodError,
+  unauthorized,
+  verifyPassword,
+} from "@/utils/misc";
 import { User } from "@prisma/client";
 import { CredentialsSignin } from "next-auth";
-import { redirect, unauthorized } from "next/navigation";
+import { redirect } from "next/navigation";
+import { ZodError } from "zod";
 import {
   getUserByEmail,
   getUserById,
@@ -17,43 +23,42 @@ import {
 } from "./db/users.server-only";
 import { resetPasswordSchema, signInSchema, signUpSchema } from "./zod/users";
 
-export async function signInWithCredentials(formData: FormData) {
+export async function signInWithCredentials(data: {
+  email: string;
+  password: string;
+}) {
   try {
-    const { email, password } = await signInSchema.parseAsync({
-      email: formData.get("email"),
-      password: formData.get("password"),
-    });
+    const { email, password } = await signInSchema.parseAsync(data);
     const user = await getUserWithPasswordHashByEmail(email);
-    if (!user || !user.passwordHash || !user.emailVerified) unauthorized();
+    if (!user || !user.passwordHash || !user.emailVerified)
+      return unauthorized();
     const result = await verifyPassword(
       password,
       Buffer.from(user.passwordHash.hash, "base64")
     );
-    if (!result) unauthorized();
+    if (!result) return unauthorized();
     await signIn("credentials", { email, password, redirectTo: "/browse" });
   } catch (error) {
     if (error instanceof CredentialsSignin) {
       if (error.type === "CredentialsSignin" && error.code === "credentials") {
-        unauthorized();
+        return unauthorized();
       }
     }
-    const zodErr = parseZodError(error as Error);
-    if (zodErr) return zodErr;
+    if (error instanceof ZodError) return badDataFromZodError(error);
     throw error;
   }
 }
 
-export async function signUpWithNodemailer(formData: FormData) {
+export async function signUpWithNodemailer(data: {
+  email: string;
+  name: string;
+  password: string;
+  passwordRepeat: string;
+}) {
   try {
     const { email, name, password, passwordRepeat } =
-      await signUpSchema.parseAsync({
-        email: formData.get("email"),
-        name: formData.get("name"),
-        password: formData.get("password"),
-        passwordRepeat: formData.get("passwordRepeat"),
-      });
-    if (password !== passwordRepeat)
-      return { error: "Passwords did not match!" };
+      await signUpSchema.parseAsync(data);
+    if (password !== passwordRepeat) return badData("Passwords did not match!");
     try {
       const user = await createUserWithEmailNameAndPassword(
         email,
@@ -63,32 +68,29 @@ export async function signUpWithNodemailer(formData: FormData) {
       redirect(`/auth/verify/${user.id}`);
     } catch (error) {
       if ((error as Error).message.startsWith("NEXT_REDIRECT")) throw error;
-      return { error: "User with this email already exists!" };
+      return badData("User with this email already exists!");
     }
   } catch (error) {
-    const zodErr = parseZodError(error as Error);
-    if (zodErr) return zodErr;
+    if (error instanceof ZodError) return badDataFromZodError(error);
     throw error;
   }
 }
 
-export async function resetUserPassword(formData: FormData) {
+export async function resetUserPassword(data: {
+  email: string;
+  password: string;
+  passwordRepeat: string;
+}) {
   try {
     const { email, password, passwordRepeat } =
-      await resetPasswordSchema.parseAsync({
-        email: formData.get("email"),
-        password: formData.get("password"),
-        passwordRepeat: formData.get("passwordRepeat"),
-      });
-    if (password !== passwordRepeat)
-      return { error: "Passwords did not match!" };
+      await resetPasswordSchema.parseAsync(data);
+    if (password !== passwordRepeat) return badData("Passwords did not match!");
     const user = await getUserByEmail(email);
-    if (!user) return { error: "User with specified id does not exist!" };
+    if (!user) return badData("User with specified id does not exist!");
     await setUserPasswordCache(user.id, password);
     redirect(`/auth/verify/${user.id}-reset`);
   } catch (error) {
-    const zodErr = parseZodError(error as Error);
-    if (zodErr) return zodErr;
+    if (error instanceof ZodError) return badDataFromZodError(error);
     throw error;
   }
 }
@@ -98,14 +100,14 @@ export async function sendVerificationMail(
   redirectTo?: string
 ) {
   const user = await getUserById(id);
-  if (!user) return { error: "User with specified id does not exist!" };
+  if (!user) return badData("User with specified id does not exist!");
   if (user.lastVerificationMail) {
     const diff = Math.round(
       (new Date().getTime() - new Date(user.lastVerificationMail).getTime()) /
         1000
     );
     if (diff < 60) {
-      return { error: `Wait another ${60 - diff}s before resending` };
+      return badData(`Wait another ${60 - diff}s before resending`);
     }
   }
   await updateUserLastVerificationMail(id);

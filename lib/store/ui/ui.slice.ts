@@ -60,7 +60,7 @@ export const UiSlice = createSlice({
       state.snackbars.push({
         message: "",
         type: "information",
-        timeout: 3000,
+        timeout: 5000,
         ...action.payload,
         id: createId(),
       });
