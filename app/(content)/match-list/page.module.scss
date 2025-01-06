@@ -2,12 +2,15 @@
 .main {
   display: flex;
   flex-direction: column;
+  margin: auto;
+  width: 80%;
   & > .header {
     margin-left: 20pt;
   }
   & > .requests {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin-left: 20pt;
     margin-right: 20pt;
     margin-top: 10px;

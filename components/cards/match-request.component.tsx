@@ -1,5 +1,7 @@
 "use client";
 import { AcceptMatchRequest, DenyMatchRequest } from "@/lib/db/matches";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { Match, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import SupabaseImage from "../images/supabase-image.component";
@@ -12,6 +14,7 @@ type Props = {
 const MatchRequestCard = ({ data, UserOne }: Props) => {
   const [decision, setDec] = useState<number>(0);
   const [next, setNext] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const dec = async () => {
       if (!data.userOneId || !data.userTwoId) {
@@ -54,6 +57,9 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
             onClick={() => {
               setDec(1);
               setNext(!next);
+              dispatch(
+                addSnackbar({ message: "Zmatchowano", type: "success" })
+              );
             }}
           ></i>
         </div>
@@ -63,6 +69,7 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
             onClick={() => {
               setDec(2);
               setNext(!next);
+              dispatch(addSnackbar({ message: "Odrzucono", type: "warning" }));
             }}
           ></i>
         </div>

@@ -4,7 +4,7 @@ import MatchRequestCard from "@/components/cards/match-request.component";
 import OurPendingCard from "@/components/cards/our-pending-card.component";
 import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
-import { getPendingRequestsFor } from "@/lib/db/matches";
+import { denyMatch, getPendingRequestsFor } from "@/lib/db/matches";
 import { getUsersMatchedWith, getUsersPendingWith } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
 import {
@@ -14,6 +14,9 @@ import {
 import { Match, User, UserMedia } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
+
+/* TODO: make refreshing requests not nasty (ja sie tym zajme) */
+
 const MatchRequestPage = () => {
   const [decision, setDec] = useState<boolean>(false);
   const [requests, setRequests] = useState<
@@ -38,17 +41,22 @@ const MatchRequestPage = () => {
     const fetchReqs = async () => {
       if (!user) return;
       const data = await getUsersPendingWith(user?.id);
-      console.log(data);
       setPendings(data);
     };
-    console.log(pendings);
     fetchReqs();
   }, [user]);
+  const handleMore = (id: string | undefined) => {
+    if (!user) return;
+    if (!id) return;
+    setDec(!decision);
+    denyMatch(user.id, id);
+  };
 
   useEffect(() => {
     const fetchMatches = async () => {
       if (!user) return;
       const data = await getUsersMatchedWith(user.id);
+      console.log(data);
       setContacts(data);
     };
     fetchMatches();
@@ -77,16 +85,24 @@ const MatchRequestPage = () => {
           <div className={styles.prompt}>
             <p>Kontakty: </p>
           </div>
-          {contacts.length > 1 ? (
+          {contacts.length >= 1 ? (
             <div className={styles.contactsList}>
               {contacts.map((cont, idx) =>
                 cont.medias ? (
                   <div className={styles.contact} key={idx}>
-                    <ContactCard data={cont} medias={cont.medias} />
+                    <ContactCard
+                      data={cont}
+                      medias={cont.medias}
+                      onClickDelete={() => handleMore(cont.id)}
+                    />
                   </div>
                 ) : (
                   <div className={styles.contact} key={idx}>
-                    <ContactCard data={cont} medias={[]} />
+                    <ContactCard
+                      data={cont}
+                      medias={[]}
+                      onClickDelete={() => handleMore(cont.id)}
+                    />
                   </div>
                 )
               )}
