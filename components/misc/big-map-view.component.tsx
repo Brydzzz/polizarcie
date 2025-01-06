@@ -227,8 +227,20 @@ const BigMapView = ({ data }: Props) => {
 
     // Adjust the map view
     const view = mapInstance.current.getView();
-    view.setCenter(getNewCenter());
-    view.setZoom(16);
+    const extent = vectorSource.current.getExtent();
+    if (
+      extent &&
+      !extent.every((coord) => coord === Infinity || coord === -Infinity)
+    ) {
+      view.fit(extent, {
+        padding: [50, 50, 50, 50],
+        duration: 200,
+        maxZoom: 19,
+      });
+    } else {
+      view.setCenter(getNewCenter());
+      view.setZoom(16);
+    }
   }, [data]);
 
   return (
