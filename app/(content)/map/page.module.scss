@@ -6,23 +6,31 @@
 .layout {
   display: flex;
   height: 100%;
-  flex-wrap: wrap;
 
   @media (max-width: 992px) {
-    flex-direction: column; // Stack children vertically for small screens
+    flex-direction: column;
+    row-gap: 20px;
   }
 }
 
 .mapContainer {
   flex: 3;
   padding: 20px;
+  width: 100%;
+  max-width: 65vw;
 
-}
+  @media (max-width: 992px) {
+    max-width: 100vw;
+    height: 70vh;
+    margin-top: 10px;
+    padding: 10px;
+  }
 
-.roundEdges {
-  height: 100%;
-  border-radius: 15px;
-  overflow: hidden;
+  & > .roundEdges {
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+  }
 }
 
 .searchContainer {
@@ -30,4 +38,11 @@
   height: 100%;
   padding-top: 30px;
   overflow-y: auto;
+
+  @media (max-width: 992px) {
+    height: 30vh;
+    padding-top: 15px;
+    padding-bottom: 20px;
+    overflow-y: unset;
+  }
 }
