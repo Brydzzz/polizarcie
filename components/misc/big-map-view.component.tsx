@@ -51,7 +51,6 @@ const BigMapView = ({ data }: Props) => {
     restaurant: RestaurantFull,
     event: MapBrowserEvent<any>
   ) => {
-    console.log("inside display popup");
     setPopupContent(restaurant);
     const coordinate = event.coordinate;
     popupOverlayRef.current?.setPosition(coordinate);
@@ -187,6 +186,19 @@ const BigMapView = ({ data }: Props) => {
       popupOverlayRef.current = popupOverlay;
       mapInstance.current.setTarget(mapRef.current);
     }
+
+    mapInstance.current.on("pointermove", handlePointerMove);
+    mapInstance.current.on("singleclick", handleSingleClick);
+    mapInstance.current.on("dblclick", handleDblClick);
+
+    return () => {
+      if (!mapInstance.current) return;
+      mapInstance.current?.un("pointermove", handlePointerMove);
+      mapInstance.current?.un("singleclick", handleSingleClick);
+      mapInstance.current?.un("dblclick", handleDblClick);
+      mapInstance.current.dispose();
+      mapInstance.current = null;
+    };
   }, []);
 
   useEffect(() => {
@@ -217,10 +229,6 @@ const BigMapView = ({ data }: Props) => {
     const view = mapInstance.current.getView();
     view.setCenter(newCenter);
     view.setZoom(16);
-
-    mapInstance.current.on("pointermove", handlePointerMove);
-    mapInstance.current.on("singleclick", handleSingleClick);
-    mapInstance.current.on("dblclick", handleDblClick);
   }, [data]);
 
   return (
