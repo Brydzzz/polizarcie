@@ -30,7 +30,7 @@
     user-select: none;
     color: var(--text);
     --dot-size: 25px;
-    --padding: 70px;
+    --padding: 80px;
     min-width: calc(100px + calc(2 * var(--padding)));
     padding: 0 var(--padding);
     background-color: var(--bg-local);
@@ -55,7 +55,7 @@
       background-color: var(--disabled);
       z-index: 3;
       color: var(--bg-local);
-      font-size: 10pt;
+      font-size: 7pt;
       font-weight: bold;
 
       &:nth-child(1) {

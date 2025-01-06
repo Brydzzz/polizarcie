@@ -43,6 +43,18 @@ export function throwParsedZodError(error: ZodError, dispatch?: AppDispatch) {
   throw new Error(poliError.message);
 }
 
+export function parseBigNumber(value: number) {
+  return value >= 10000000
+    ? `${Math.round(value / 1000000)}M`
+    : value >= 1000000
+    ? `${Math.round(value / 100000) / 10}M`
+    : value >= 10000
+    ? `${Math.round(value / 1000)}k`
+    : value >= 1000
+    ? `${Math.round(value / 100) / 10}k`
+    : value;
+}
+
 export async function makeRequest<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Func extends (...args: any[]) => Promise<any>

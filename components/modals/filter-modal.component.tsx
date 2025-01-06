@@ -274,10 +274,10 @@ const FilterModal = ({
         ></SelectBox>
         <SliderInput
           value={facultyDistance}
-          limit={{ min: 200, max: 900 }}
+          limit={{ min: 200, max: 5000 }}
           onChange={(v) => setFacultyDistance(v)}
           step={100}
-          suffix=" m"
+          suffix="m"
           label="Max. odległość od wydziału"
           disabled={selectedFaculty.value === "none"}
         ></SliderInput>

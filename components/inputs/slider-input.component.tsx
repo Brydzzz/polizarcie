@@ -1,5 +1,6 @@
 "use client";
 
+import { parseBigNumber } from "@/utils/misc";
 import { LegacyRef, MouseEvent, useRef } from "react";
 import styles from "./sliders.module.scss";
 
@@ -63,7 +64,7 @@ const SliderInput = ({
         onMouseMove={handleOnMouseEvent}
         onMouseDown={handleOnMouseEvent}
       >
-        <span className={styles.limit}>{limit.min}</span>
+        <span className={styles.limit}>{parseBigNumber(limit.min)}</span>
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
           <div
             className={styles.dot}
@@ -75,10 +76,10 @@ const SliderInput = ({
           </div>
         </div>
         <span className={styles.value}>
-          {value}
+          {parseBigNumber(value)}
           {suffix}
         </span>
-        <span className={styles.limit}>{limit.max}</span>
+        <span className={styles.limit}>{parseBigNumber(limit.max)}</span>
       </div>
       <input
         className={styles.invisible}
