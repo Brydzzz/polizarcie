@@ -39,7 +39,7 @@ import {
 } from "@prisma/client";
 import { getDishById } from "../../lib/db/dishes";
 import { getRestaurantById } from "../../lib/db/restaurants";
-import { PoliError, transferWithJSON } from "../misc";
+import { PoliError } from "../misc";
 
 export type ReviewType = {
   restaurant: {
@@ -94,7 +94,7 @@ export const REVIEW_FUNCTIONS_FACTORY: ReviewFunctions = {
     getById: getRestaurantReviewById,
     getBySubjectId: getRestaurantReviewsByRestaurantId,
     getByAuthorId: getRestaurantReviewsByAuthorId,
-    getSubject: async (id) => await transferWithJSON(getRestaurantById, [id]),
+    getSubject: getRestaurantById,
     create: createRestaurantReview,
     edit: updateRestaurantReview,
   },
