@@ -85,7 +85,7 @@
         .data {
           display: flex;
           flex-direction: column;
-
+          max-width: 1000px;
           & > h2 {
             margin-bottom: 3px;
             margin-top: 10px;
