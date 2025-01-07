@@ -321,6 +321,7 @@ enum DishType {
     OTHER
     DRINK
     SIDE
+    TOP
 }
 
 enum MatchRequest {

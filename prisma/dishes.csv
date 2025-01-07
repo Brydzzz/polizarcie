@@ -1,0 +1,174 @@
+﻿xd;id;restaurantId;type;name;description;priceZl;priceGr
+1;1;1;TOP;Kurczak po tajsku;;25;0
+1;2;1;TOP;Indyk w sosie masło - czosnek;;25;0
+1;3;1;TOP;Ryż smażony z kurczakiem;;25;0
+1;4;1;MAIN_DISH;Kurczak w cieście;;24;0
+1;5;1;MAIN_DISH;Kurczak w 5-ciu smakach;;24;0
+1;6;1;MAIN_DISH;Wieprzowina z warzywami;;24;0
+1;7;1;MAIN_DISH;Wieprzowina w 5-ciu smakach;;24;0
+1;8;1;MAIN_DISH;Ryba z warzywami;;24;0
+1;9;1;MAIN_DISH;Ryba po tajsku;;24;0
+1;10;1;MAIN_DISH;Kaczka w sosie pomarańczowym;;30;0
+1;11;1;MAIN_DISH;Cielencina z warzywami;;32;0
+1;12;1;MAIN_DISH;Cielencina w 5-ciu smakach;;32;0
+1;13;1;MAIN_DISH;Cielencina na gorącym półmisku;;34;0
+1;14;1;SOUP;Zupa PHO z kurczakiem;Opcja z wołowiną +2 zł;20;0
+1;15;1;SOUP;Zupa z makaronem sojowym i kurczakiem;Opcja z wołowiną +2 zł;20;0
+1;16;1;SOUP;Zupa krabowa;;15;0
+1;17;1;SOUP;Zupa krewetkowa;;15;0
+1;18;1;SOUP;Zupa Pho krewetkowa i Ha Cao;;29;0
+1;19;1;SOUP;Zupa PHO tofu;;19;0
+1;20;1;STARTER;Sajkonki z surówką;;13;0
+1;21;1;STARTER;Sajkonki z ryżem;;15;0
+1;22;1;STARTER;Sajkonki z frytkami;;19;0
+1;23;1;DRINK;Coca Cola 0,5l;;8;0
+1;24;1;DRINK;Woda 0,5l;Kropla Beskidu;5;0
+1;25;1;DRINK;Cappy 0,33l;pomarańczowy/jabłkowy/multiwitamina;6;0
+1;26;1;DRINK;Kawa/Herbata;;5;0
+1;27;1;SIDE;Ryż biały;;3;0
+1;28;1;SIDE;Ryż smażony;;7;0
+1;29;1;SIDE;Makaron sojowy;;7;0
+1;30;1;SIDE;Frytki;;8;0
+1;31;2;TOP;Kotlet schabowy;;11;80
+1;32;2;TOP;Pierogi ruskie;;12;40
+1;33;2;TOP;Pierogi z serem;;12;50
+1;34;2;TOP;Naleśniki z serem;;9;20
+1;35;2;TOP;Naleśniki z jabłkiem;;9;60
+1;36;2;TOP;Pomidorowa z makaronem/ryżem;;4;50
+1;37;2;TOP;Rosół z makaronem;;4;50
+1;38;2;SOUP;Szczawiowa z jajkiem;;5;90
+1;39;2;SOUP;Krupnik;;5;50
+1;40;2;SOUP;Fasolowa;;6;80
+1;41;2;SOUP;Krem z warzyw;;5;50
+1;42;2;SOUP;Brokułowa;;5;10
+1;43;2;SOUP;Barszcz czerwony z ziemniakami;;5;30
+1;44;2;DESSERT;Budyń z sokiem;;4;60
+1;45;2;DESSERT;Kisiel z owocami;;2;50
+1;46;2;DESSERT;Sernik;;6;45
+1;47;2;DESSERT;Szarlotka;;6;45
+1;48;2;DESSERT;Blok czekoladowy;ciemny/jasny;6;95
+1;49;2;DESSERT;Galaretka;;2;95
+1;50;2;MAIN_DISH;Pierogi z mięsem;;13;40
+1;51;2;MAIN_DISH;Pierogi z kapustą i grzybami;;12;80
+1;52;2;MAIN_DISH;Pierogi ze szpinakiem;;12;50
+1;53;2;MAIN_DISH;Pielmienie;;15;80
+1;54;2;MAIN_DISH;Leniwe;;11;50
+1;55;2;MAIN_DISH;Kopytka;opcja z sosem grzybowym/pieczeniowym +2,5 zł;8;80
+1;56;2;MAIN_DISH;Kluski śląskie;opcja z sosem grzybowym/pieczeniowym +2,5 zł;8;80
+1;57;2;MAIN_DISH;Naleśniki ze szpinakiem;;10;80
+1;58;2;MAIN_DISH;Naleśniki z nutellą;;11;80
+1;59;2;MAIN_DISH;Naleśniki z malinami;;13;50
+1;60;2;MAIN_DISH;Naleśniki z dżemem;;8;50
+1;61;2;MAIN_DISH;Naleśniki z łososiem i szpinakiem;;14;50
+1;62;2;MAIN_DISH;Naleśniki puste;;3;60
+1;63;2;MAIN_DISH;Filet z pierski kurczaka;;10;20
+1;64;2;MAIN_DISH;Sznycel z kurczaka;;11;50
+1;65;2;MAIN_DISH;Kotlet mielony;;10;80
+1;66;2;MAIN_DISH;Kotlet de volaille;;11;90
+1;67;2;MAIN_DISH;Kurczak pieczony;;11;80
+1;68;2;MAIN_DISH;Gulasz wieprzowy;;9;40
+1;69;2;MAIN_DISH;Klopsy w sosie;;11;50
+1;70;2;MAIN_DISH;Karkówka pieczona w sosie;;11;80
+1;71;2;MAIN_DISH;Wątróbka z cebulką;;10;30
+1;72;2;MAIN_DISH;Fasolka po bretońsku;;7;40
+1;73;2;MAIN_DISH;Żołądki w sosie;;9;10
+1;74;2;MAIN_DISH;Ozór w sosie chrzanowym;;10;80
+1;75;2;MAIN_DISH;Żeberka;;15;10
+1;76;2;MAIN_DISH;Gołąbek;;12;80
+1;77;2;MAIN_DISH;Kotlet pożarski;;10;50
+1;78;2;MAIN_DISH;Kiełbasa z cebulką;;7;20
+1;79;2;MAIN_DISH;Strogonoff;;14;50
+1;80;2;MAIN_DISH;Gulasz drobiowy z warzywami;;8;60
+1;81;2;MAIN_DISH;Cordon bleu;;14;50
+1;82;2;MAIN_DISH;Rolada z kurczaka z pieczarkami i żółtym serem;;16;50
+1;83;2;MAIN_DISH;Leczo;;8;50
+1;84;2;MAIN_DISH;Placki ziemniaczane;opcja z sosem grzybowym +4 zł;8;50
+1;85;2;MAIN_DISH;Kaszanka z cebulką;;7;20
+1;86;2;MAIN_DISH;Kotlet warzywny;(z kalafiora, brokuła);6;50
+1;87;2;SIDE;Ziemniaki /ziemniaki pieczone;;4;75
+1;88;2;SIDE;Ryż;;2;67
+1;89;2;SIDE;Kasza gryczana;;3;35
+1;90;2;SIDE;Buraczki zasmażane;;5;90
+1;91;2;SIDE;Marchewka z groszkiem;;5;20
+1;92;2;SIDE;szpinak;;5;19
+1;93;2;SIDE;Surówka z białej kapusty;;4;80
+1;94;2;SIDE;Surówka z kapusty kiszonej;;5;50
+1;95;2;SIDE;Surówka z marchwi;;5;50
+1;96;2;SIDE;Mizeria ze śmietaną;;6;50
+1;97;2;SIDE;Bukiet surówek;;8;95
+1;98;2;SIDE;Surówka z ogórka kiszonego;;5;50
+1;99;2;SIDE;Surówka z czerwonej kapusty;;4;80
+1;100;2;SIDE;Pomidor z cebulą;;4;50
+1;101;2;DRINK;7-UP / Mirinda / Pepsi;;5;50
+1;102;2;DRINK;Coca cola / Fanta / Sprite;;5;50
+1;103;2;DRINK;Woda gaz / N-Gaz;;4;0
+1;104;2;DRINK;Kinley;;5;50
+1;105;2;DRINK;Fuze tea;;5;50
+1;106;2;DRINK;Cappy;;5;50
+1;107;2;DRINK;Lipton ice;;5;50
+1;108;2;DRINK;Oranżada;;4;95
+1;109;2;DRINK;Mleko;;2;55
+1;110;2;DRINK;Mleko do kawy;;1;70
+1;111;2;DRINK;Kakao;;3;20
+1;112;2;DRINK;Latte;;6;50
+1;113;2;DRINK;Kawa naturalna;;4;90
+1;114;2;DRINK;Kawa zbożowa;;3;50
+1;115;2;DRINK;Herbata z cytryną;;3;50
+1;116;2;DRINK;Kefir;;1;55
+1;117;2;DRINK;Kompot;;2;0
+1;118;3;MAIN_DISH;Schabowy;;10;0
+1;119;4;TOP;Luca tradycyjny + strudel z jogurttem;w pakiecie -46%;8;90
+1;120;4;TOP;Pizza luca, campus, luca 4 sery + bajgiel z nutellą;w pakiecie -46%, jeden kawałek wybranej pizzy razem z bajglem wypełnionym nutellą;8;90
+1;121;4;TOP;Happy luca + bajgiel z wiśnią;w pakiecie -46%;9;50
+1;122;4;TOP;Pizza dziarska + bajgiel z nutellą;w pakiecie -49%;8;90
+1;123;4;TOP;Luca dziarski + strudel jabłkowy;w pakiecie -42%;9;50
+1;124;4;MAIN_DISH;Precel sezem, mak/słonecznik;słonecznik +60gr, Alergeny pszenica, sezam, 110g;4;90
+1;125;4;MAIN_DISH;Couri luca;parówka w pieczywie, alergeny pszenica, mleko, laktoza, soja, gorczyca, seler. 120 g;5;90
+1;126;4;MAIN_DISH;Luca tradycyjny;mozarella i szynka, 120 g;8;90
+1;127;4;MAIN_DISH;Bajgiel z serem;85 g;6;50
+1;128;4;MAIN_DISH;Happy luca;parówka, ser żółty, ketchup, musztarda. 150g;9;50
+1;129;4;MAIN_DISH;Bajgiel z nutellą;krem z kakao, orzechami laskowymi i mlekiem. 145 g;9;50
+1;130;4;MAIN_DISH;Bajgiel z nadzieniem wiśniowym;145 g;7;90
+1;131;4;MAIN_DISH;Luca dziarski;Szynka zbójnicka, plasterki cebuli i produkt spożywczy z odtłuszczonego mleka i tłuszczów roślinnych w zalewie. 120g;9;50
+1;132;4;MAIN_DISH;Kanapka ze sznyclem z kurczaka;290g;18;90
+1;133;4;MAIN_DISH;Pizza campus;ciasto na pizzę, szynka, sos do pizzy, czarne oliwki. Jeden kawałek 130g;7;90
+1;134;4;MAIN_DISH;Pizza luca;ciasto na pizzę, sos do pizzy, szynka, salami, papryka, pieczarki, czarne oliwki. Jeden kawałek 130g;7;90
+1;135;5;TOP;Zapakowanie na wynos;;1;0
+1;136;5;TOP;Dodatkowy ser;;1;0
+1;137;5;TOP;Kebab mały na cienkim z kurczaka/baranina/mix;baranina lub mix +1zł;17;0
+1;138;5;TOP;Kebab średni na cienkim z kurczaka/baranina/mix;baranina lub mix +1zł;20;0
+1;139;5;TOP;Kebab duży na cienkim z kurczaka/baranina/mix;baranina lub mix +1zł;25;0
+1;140;5;TOP;Kebab gigant na cienkim z kurczaka/baranina/mix;;30;0
+1;141;5;TOP;Kebab mały na grubym z kurczaka/baranina/mix;baranina lub mix +1zł;20;0
+1;142;5;TOP;Kebab średni na grubym z kurczaka/baranina/mix;baranina lub mix +2zł;23;0
+1;143;5;TOP;Kebab duży na grubym z kurczaka/baranina/mix;baranina lub mix +5zł;25;0
+1;144;5;TOP;Kebab gigant na grubym z kurczaka/baranina/mix;;35;0
+1;145;5;MAIN_DISH;Kebab mały na cienkim z falafel;;17;0
+1;146;5;MAIN_DISH;Kebab średni na cienkim z falafel;;20;0
+1;147;5;MAIN_DISH;Kebab duży na cienkim z falafel;;25;0
+1;148;5;MAIN_DISH;Kebab gigant na cienkim z falafel;;30;0
+1;149;5;MAIN_DISH;Kebab mały na grubym z falafel;;20;0
+1;150;5;MAIN_DISH;Kebab średni na grubym z falafel;;23;0
+1;151;5;MAIN_DISH;Kebab duży na grubym z falafel;;25;0
+1;152;5;MAIN_DISH;Kebab gigant na grubym z falafel;;30;0
+1;153;5;MAIN_DISH;Talerz mały kebab kurczak/baranina/falafel;;30;0
+1;154;5;MAIN_DISH;Talerz średni kebab kurczak/baranina/falafel;;35;0
+1;155;5;MAIN_DISH;Talerz duży kebab kurczak/baranina/falafel;;40;0
+1;156;5;DESSERT;Baklawa;;6;0
+1;157;5;DRINK;Cola butelka 0,5l;;7;0
+1;158;5;DRINK;Cola puszka;;6;0
+1;159;5;DRINK;Woda;;6;0
+1;160;5;DRINK;Ayran;;6;0
+1;161;5;DRINK;Mango;;7;0
+1;162;5;SIDE;Dodatkowy sos;;3;0
+1;163;6;TOP;Kebab lawasz L kurczak/mix, wołowina;mix, wołowina +2zł;24;0
+1;164;6;TOP;Kebab lawasz XL kurczak/mix, wołowina;mix, wołowina +2zł;29;0
+1;165;6;TOP;Kebab lawasz King Size kurczak/mix, wołowina;mix, wołowina +3zł;35;0
+1;166;7;TOP;Pita mała z kurczakiem/wołowina/mix;wołowina, mix +2zł;17;0
+1;167;7;TOP;Pita średnia z kurczakiem/wołowina/mix;wołowina, mix +2zł;20;0
+1;168;7;TOP;Pita duża z kurczakiem/wołowina/mix;wołowina, mix +2zł;23;0
+1;169;7;TOP;Eid lawasz 50 cm;;30;0
+1;170;7;MAIN_DISH;Lawasz średni kurczak/wołowina/mix;wołowina, mix +2zł;22;0
+1;171;7;MAIN_DISH;Lawasz duży kurczak/wołowina/mix;wołowina, mix +2zł;24;0
+1;172;7;MAIN_DISH;Pita falafel;średni +4zł, duży +7zł;17;0
+1;173;7;MAIN_DISH;Lawasz falafel;duży +3zł;20;0

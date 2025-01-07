@@ -272,7 +272,7 @@ const ReviewCard = <Type extends keyof ReviewType>({
       >
         <div className={styles.header}>
           <Link
-            href={`#`}
+            href={`/profile/${author.id}`}
             className={`${styles.author} ${
               user?.id === author.id ? styles.highlighted : ""
             }`}

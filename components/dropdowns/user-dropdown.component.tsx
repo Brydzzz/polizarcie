@@ -27,6 +27,12 @@ const UserDropdown = () => {
         {user ? (
           <>
             <h2>{user.name}</h2>
+            <span className={styles.item} onClick={() => window.location.href = "/userprofile"}>
+              &nbsp; &nbsp; Profil
+            </span>
+            <span className={styles.item} onClick={() => window.location.href = "/settings"}>
+                &nbsp; &nbsp; Ustawienia
+            </span>
             <span
               className={styles.item}
               onClick={() => signOut({ redirect: true, redirectTo: "/browse" })}

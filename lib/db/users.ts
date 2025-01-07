@@ -2,8 +2,9 @@
 
 import { prisma } from "@/prisma";
 import { unauthorized } from "@/utils/misc";
+import { UserMedia } from "@prisma/client";
 import { getCurrentUser } from "@/utils/users";
-import { MatchRequest, Restaurant, User } from "@prisma/client";
+import { MatchRequest, Restaurant, User, Gender } from "@prisma/client";
 import {
   clearUserPasswordCache,
   updateUserPasswordFromCache,
@@ -469,3 +470,79 @@ export async function cancelPasswordChange() {
   if (!currentUser) return unauthorized();
   return await clearUserPasswordCache(currentUser.id);
 }
+
+export async function saveUserSettings(id: User["id"], settings: { name: string | null, description: string | null, gender: Gender | null, preferredGender: Gender | null, meetingStatus: boolean | null}) {
+  const data: { name?: string, description?: string, gender?: Gender, preferredGender?: Gender, meetingStatus?: boolean } = {};
+  if (settings.name !== null) data.name = settings.name;
+  if (settings.description !== null) data.description = settings.description;
+  if (settings.gender !== null) data.gender = settings.gender;
+  if (settings.preferredGender !== null) data.preferredGender = settings.preferredGender;
+  if (settings.meetingStatus !== null) data.meetingStatus = settings.meetingStatus;
+
+
+  return await prisma.user.update({
+    where: { id: id },
+    data: data,
+  });
+}
+
+export async function getUserMedias(id: User["id"]) {
+  return await prisma.userMedia.findMany({
+    where: {
+      userId: id,
+    },
+  });
+}
+
+async function saveMedia(id: User["id"], type: UserMedia["type"], link: string) {
+  return await prisma.userMedia.upsert({
+    where: {
+      id: `${id}-${type}`,
+    },
+    update: {
+      link: link,
+    },
+    create: {
+      id: `${id}-${type}`,
+      userId: id,
+      type: type,
+      link: link,
+    },
+  });
+}
+
+export async function saveUserMedias(id: User["id"], medias: { type: UserMedia["type"], link: string }[]) {
+  return await Promise.all(
+    medias
+      .filter(media => media.link.trim() !== "")
+      .map(media => saveMedia(id, media.type, media.link))
+  );
+}
+
+export async function saveProfileImagePath(id: User["id"], paths: string[]) {
+  return await prisma.user.update({
+    where: { id: id },
+    data: {
+      image: paths[0],
+    },
+  });
+}
+
+
+
+// export async function saveUserMedias(id: User["id"], medias: { link: string, type: string }[]) {
+//   const data = medias.map(media => {
+//     return {
+//       userId: id,
+//       link: media.link,
+//       type: media.type,
+//     };
+//   });
+//   return
+
+//   // return await prisma.userMedia.createMany({
+//   //   data: data,
+//   // });
+// }
+
+
