@@ -13,7 +13,7 @@ Konspekt znajduje się w pliku: [konspekt.md](./konspekt.md)
   <img src="https://www.vectorlogo.zone/logos/js_redux/js_redux-icon.svg" alt="Redux" />
   <img src="https://raw.githubusercontent.com/gilbarbara/logos/refs/heads/main/logos/prisma.svg" height=60 alt="Prisma" />
   <img src="https://raw.githubusercontent.com/walkxcode/dashboard-icons/refs/heads/main/svg/openstreetmap.svg" height=60 alt="OpenStreetMap" />
-  <img src="https://github.com/gilbarbara/logos/blob/main/logos/openlayers.svg" height=60 alt="OpenLayers" />
+  <img src="https://raw.githubusercontent.com/gilbarbara/logos/refs/heads/main/logos/openlayers.svg" height=60 alt="OpenLayers" />
   <img src="https://authjs.dev/img/etc/logo-sm.webp" height=60 alt="AuthJS" />
   <img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" alt="Supabase" />
   <img src="https://www.vectorlogo.zone/logos/sass-lang/sass-lang-icon.svg" alt="Sass" />
