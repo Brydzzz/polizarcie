@@ -15,8 +15,6 @@ import { Match, User, UserMedia } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 
-/* TODO: make refreshing requests not nasty (ja sie tym zajme) */
-
 const MatchRequestPage = () => {
   const [decision, setDec] = useState<boolean>(false);
   const [requests, setRequests] = useState<
@@ -48,8 +46,10 @@ const MatchRequestPage = () => {
   const handleMore = (id: string | undefined) => {
     if (!user) return;
     if (!id) return;
-    setDec(!decision);
     denyMatch(user.id, id);
+  };
+  const handleDecision = (val: boolean) => {
+    setDec(!decision);
   };
 
   useEffect(() => {
@@ -75,7 +75,11 @@ const MatchRequestPage = () => {
         {requests.map((req, idx) =>
           req.userOne ? (
             <div className={styles.request} key={idx}>
-              <MatchRequestCard data={req} UserOne={req.userOne} />
+              <MatchRequestCard
+                data={req}
+                UserOne={req.userOne}
+                onClickDecision={() => handleDecision(!decision)}
+              />
             </div>
           ) : null
         )}
@@ -113,7 +117,7 @@ const MatchRequestPage = () => {
           <div className={styles.prompt}>
             <p>Oczekujące: </p>
           </div>
-          {pendings.length > 1 ? (
+          {pendings.length >= 1 ? (
             <div className={styles.pendingList}>
               {pendings.map((pend, idx) => (
                 <div className={styles.pend} key={idx}>

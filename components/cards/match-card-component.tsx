@@ -30,15 +30,11 @@ const MatchCard = ({ data, likedRests, algo }: Props) => {
       <div className={styles.details}>
         <div className={styles.restaurants}>
           {algo ? <p>Łączy nas: </p> : <p> Lubię jeść: </p>}
-          {likedRests ? (
-            <ul>
-              {likedRests.slice(0, 3).map((rest, idx) => (
-                <p key={idx}>
-                  {idx + 1}. {rest.name || null}
-                </p>
-              ))}
-            </ul>
-          ) : null}
+          {Array.from({ length: 3 }, (_, idx) => (
+            <p key={idx}>
+              {idx + 1}. {likedRests?.[idx]?.name || "-----"}
+            </p>
+          ))}
         </div>
         <div className={styles.desc}>
           <UserCard data={data} socials={false}></UserCard>

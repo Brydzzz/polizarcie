@@ -3,15 +3,16 @@ import { AcceptMatchRequest, DenyMatchRequest } from "@/lib/db/matches";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { Match, User } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import SupabaseImage from "../images/supabase-image.component";
 import styles from "./match-request.module.scss";
 type Props = {
   data: Partial<Match>;
   UserOne: Partial<User>;
+  onClickDecision?: MouseEventHandler;
 };
 
-const MatchRequestCard = ({ data, UserOne }: Props) => {
+const MatchRequestCard = ({ data, UserOne, onClickDecision }: Props) => {
   const [decision, setDec] = useState<number>(0);
   const [next, setNext] = useState<boolean>(false);
   const dispatch = useAppDispatch();
@@ -56,10 +57,10 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
             className="fa-solid fa-square-check"
             onClick={() => {
               setDec(1);
-              setNext(!next);
               dispatch(
                 addSnackbar({ message: "Zmatchowano", type: "success" })
               );
+              onClickDecision;
             }}
           ></i>
         </div>
@@ -68,8 +69,8 @@ const MatchRequestCard = ({ data, UserOne }: Props) => {
             className="fa-solid fa-square-xmark"
             onClick={() => {
               setDec(2);
-              setNext(!next);
               dispatch(addSnackbar({ message: "Odrzucono", type: "warning" }));
+              onClickDecision;
             }}
           ></i>
         </div>
