@@ -22,6 +22,8 @@ import {
   turnOnMeeting,
 } from "@/lib/db/users";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
@@ -33,13 +35,16 @@ import styles from "./page.module.scss";
 const MatchPage = () => {
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
-  const [first, setFirst] = useState<Boolean>(false);
+  //const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
   const [status, setStatus] = useState<Boolean>(false);
   const [algo, setAlgo] = useState<boolean>(false);
+  const [prevUser, setPrevUser] = useState<User>();
+  const [prevRests, setPrevRests] = useState<Restaurant[]>([]);
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
+  const size = useAppSelector(selectViewportWidth);
   const dispatch = useAppDispatch();
 
   const pushUnmatchedUser = async () => {
@@ -74,7 +79,6 @@ const MatchPage = () => {
   }, [status]);
   useEffect(() => {
     const reloadEnv = async () => {
-      setFirst(false);
       setDec(0);
     };
     reloadEnv();
@@ -106,32 +110,21 @@ const MatchPage = () => {
   };
   useEffect(() => {
     const match = async () => {
-      if (
-        !user ||
-        (first == false && !users[0]) ||
-        (first == true && !users[1])
-      )
-        return;
-      if (decision == 1 && first == false) {
+      if (!user || !users[0]) return;
+      if (decision == 1) {
         await matchYesWith(user.id, users[0].id);
-      } else if (decision == 1 && first == true) {
-        await matchYesWith(user.id, users[1].id);
-      } else if (decision == 2 && first == false) {
+      } else if (decision == 2) {
         await matchNoWith(user.id, users[0].id);
-      } else if (decision == 2 && first == true) {
-        await matchNoWith(user.id, users[1].id);
       }
-      if (first) {
-        setLikedRests((likedRests) => {
-          return likedRests.slice(1);
-        });
-        setUsers((users) => {
-          return users.slice(1);
-        });
-        await pushUnmatchedUser();
-      } else {
-        setFirst(true);
-      }
+      setPrevUser(users[0]);
+      setPrevRests(likedRests[0]);
+      setLikedRests((likedRests) => {
+        return likedRests.slice(1);
+      });
+      setUsers((users) => {
+        return users.slice(1);
+      });
+      await pushUnmatchedUser();
     };
     match();
   }, [next]);
@@ -141,7 +134,11 @@ const MatchPage = () => {
   ) : user ? (
     user.meetingStatus ? (
       <main className={styles.main}>
-        <div className={styles.switch}>
+        <div
+          className={
+            size > ViewportSize.SM ? styles.switch : styles.switchMobile
+          }
+        >
           {algo ? (
             <p className={styles.prompt}>Niech los zadecyduje...</p>
           ) : (
@@ -150,22 +147,19 @@ const MatchPage = () => {
           <Switch checked={algo} onChange={handleSwitch} />
         </div>
         <div className={styles.container}>
-          <div>
-            {!first && users[0] ? (
-              <MatchCard
-                data={users[0]}
-                likedRests={likedRests[0]}
-                algo={algo}
-              />
-            ) : first && users[1] ? (
-              <MatchCard
-                data={users[1]}
-                likedRests={likedRests[1]}
-                algo={algo}
-              />
-            ) : null}
-          </div>
-          {users[1] || (users[0] && !first) ? (
+          {users[0] ? (
+            <MatchCard data={users[0]} likedRests={likedRests[0]} algo={algo} />
+          ) : (
+            <p
+              className={
+                size > ViewportSize.SM ? styles.notFound : styles.notFoundMobile
+              }
+            >
+              Nie znaleziono żadnych kanydatów, wróć później
+            </p>
+          )}
+
+          {users[0] ? (
             <div className={styles.buttons}>
               <div className={styles.yes}>
                 <i
@@ -188,53 +182,24 @@ const MatchPage = () => {
             </div>
           ) : null}
         </div>
-
-        {users[0] && first ? (
-          <div className={styles.back}>
-            <div className={styles.card}>
-              {users[0] && first ? (
-                <MatchCard
-                  data={users[0]}
-                  likedRests={likedRests[0]}
-                  algo={algo}
-                />
-              ) : null}
-            </div>
-            <div className={styles.card}>
-              {users[2] ? (
-                <div className={styles.card}>
-                  <MatchCard
-                    data={users[2]}
-                    likedRests={likedRests[2]}
-                    algo={algo}
-                  />
-                </div>
-              ) : users[1] && !first ? (
+        <div className={styles.back}>
+          <div className={styles.card}>
+            {prevUser && users[0] && size > ViewportSize.MD ? (
+              <MatchCard data={prevUser} likedRests={prevRests} algo={algo} />
+            ) : null}
+          </div>
+          <div className={styles.card}>
+            {users[1] && size > ViewportSize.MD ? (
+              <div className={styles.card}>
                 <MatchCard
                   data={users[1]}
                   likedRests={likedRests[1]}
                   algo={algo}
                 />
-              ) : null}
-            </div>
-          </div>
-        ) : (
-          <div className={styles.oneCard}>
-            {users[2] && first ? (
-              <MatchCard
-                data={users[2]}
-                likedRests={likedRests[2]}
-                algo={algo}
-              />
-            ) : users[1] && !first ? (
-              <MatchCard
-                data={users[1]}
-                likedRests={likedRests[1]}
-                algo={algo}
-              />
+              </div>
             ) : null}
           </div>
-        )}
+        </div>
       </main>
     ) : (
       <main className={styles.main}>

@@ -4,9 +4,11 @@ import MatchRequestCard from "@/components/cards/match-request.component";
 import OurPendingCard from "@/components/cards/our-pending-card.component";
 import LoaderBlur from "@/components/misc/loader-blur.component";
 import LoginNeeded from "@/components/misc/login-needed.component";
-import { getPendingRequestsFor } from "@/lib/db/matches";
+import { denyMatch, getPendingRequestsFor } from "@/lib/db/matches";
 import { getUsersMatchedWith, getUsersPendingWith } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
@@ -14,6 +16,7 @@ import {
 import { Match, User, UserMedia } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
+
 const MatchRequestPage = () => {
   const [decision, setDec] = useState<boolean>(false);
   const [requests, setRequests] = useState<
@@ -25,6 +28,7 @@ const MatchRequestPage = () => {
   const [pendings, setPendings] = useState<Partial<User[]>>([]);
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
+  const size = useAppSelector(selectViewportWidth);
   useEffect(() => {
     const fetchReqs = async () => {
       if (!user) return;
@@ -38,17 +42,24 @@ const MatchRequestPage = () => {
     const fetchReqs = async () => {
       if (!user) return;
       const data = await getUsersPendingWith(user?.id);
-      console.log(data);
       setPendings(data);
     };
-    console.log(pendings);
     fetchReqs();
   }, [user]);
+  const handleMore = (id: string | undefined) => {
+    if (!user) return;
+    if (!id) return;
+    denyMatch(user.id, id);
+  };
+  const handleDecision = (val: boolean) => {
+    setDec(!decision);
+  };
 
   useEffect(() => {
     const fetchMatches = async () => {
       if (!user) return;
       const data = await getUsersMatchedWith(user.id);
+      console.log(data);
       setContacts(data);
     };
     fetchMatches();
@@ -57,55 +68,75 @@ const MatchRequestPage = () => {
   return loading ? (
     <LoaderBlur />
   ) : user ? (
-    <main className={styles.main}>
+    <main className={size > ViewportSize.MD ? styles.main : styles.mainMobile}>
       <div className={styles.header}>
         <div className={styles.prompt}>
           <p>Zainteresowani wspólnym pożeraniem: </p>
         </div>
       </div>
       <div className={styles.requests} onClick={() => setDec(!decision)}>
-        {requests.map((req, idx) =>
-          req.userOne ? (
-            <div className={styles.request} key={idx}>
-              <MatchRequestCard data={req} UserOne={req.userOne} />
-            </div>
-          ) : null
+        {requests.length >= 1 ? (
+          requests.map((req, idx) =>
+            req.userOne ? (
+              <div className={styles.request} key={idx}>
+                <MatchRequestCard
+                  data={req}
+                  UserOne={req.userOne}
+                  onClickDecision={() => handleDecision(!decision)}
+                />
+              </div>
+            ) : null
+          )
+        ) : (
+          <p className={styles.info}>Brak zainteresowanych użytkowników</p>
         )}
       </div>
       <div className={styles.bottom}>
         <div className={styles.contacts}>
-          <div className={styles.prompt}>
+          <div className={styles.promptBottom}>
             <p>Kontakty: </p>
           </div>
-          {contacts.length > 1 ? (
-            <div className={styles.contactsList}>
-              {contacts.map((cont, idx) =>
+          <div className={styles.contactsList}>
+            {contacts.length >= 1 ? (
+              contacts.map((cont, idx) =>
                 cont.medias ? (
                   <div className={styles.contact} key={idx}>
-                    <ContactCard data={cont} medias={cont.medias} />
+                    <ContactCard
+                      data={cont}
+                      medias={cont.medias}
+                      onClickDelete={() => handleMore(cont.id)}
+                    />
                   </div>
                 ) : (
                   <div className={styles.contact} key={idx}>
-                    <ContactCard data={cont} medias={[]} />
+                    <ContactCard
+                      data={cont}
+                      medias={[]}
+                      onClickDelete={() => handleMore(cont.id)}
+                    />
                   </div>
                 )
-              )}
-            </div>
-          ) : null}
+              )
+            ) : (
+              <p className={styles.info}>Nie posiadasz nikogo w kontaktach</p>
+            )}
+          </div>
         </div>
         <div className={styles.pendings}>
-          <div className={styles.prompt}>
+          <div className={styles.promptBottom}>
             <p>Oczekujące: </p>
           </div>
-          {pendings.length > 1 ? (
-            <div className={styles.pendingList}>
-              {pendings.map((pend, idx) => (
+          <div className={styles.pendingList}>
+            {pendings.length >= 1 ? (
+              pendings.map((pend, idx) => (
                 <div className={styles.pend} key={idx}>
                   {pend ? <OurPendingCard data={pend} /> : null}
                 </div>
-              ))}
-            </div>
-          ) : null}
+              ))
+            ) : (
+              <p className={styles.info}>Brak oczekujących zaproszeń</p>
+            )}
+          </div>
         </div>
       </div>
     </main>

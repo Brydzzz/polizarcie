@@ -2,12 +2,15 @@
 .main {
   display: flex;
   flex-direction: column;
+  margin: auto;
+  width: 80%;
   & > .header {
     margin-left: 20pt;
   }
   & > .requests {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     margin-left: 20pt;
     margin-right: 20pt;
     margin-top: 10px;
@@ -17,11 +20,17 @@
       padding-bottom: 7pt;
     }
   }
+  & > .info {
+    font-size: 15pt;
+  }
   & > .bottom {
     margin-left: 20pt;
     display: flex;
     flex-direction: row;
-
+    & > .info {
+      font-size: 17pt;
+      text-align: center;
+    }
     & > .contacts {
       margin-right: 20pt;
       display: flex;
@@ -38,6 +47,11 @@
         & > .contact {
           padding-top: 5pt;
           padding-bottom: 5pt;
+        }
+        & > .info {
+          text-align: center;
+          padding: 5pt;
+          font-size: 15pt;
         }
       }
     }
@@ -60,6 +74,11 @@
           padding-top: 5pt;
           padding-top: 5pt;
         }
+        & > .info {
+          text-align: center;
+          padding: 5pt;
+          font-size: 13pt;
+        }
       }
     }
   }
@@ -77,8 +96,106 @@
   }
 }
 
+.mainMobile {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 100%;
+  & > .header {
+    margin-top: 10pt;
+    text-align: center;
+  }
+
+  & > .requests {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 20pt;
+    margin-right: 20pt;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    & > .info {
+      font-size: 17pt;
+      text-align: center;
+    }
+    & > .request {
+      padding-top: 7pt;
+      padding-bottom: 7pt;
+    }
+  }
+
+  & > .bottom {
+    margin-left: 5pt;
+    display: flex;
+    flex-direction: column;
+
+    & > .contacts {
+      margin-left: 5pt;
+      margin-right: 5pt;
+      display: flex;
+      flex-direction: column;
+      width: 90%;
+      margin-left: 10pt;
+
+      & > .contactsList {
+        border: 2px solid var(--background-dark);
+        background-color: var(--background-medium);
+        border-radius: 6px;
+        padding: 3pt;
+        padding-left: 5pt;
+        padding-right: 10pt;
+        margin-top: 7pt;
+        & > .contact {
+          padding-top: 5pt;
+          padding-bottom: 5pt;
+        }
+        & > .info {
+          text-align: center;
+          padding: 5pt;
+          font-size: 15pt;
+        }
+      }
+    }
+    & > .pendings {
+      margin-left: 5pt;
+      margin-right: 1pt;
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+      margin-left: 10pt;
+
+      & > .pendingList {
+        border: 2px solid var(--background-dark);
+        background-color: var(--background-medium);
+        padding: 3pt;
+        padding-left: 10pt;
+        padding-right: 5pt;
+        padding-bottom: 10pt;
+        border-radius: 6px;
+        margin-top: 7pt;
+        & > .info {
+          text-align: center;
+          padding: 5pt;
+          font-size: 13pt;
+        }
+        & > .pend {
+          padding-top: 5pt;
+          padding-top: 5pt;
+        }
+      }
+    }
+  }
+}
+
 .prompt {
-  padding-left: 20pt;
+  // padding-left: 20pt;
+  margin-top: 10pt;
+  font-size: 20pt;
+  font-family: "Gluten", sans-serif;
+}
+
+.promptBottom {
+  padding-left: 10pt;
   margin-top: 10pt;
   font-size: 20pt;
   font-family: "Gluten", sans-serif;

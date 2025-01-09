@@ -22,6 +22,20 @@ export async function matchNoWith(ourId: User["id"], theirId: User["id"]) {
   });
 }
 
+export async function denyMatch(oneId: User["id"], twoId: User["id"]) {
+  return await prisma.match.update({
+    data: {
+      value: MatchRequest.DENIED,
+    },
+    where: {
+      userOneId_userTwoId: {
+        userOneId: oneId,
+        userTwoId: twoId,
+      },
+    },
+  });
+}
+
 export async function getPendingRequestsFor(
   userId: User["id"],
   howMany: number
