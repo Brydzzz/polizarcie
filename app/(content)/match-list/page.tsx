@@ -7,6 +7,8 @@ import LoginNeeded from "@/components/misc/login-needed.component";
 import { denyMatch, getPendingRequestsFor } from "@/lib/db/matches";
 import { getUsersMatchedWith, getUsersPendingWith } from "@/lib/db/users";
 import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
@@ -26,6 +28,7 @@ const MatchRequestPage = () => {
   const [pendings, setPendings] = useState<Partial<User[]>>([]);
   const user = useAppSelector(selectCurrentUser);
   const loading = useAppSelector(selectUserLoading);
+  const size = useAppSelector(selectViewportWidth);
   useEffect(() => {
     const fetchReqs = async () => {
       if (!user) return;
@@ -65,33 +68,37 @@ const MatchRequestPage = () => {
   return loading ? (
     <LoaderBlur />
   ) : user ? (
-    <main className={styles.main}>
+    <main className={size > ViewportSize.MD ? styles.main : styles.mainMobile}>
       <div className={styles.header}>
         <div className={styles.prompt}>
           <p>Zainteresowani wspólnym pożeraniem: </p>
         </div>
       </div>
       <div className={styles.requests} onClick={() => setDec(!decision)}>
-        {requests.map((req, idx) =>
-          req.userOne ? (
-            <div className={styles.request} key={idx}>
-              <MatchRequestCard
-                data={req}
-                UserOne={req.userOne}
-                onClickDecision={() => handleDecision(!decision)}
-              />
-            </div>
-          ) : null
+        {requests.length >= 1 ? (
+          requests.map((req, idx) =>
+            req.userOne ? (
+              <div className={styles.request} key={idx}>
+                <MatchRequestCard
+                  data={req}
+                  UserOne={req.userOne}
+                  onClickDecision={() => handleDecision(!decision)}
+                />
+              </div>
+            ) : null
+          )
+        ) : (
+          <p className={styles.info}>Brak zainteresowanych użytkowników</p>
         )}
       </div>
       <div className={styles.bottom}>
         <div className={styles.contacts}>
-          <div className={styles.prompt}>
+          <div className={styles.promptBottom}>
             <p>Kontakty: </p>
           </div>
-          {contacts.length >= 1 ? (
-            <div className={styles.contactsList}>
-              {contacts.map((cont, idx) =>
+          <div className={styles.contactsList}>
+            {contacts.length >= 1 ? (
+              contacts.map((cont, idx) =>
                 cont.medias ? (
                   <div className={styles.contact} key={idx}>
                     <ContactCard
@@ -109,23 +116,27 @@ const MatchRequestPage = () => {
                     />
                   </div>
                 )
-              )}
-            </div>
-          ) : null}
+              )
+            ) : (
+              <p className={styles.info}>Nie posiadasz nikogo w kontaktach</p>
+            )}
+          </div>
         </div>
         <div className={styles.pendings}>
-          <div className={styles.prompt}>
+          <div className={styles.promptBottom}>
             <p>Oczekujące: </p>
           </div>
-          {pendings.length >= 1 ? (
-            <div className={styles.pendingList}>
-              {pendings.map((pend, idx) => (
+          <div className={styles.pendingList}>
+            {pendings.length >= 1 ? (
+              pendings.map((pend, idx) => (
                 <div className={styles.pend} key={idx}>
                   {pend ? <OurPendingCard data={pend} /> : null}
                 </div>
-              ))}
-            </div>
-          ) : null}
+              ))
+            ) : (
+              <p className={styles.info}>Brak oczekujących zaproszeń</p>
+            )}
+          </div>
         </div>
       </div>
     </main>

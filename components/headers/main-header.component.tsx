@@ -35,6 +35,29 @@ const MainHeader = () => {
       </div>
     </>
   );
+  const linksMobile = () => (
+    <>
+      <Link className={styles.option} href={"/browse/"}>
+        <h2>Przeglądaj</h2>
+      </Link>
+      <Link className={styles.option} href={"/map/"}>
+        <h2>Mapka</h2>
+      </Link>
+      <div className={styles.option}>
+        <h2>Poznajmy się</h2>
+        <div className={styles.subbox}>
+          <Link className={styles.sub} href={"/match/"}>
+            <h2> - Matchowanie </h2>
+          </Link>
+        </div>
+        <div className={styles.subbox}>
+          <Link className={styles.sub} href={"/match-list/"}>
+            <h2> - Kontakty </h2>
+          </Link>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <>
@@ -56,7 +79,7 @@ const MainHeader = () => {
                 onClick={() => toggleMenuVisible(false)}
               >
                 <h1>Poliżarcie</h1>
-                {links()}
+                {linksMobile()}
               </div>
             )}
           </>

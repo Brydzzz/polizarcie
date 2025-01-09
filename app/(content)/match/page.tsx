@@ -23,6 +23,7 @@ import {
 } from "@/lib/db/users";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import {
   selectCurrentUser,
   selectUserLoading,
@@ -133,7 +134,11 @@ const MatchPage = () => {
   ) : user ? (
     user.meetingStatus ? (
       <main className={styles.main}>
-        <div className={size > 600 ? styles.switch : styles.switchMobile}>
+        <div
+          className={
+            size > ViewportSize.SM ? styles.switch : styles.switchMobile
+          }
+        >
           {algo ? (
             <p className={styles.prompt}>Niech los zadecyduje...</p>
           ) : (
@@ -145,7 +150,11 @@ const MatchPage = () => {
           {users[0] ? (
             <MatchCard data={users[0]} likedRests={likedRests[0]} algo={algo} />
           ) : (
-            <p className={size > 600 ? styles.notFound : styles.notFoundMobile}>
+            <p
+              className={
+                size > ViewportSize.SM ? styles.notFound : styles.notFoundMobile
+              }
+            >
               Nie znaleziono żadnych kanydatów, wróć później
             </p>
           )}
@@ -175,12 +184,12 @@ const MatchPage = () => {
         </div>
         <div className={styles.back}>
           <div className={styles.card}>
-            {prevUser && users[0] && size > 800 ? (
+            {prevUser && users[0] && size > ViewportSize.MD ? (
               <MatchCard data={prevUser} likedRests={prevRests} algo={algo} />
             ) : null}
           </div>
           <div className={styles.card}>
-            {users[1] && size > 800 ? (
+            {users[1] && size > ViewportSize.MD ? (
               <div className={styles.card}>
                 <MatchCard
                   data={users[1]}

@@ -1,5 +1,8 @@
+import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { UserMedia } from "@prisma/client";
 import styles from "./link-card.module.scss";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 type Props = {
   data: Partial<UserMedia>;
 };
@@ -15,11 +18,14 @@ const MediaTypeDict: { [key: string]: JSX.Element } = {
 
 const LinkCard = ({ data }: Props) => {
   const { link, type } = data;
+  const size = useAppSelector(selectViewportWidth);
   return (
     <div className={styles.container}>
-      <p className={styles.type}>{MediaTypeDict[String(type)]}</p>
-      <a className={styles.link} href={link}>
-        {String(type).toLowerCase()}
+      <a href={link} className={styles.box}>
+        <p className={styles.type}>{MediaTypeDict[String(type)]}</p>
+        {size > ViewportSize.MD ? (
+          <p className={styles.link}>{String(type).toLowerCase()}</p>
+        ) : null}
       </a>
     </div>
   );

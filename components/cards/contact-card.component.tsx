@@ -1,5 +1,6 @@
 "use client";
 import { useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { User, UserMedia } from "@prisma/client";
 import { MouseEventHandler, useState } from "react";
@@ -8,6 +9,7 @@ import { ButtonColor, ButtonSize } from "../button/button.types";
 import SupabaseImage from "../images/supabase-image.component";
 import styles from "./contact-card.module.scss";
 import LinkCard from "./link-card.component";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 type Props = {
   data: Partial<User>;
   medias: Partial<UserMedia>[];
@@ -17,6 +19,7 @@ type Props = {
 const ContactCard = ({ data, medias, onClickDelete }: Props) => {
   const [more, setMore] = useState<Boolean>(false);
   const user = useAppSelector(selectCurrentUser);
+  const size = useAppSelector(selectViewportWidth);
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -38,13 +41,14 @@ const ContactCard = ({ data, medias, onClickDelete }: Props) => {
         <div className={styles.namebox}>
           {data ? <p className={styles.name}>{data.name}</p> : null}
         </div>
+        <ol className={styles.medias}>
+          {medias?.map((link, type) => (
+            <LinkCard key={type} data={link}></LinkCard>
+          ))}
+        </ol>
       </div>
-      <ol className={styles.medias}>
-        {medias?.map((link, type) => (
-          <LinkCard key={type} data={link}></LinkCard>
-        ))}
-      </ol>
-      <div className={styles.right}>
+
+      <div className={size > ViewportSize.MD ? styles.right : styles.rightMobile}>
         {more ? (
           <div className={styles.delete}>
             <Button
