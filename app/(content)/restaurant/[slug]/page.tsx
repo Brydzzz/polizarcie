@@ -13,6 +13,7 @@ import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 import RestaurantLiked from "./restaurant-liked";
 import WriteReviewButton from "./write-review-button";
+import BackButton from "./back-button";
 type Props = {
   params: Promise<{
     slug: string;
@@ -66,9 +67,7 @@ const RestaurantPage = async ({ params }: Props) => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/browse">
-          <i className="fa-solid fa-arrow-left"></i>
-        </Link>
+        <BackButton/>
         <div>
           <h1>{restaurant.name}</h1>
           <span>
