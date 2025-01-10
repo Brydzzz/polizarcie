@@ -9,7 +9,7 @@ RUN apt-get install -y openssl
 
 RUN npm install
 
-RUN npx prisma db push
+RUN npx prisma db push --accept-data-loss
 
 RUN npx tsx prisma/seed.ts
 
