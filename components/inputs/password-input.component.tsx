@@ -30,6 +30,12 @@ const PasswordInput = (props: Props) => {
         onMouseUp={() => {
           toggleVisible(false);
         }}
+        onTouchStart={() => {
+          toggleVisible(true);
+        }}
+        onTouchEnd={() => {
+          toggleVisible(false);
+        }}
         onMouseLeave={() => {
           toggleVisible(false);
         }}
