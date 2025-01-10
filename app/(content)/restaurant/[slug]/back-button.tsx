@@ -1,15 +1,19 @@
 "use client";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const BackButton = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  let origin = searchParams.get("origin");
+  if (!origin || !(origin == "map" || origin == "browse")) {
+    origin = "browse";
+  }
   return (
-    <span
-      onClick={() => router.back()}
-      style={{ fontSize: "30pt", color: "var(--primary)" }}
-    >
-      <i className="fa-solid fa-arrow-left"></i>
-    </span>
+    <Link href={`/${origin}`}>
+      <span style={{ fontSize: "30pt", color: "var(--primary)" }}>
+        <i className="fa-solid fa-arrow-left"></i>
+      </span>
+    </Link>
   );
 };
 

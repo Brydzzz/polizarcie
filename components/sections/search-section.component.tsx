@@ -18,6 +18,7 @@ import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
 import styles from "./search-section.module.scss";
+import { CardsOrigin } from "../cards/restaurant-card.component";
 
 type Props = {
   forceCompactRestaurantList?: boolean;
@@ -25,6 +26,7 @@ type Props = {
   forceSmallSearchBar?: boolean;
   forceSmallHeader?: boolean;
   onUpdateRestaurants?: (restaurants: RestaurantFull[]) => void;
+  cardsOrigin?: CardsOrigin;
 };
 
 const SearchSection = ({
@@ -33,6 +35,7 @@ const SearchSection = ({
   forceSmallSearchBar,
   forceSmallHeader,
   onUpdateRestaurants,
+  cardsOrigin
 }: Props) => {
   const filters_default: Filters = {
     priceRange: { min: 0, max: 100 },
@@ -173,6 +176,7 @@ const SearchSection = ({
         data={restaurants}
         forceOneRow={forceOneRowRestaurantList}
         forceCompact={forceCompactRestaurantList}
+        cardsOrigin={cardsOrigin}
       />
     </main>
   );
