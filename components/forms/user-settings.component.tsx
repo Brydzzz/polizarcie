@@ -29,7 +29,7 @@ const UserSettingsForm = ({ user }: Props) => {
   const dispatch = useAppDispatch();
 
   const [name, setUsername] = useState(user.name || "");
-  const [isToggledMeeting, setIsToggledMeeting] = useState(false);
+  const [isToggledMeeting, setIsToggledMeeting] = useState(user.meetingStatus);
   const [isToggledCensorship, setIsToggledCensorship] = useState(false);
   const [profileImage, setProfileImage] = useState<File | undefined>();
   const [bio, setBio] = useState(user.description || "");
