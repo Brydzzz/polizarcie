@@ -6,7 +6,7 @@ import styles from "./page.module.scss";
 const SearchPage = () => {
   return (
     <div className={styles.container}>
-      <SearchSection />
+      <SearchSection cardsOrigin="browse"/>
     </div>
   );
 };
