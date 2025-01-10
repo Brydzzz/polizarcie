@@ -59,10 +59,7 @@ const UserSettingsForm = ({ user }: Props) => {
   );
 
   const handleSave = async () => {
-    if (
-      facebook &&
-      !facebook.startsWith("https://www.facebook.com/profile.php?id=")
-    ) {
+    if (facebook && !facebook.startsWith("https://www.facebook.com/")) {
       dispatch(
         addSnackbar({ message: "Nieprawidłowy Facebook", type: "error" })
       );

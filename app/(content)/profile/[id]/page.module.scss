@@ -1,5 +1,5 @@
 .container {
-  padding-top: 50px;
+  padding: 50px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +12,7 @@
     width: 100%;
     max-width: 800px;
     padding: 0 20px;
+    flex-wrap: wrap;
 
     .imageContainer {
       width: 100px;
@@ -21,6 +22,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+  }
+
+  .info {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    h3 {
+      color: var(--text-dark);
+      font-weight: normal;
+    }
+
+    .entry {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+
+      & > h4 {
+        font-weight: normal;
+      }
+
+      & > a {
+        color: var(--secondary);
+        line-break: anywhere;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 
