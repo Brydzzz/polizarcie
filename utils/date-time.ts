@@ -1,7 +1,3 @@
-export function getUserTimeZone() {
-  return Intl.DateTimeFormat().resolvedOptions().timeZone;
-}
-
 export function parseDate(date: Date | string | undefined) {
   if (!date) return "undefined";
   return new Date(date).toLocaleString([], {
@@ -11,7 +7,7 @@ export function parseDate(date: Date | string | undefined) {
     hour: "numeric",
     minute: "2-digit",
     hour12: false,
-    timeZone: getUserTimeZone(),
+    timeZone: "Europe/Warsaw",
   });
 }
 
@@ -21,6 +17,6 @@ export function parseTime(date: Date | string | undefined) {
     hour: "numeric",
     minute: "2-digit",
     hour12: false,
-    timeZone: getUserTimeZone(),
+    timeZone: "Europe/Warsaw",
   });
 }
