@@ -1,8 +1,10 @@
+"use client";
+
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { UserMedia } from "@prisma/client";
 import styles from "./link-card.module.scss";
-import { ViewportSize } from "@/lib/store/ui/ui.slice";
 type Props = {
   data: Partial<UserMedia>;
 };

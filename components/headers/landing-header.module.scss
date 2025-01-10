@@ -38,3 +38,34 @@
     }
   }
 }
+
+@media (max-width: "1000px") {
+  .container {
+    .content {
+      h1 {
+        font-size: 75pt;
+        text-shadow: 7.5px 7.5px #0005;
+      }
+    }
+  }
+}
+@media (max-width: "700px") {
+  .container {
+    .content {
+      h1 {
+        font-size: 50pt;
+        text-shadow: 5px 5px #0005;
+      }
+    }
+  }
+}
+@media (max-width: "500px") {
+  .container {
+    .content {
+      h1 {
+        font-size: 40pt;
+        text-shadow: 4px 4px #0005;
+      }
+    }
+  }
+}
