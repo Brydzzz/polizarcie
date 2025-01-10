@@ -49,6 +49,7 @@ const MatchRequestPage = () => {
   const handleMore = (id: string | undefined) => {
     if (!user) return;
     if (!id) return;
+    setDec(!decision);
     denyMatch(user.id, id);
   };
   const handleDecision = (val: boolean) => {
