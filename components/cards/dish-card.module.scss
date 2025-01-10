@@ -20,6 +20,15 @@
     padding: 0 10px;
     background-color: var(--background);
     font-weight: bold;
+    display: -webkit-box;
+    max-width: calc(100% - 15px);
+    --lines-number: 1;
+    line-break: anywhere;
+    line-clamp: var(--lines-number);
+    -webkit-line-clamp: var(--lines-number);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .description {

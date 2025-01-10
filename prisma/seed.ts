@@ -1,134 +1,71 @@
 import { prisma } from "@/prisma";
-import { hashPassword } from "@/utils/misc";
-import { DishType, Gender, Role } from "@prisma/client";
+import { Dish, DishType, Restaurant } from "@prisma/client";
+import csv from "csv-parser";
+import fs from "fs";
 import slugify from "slugify";
-import { addresses } from "./temp_adresses";
-import fs from 'fs';
-import csv from 'csv-parser';
+import { ADDRESSES_DATA } from "./addresses";
+import { USERS_DATA } from "./users";
 
+const RESTAURANTS_CSV_FILEPATH = "./prisma/restaurants.csv";
+const DISHES_CSV_FILEPATH = "./prisma/dishes.csv";
 
 async function initData() {
-  // TODO add some actual database initialization
-  
+  const users = await Promise.all(
+    (
+      await USERS_DATA
+    ).map(
+      async (data) =>
+        await prisma.user.upsert({
+          where: { email: data.email },
+          update: data,
+          create: data,
+        })
+    )
+  );
+  console.log("SEED: Users upsert completed successfully");
 
-  for (const address of addresses) {
-    await prisma.address.upsert({
-      where: { id: address.id },
-      update: address,
-      create: address,
-    });
-  }
-
-  const users = [
-    {
-      id: "dummyUser1",
-      name: "Balbinka",
-      email: "balbinka@gmail.com",
-      gender: Gender.FEMALE,
-      meetingStatus: false,
-      points: 0,
-      roles: [Role.ADMIN],
-      emailVerified: "2137-01-01T08:00:00.000Z",
-      passwordHash: {
-        connectOrCreate: {
-          where: {
-            forUserEmail: "balbinka@gmail.com",
-          },
-          create: {
-            hash: (await hashPassword("balbinka")).toString("base64"),
-          },
-        },
-      },
-    },
-    {
-      id: "dummyUser2",
-      name: "Brygida",
-      email: "brygida@gmail.com",
-      gender: Gender.FEMALE,
-      meetingStatus: false,
-      points: 0,
-      roles: [Role.MODERATOR],
-      emailVerified: "2137-01-01T08:00:00.000Z",
-      passwordHash: {
-        connectOrCreate: {
-          where: {
-            forUserEmail: "brygida@gmail.com",
-          },
-          create: {
-            hash: (await hashPassword("brygida")).toString("base64"),
-          },
-        },
-      },
-    },
-    {
-      id: "dummyUser4",
-      name: "Noobek",
-      email: "noobek@gmail.com",
-      gender: Gender.MALE,
-      meetingStatus: false,
-      points: 0,
-      roles: [Role.USER],
-      emailVerified: "2137-01-01T08:00:00.000Z",
-      passwordHash: {
-        connectOrCreate: {
-          where: {
-            forUserEmail: "noobek@gmail.com",
-          },
-          create: {
-            hash: (await hashPassword("noobek")).toString("base64"),
-          },
-        },
-      },
-    },
-    {
-      id: "dummyUser3",
-      name: "Mateusz",
-      email: "mateusz@gmail.com",
-      gender: Gender.MALE,
-      meetingStatus: false,
-      points: 0,
-      roles: [Role.MODERATOR],
-      emailVerified: "2137-01-01T08:00:00.000Z",
-      passwordHash: {
-        connectOrCreate: {
-          where: {
-            forUserEmail: "mateusz@gmail.com",
-          },
-          create: {
-            hash: (await hashPassword("mateusz")).toString("base64"),
-          },
-        },
-      },
-    },
-  ];
-  for (const user of users) {
-    await prisma.user.upsert({
-      where: { id: user.id },
-      update: user,
-      create: user,
-    });
-  }
-
-  const csvFilePath = "./prisma/restaurants.csv";
-
-  const restaurantPromises: any[] = [];
-
-  await new Promise<void>((resolve, reject) => {
-    fs.createReadStream(csvFilePath)
-      .pipe(csv({ separator: ';' }))
-      .on('data', (row) => {
+  const restaurants = await new Promise<Restaurant[]>((resolve, reject) => {
+    const restaurantPromises: Promise<Restaurant>[] = [];
+    let i = 0;
+    fs.createReadStream(RESTAURANTS_CSV_FILEPATH)
+      .pipe(csv({ separator: ";" }))
+      .on("data", (row) => {
+        const slug = slugify(row.name, { lower: true });
         restaurantPromises.push(
-          //console.log(row);
           prisma.restaurant.upsert({
             where: {
-              name: row.name,
+              slug: slug,
             },
-            update: { id: row.id },
-            create: {
-              id: row.id,
+            update: {
               name: row.name,
-              slug: slugify(row.name, { lower: true }),
-              addressId: row.addressId,
+              slug: slug,
+              address: {
+                update: {
+                  data: ADDRESSES_DATA[i],
+                },
+              },
+              description: row.description,
+              openingTimeMon: row.openingTimeMon,
+              openingTimeTue: row.openingTimeTue,
+              openingTimeWen: row.openingTimeWen,
+              openingTimeThu: row.openingTimeThu,
+              openingTimeFri: row.openingTimeFri,
+              openingTimeSat: row.openingTimeSat,
+              openingTimeSun: row.openingTimeSun,
+              closingTimeMon: row.closingTimeMon,
+              closingTimeTue: row.closingTimeTue,
+              closingTimeWen: row.closingTimeWen,
+              closingTimeThu: row.closingTimeThu,
+              closingTimeFri: row.closingTimeFri,
+              closingTimeSat: row.closingTimeSat,
+              closingTimeSun: row.closingTimeSun,
+            },
+            create: {
+              name: row.name,
+              slug: slug,
+              address: {
+                create: ADDRESSES_DATA[i],
+              },
               description: row.description,
               openingTimeMon: row.openingTimeMon,
               openingTimeTue: row.openingTimeTue,
@@ -147,43 +84,64 @@ async function initData() {
             },
           })
         );
+        i += 1;
       })
-      .on('end', async () => {
-        console.log('CSV restaurants successfully processed');
+      .on("end", async () => {
         try {
-          await Promise.all(restaurantPromises);
-          resolve();
+          const restaurants = await Promise.all(restaurantPromises);
+          console.log("SEED: Restaurants upsert completed successfully");
+          resolve(restaurants);
         } catch (error) {
+          console.log("SEED: Restaurants upsert failed");
           reject(error);
         }
       })
-      .on('error', reject);
+      .on("error", reject);
   });
 
-  const csvFilePath2 = "./prisma/dishes.csv";
-
-  fs.createReadStream(csvFilePath2)
-  .pipe(csv({ separator: ';' }))
-    .on('data', async (row) => {
-      //console.log(row);
-      await prisma.dish.upsert({
-        where: {
-          id: row.id,
-        },
-        update: { id: row.id },
-        create: {
-          id: row.id,
-          name: row.name,
-          description: row.description,
-          priceZl: parseInt(row.priceZl, 10),
-          priceGr: parseInt(row.priceGr, 10),
-          restaurantId: row.restaurantId,
-          type: DishType[row.type as keyof typeof DishType],
-        },
-      });
-    })
-  .on('end', () => {
-    console.log('CSV restaurants successfully processed');
+  const dishes = await new Promise<Dish[]>((resolve, reject) => {
+    const dishesPromises: Promise<Dish>[] = [];
+    fs.createReadStream(DISHES_CSV_FILEPATH)
+      .pipe(csv({ separator: ";" }))
+      .on("data", async (row) => {
+        dishesPromises.push(
+          prisma.dish.upsert({
+            where: {
+              restaurantId_name: {
+                restaurantId: restaurants[row.restaurantId - 1].id,
+                name: row.name,
+              },
+            },
+            update: {
+              name: row.name,
+              description: row.description,
+              priceZl: parseInt(row.priceZl, 10),
+              priceGr: parseInt(row.priceGr, 10),
+              restaurantId: restaurants[row.restaurantId - 1].id,
+              type: DishType[row.type as keyof typeof DishType],
+            },
+            create: {
+              name: row.name,
+              description: row.description,
+              priceZl: parseInt(row.priceZl, 10),
+              priceGr: parseInt(row.priceGr, 10),
+              restaurantId: restaurants[row.restaurantId - 1].id,
+              type: DishType[row.type as keyof typeof DishType],
+            },
+          })
+        );
+      })
+      .on("end", async () => {
+        try {
+          const dishes = await Promise.all(dishesPromises);
+          console.log("SEED: Dishes upsert completed successfully");
+          resolve(dishes);
+        } catch (error) {
+          console.log("SEED: Dishes upsert failed");
+          reject(error);
+        }
+      })
+      .on("error", reject);
   });
 }
 

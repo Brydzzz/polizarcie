@@ -122,6 +122,8 @@ model Dish {
     updatedDate  DateTime     @updatedAt
     hidden       Boolean      @default(false)
     type         DishType     @default(OTHER)
+
+    @@unique([restaurantId, name])
 }
 
 model Address {
