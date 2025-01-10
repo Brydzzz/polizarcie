@@ -4,7 +4,9 @@ export function isRestaurantOpen(restaurant: Restaurant): boolean {
   const currentDateTime = new Date();
   const day = currentDateTime.getUTCDay();
   const time =
-    currentDateTime.getUTCHours() * 60 + currentDateTime.getUTCMinutes() + day * 3600;
+    currentDateTime.getUTCHours() * 60 +
+    currentDateTime.getUTCMinutes() +
+    day * 3600;
 
   let openingTime: Date | undefined;
   let closingTime: Date | undefined;
@@ -62,7 +64,7 @@ export function isRestaurantOpen(restaurant: Restaurant): boolean {
 
   const openingTimeMin =
     new Date(openingTime).getUTCHours() * 60 +
-    new Date(openingTime).getMinutes() +
+    new Date(openingTime).getUTCMinutes() +
     day * 3600;
   let closingTimeMin =
     new Date(closingTime).getUTCHours() * 60 +
