@@ -1,6 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize, ButtonStyle } from "../button/button.types";
 
@@ -9,12 +10,13 @@ type Props = {
 };
 
 const ProviderButton = ({ provider }: Props) => {
+  const searchParams = useSearchParams();
   return (
     <Button
       onClick={() =>
         signIn(provider.id, {
           redirect: true,
-          redirectTo: "/browse",
+          redirectTo: searchParams.get("callbackUrl") || "/browse",
         })
       }
       color={ButtonColor.TEXT}

@@ -23,10 +23,13 @@ import {
 } from "./db/users.server-only";
 import { resetPasswordSchema, signInSchema, signUpSchema } from "./zod/users";
 
-export async function signInWithCredentials(data: {
-  email: string;
-  password: string;
-}) {
+export async function signInWithCredentials(
+  data: {
+    email: string;
+    password: string;
+  },
+  callbackUrl?: string
+) {
   try {
     const { email, password } = await signInSchema.parseAsync(data);
     const user = await getUserWithPasswordHashByEmail(email);
@@ -37,7 +40,11 @@ export async function signInWithCredentials(data: {
       Buffer.from(user.passwordHash.hash, "base64")
     );
     if (!result) return unauthorized();
-    await signIn("credentials", { email, password, redirectTo: "/browse" });
+    await signIn("credentials", {
+      email,
+      password,
+      redirectTo: callbackUrl || "/browse",
+    });
   } catch (error) {
     if (error instanceof CredentialsSignin) {
       if (error.type === "CredentialsSignin" && error.code === "credentials") {
@@ -49,12 +56,15 @@ export async function signInWithCredentials(data: {
   }
 }
 
-export async function signUpWithNodemailer(data: {
-  email: string;
-  name: string;
-  password: string;
-  passwordRepeat: string;
-}) {
+export async function signUpWithNodemailer(
+  data: {
+    email: string;
+    name: string;
+    password: string;
+    passwordRepeat: string;
+  },
+  callbackUrl?: string
+) {
   try {
     const { email, name, password, passwordRepeat } =
       await signUpSchema.parseAsync(data);
@@ -65,7 +75,7 @@ export async function signUpWithNodemailer(data: {
         name,
         password
       );
-      redirect(`/auth/verify/${user.id}`);
+      redirect(`/auth/verify/${user.id}?callbackUrl${callbackUrl}`);
     } catch (error) {
       if ((error as Error).message.startsWith("NEXT_REDIRECT")) throw error;
       return badData("User with this email already exists!");

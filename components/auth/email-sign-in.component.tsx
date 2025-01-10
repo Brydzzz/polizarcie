@@ -22,6 +22,7 @@ import {
 } from "@/lib/zod/users";
 import { makeRequest, throwParsedZodError } from "@/utils/misc";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ZodError } from "zod";
 import Button from "../button/button.component";
@@ -46,6 +47,7 @@ const EmailSignIn = () => {
   const size = useAppSelector(selectViewportWidth);
   const [inputSize, setInputSize] = useState(InputSize.MEDIUM);
   const [buttonSize, setButtonSize] = useState(ButtonSize.LARGE);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     dispatch(setSignInPageLoading(false));
@@ -66,7 +68,11 @@ const EmailSignIn = () => {
           email: formData.get("email"),
           password: formData.get("password"),
         });
-        await makeRequest(signInWithCredentials, [data], undefined);
+        await makeRequest(
+          signInWithCredentials,
+          [data, searchParams.get("callbackUrl") || undefined],
+          undefined
+        );
       } catch (error) {
         if (error instanceof ZodError) throwParsedZodError(error, dispatch);
         throw error;
@@ -109,7 +115,11 @@ const EmailSignIn = () => {
           );
           throw new Error("POLI_ERROR;;");
         }
-        await makeRequest(signUpWithNodemailer, [data], dispatch);
+        await makeRequest(
+          signUpWithNodemailer,
+          [data, searchParams.get("callbackUrl") || undefined],
+          dispatch
+        );
       } catch (error) {
         if (error instanceof ZodError) throwParsedZodError(error, dispatch);
         throw error;
