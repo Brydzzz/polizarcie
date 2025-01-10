@@ -64,7 +64,7 @@ export async function makeRequest<
   dispatch?: AppDispatch
 ): Promise<Exclude<Awaited<ReturnType<Func>>, PoliError>> {
   const result = (await transferWithJSON(func, args)) as any;
-  if (result.poliErrorTest) {
+  if (result && result.poliErrorTest) {
     const error = `POLI_ERROR;${result.code};${result.message}`;
     if (dispatch) dispatch(addSnackbar({ message: error, type: "error" }));
     throw new Error(error);
