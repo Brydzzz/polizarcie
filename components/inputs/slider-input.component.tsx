@@ -1,7 +1,7 @@
 "use client";
 
 import { parseBigNumber } from "@/utils/misc";
-import { LegacyRef, MouseEvent, useRef } from "react";
+import { LegacyRef, MouseEvent, TouchEvent, useRef } from "react";
 import styles from "./sliders.module.scss";
 
 type Range = {
@@ -57,12 +57,19 @@ const SliderInput = ({
     const dotValue = axisValueAt(e.clientX);
     onChange(clamp(dotValue));
   };
+  const handleOnTouchEvent = (e: TouchEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    const dotValue = axisValueAt(e.touches.item(0)?.clientX || 0);
+    onChange(clamp(dotValue));
+  };
+
   return (
     <div className={`${styles.container} ${disabled ? styles.disabled : ""}`}>
       <div
         className={styles.slider}
         onMouseMove={handleOnMouseEvent}
         onMouseDown={handleOnMouseEvent}
+        onTouchMove={handleOnTouchEvent}
       >
         <span className={styles.limit}>{parseBigNumber(limit.min)}</span>
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
