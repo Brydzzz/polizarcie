@@ -357,15 +357,17 @@ const ReviewCard = <Type extends keyof ReviewType>({
             </>
           )}
           <div className={styles.expander}></div>
-          {type !== "response" && currentUser && (
+          {type !== "response" && (
             <>
-              <i
-                className={`fa-solid fa-reply ${styles.information}`}
-                onClick={() => {
-                  setShowRespondModal(true);
-                  setShowResponses(true);
-                }}
-              ></i>
+              {currentUser && (
+                <i
+                  className={`fa-solid fa-reply ${styles.information}`}
+                  onClick={() => {
+                    setShowRespondModal(true);
+                    setShowResponses(true);
+                  }}
+                ></i>
+              )}
               <i
                 className={`fa-solid fa-comment-dots ${styles.information}`}
                 onClick={() => setShowResponses(!showResponses)}

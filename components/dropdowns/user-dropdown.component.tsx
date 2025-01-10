@@ -2,8 +2,7 @@
 
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
+import { signIn, signOut } from "next-auth/react";
 import { useState } from "react";
 import styles from "./user-dropdown.module.scss";
 
@@ -50,10 +49,10 @@ const UserDropdown = () => {
             </span>
           </>
         ) : (
-          <Link className={styles.item} href="/auth/sign-in">
+          <span className={styles.item} onClick={() => signIn()}>
             <i className="fa-solid fa-right-to-bracket"></i>
             &nbsp; &nbsp; Zaloguj się
-          </Link>
+          </span>
         )}
       </div>
     </div>
