@@ -6,10 +6,11 @@ import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { BaseReview, Image, User } from "@prisma/client";
 import { deleteImages, getImagesByPaths } from "../images";
+import { updateDishStatsCacheById } from "./dish-reviews";
 import { getResponseReviewById } from "./response-reviews";
 import {
   getRestaurantReviewById,
-  updateRestaurantStats,
+  updateRestaurantStatsCacheById,
 } from "./restaurant-reviews";
 
 export type BaseReviewFull = {
@@ -69,6 +70,8 @@ export async function deleteReview(id: BaseReview["id"]) {
   // TODO: find a cleaner way to update restaurant stats
   const restaurantReview = await getRestaurantReviewById(id);
   if (restaurantReview instanceof PoliError) return baseReview;
+  const dishReview = await getRestaurantReviewById(id);
+  if (dishReview instanceof PoliError) return baseReview;
   const responseReview = await getResponseReviewById(id);
   if (responseReview instanceof PoliError) return baseReview;
   const review = await prisma.baseReview.delete({
@@ -77,7 +80,10 @@ export async function deleteReview(id: BaseReview["id"]) {
     },
   });
   if (restaurantReview) {
-    await updateRestaurantStats(restaurantReview.subjectId);
+    await updateRestaurantStatsCacheById(restaurantReview.subjectId);
+  }
+  if (dishReview) {
+    await updateDishStatsCacheById(dishReview.subjectId);
   }
   if (responseReview) {
     await prisma.baseReview.update({

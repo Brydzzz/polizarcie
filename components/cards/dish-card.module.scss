@@ -29,6 +29,17 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 5px;
   }
 
   .description {
@@ -42,7 +53,6 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-left: 10px;
   }
 
   .price {

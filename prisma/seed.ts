@@ -104,16 +104,18 @@ async function initData() {
     fs.createReadStream(DISHES_CSV_FILEPATH)
       .pipe(csv({ separator: ";" }))
       .on("data", async (row) => {
+        const slug = slugify(row.name, { lower: true });
         dishesPromises.push(
           prisma.dish.upsert({
             where: {
-              restaurantId_name: {
+              restaurantId_slug: {
                 restaurantId: restaurants[row.restaurantId - 1].id,
-                name: row.name,
+                slug: slug,
               },
             },
             update: {
               name: row.name,
+              slug: slug,
               description: row.description,
               priceZl: parseInt(row.priceZl, 10),
               priceGr: parseInt(row.priceGr, 10),
@@ -122,6 +124,7 @@ async function initData() {
             },
             create: {
               name: row.name,
+              slug: slug,
               description: row.description,
               priceZl: parseInt(row.priceZl, 10),
               priceGr: parseInt(row.priceGr, 10),

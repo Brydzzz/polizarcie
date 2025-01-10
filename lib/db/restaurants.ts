@@ -166,13 +166,6 @@ export async function getRestaurantBySlug(
 
 export async function getMenuByRestaurantId(id: Restaurant["id"]) {
   const data = await prisma.dish.findMany({
-    select: {
-      name: true,
-      description: true,
-      priceZl: true,
-      priceGr: true,
-      type: true,
-    },
     where: {
       restaurantId: id,
     },

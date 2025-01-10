@@ -2,10 +2,11 @@ import { Dish, DishType } from "@prisma/client";
 import DishCard from "../cards/dish-card.component";
 import styles from "./menu-list.module.scss";
 type Props = {
-  data: Partial<Dish>[];
+  data: Dish[];
+  restaurantSlug: string;
 };
 
-const MenuList = ({ data }: Props) => {
+const MenuList = ({ data, restaurantSlug }: Props) => {
   const dishTypeOrder = [
     DishType.TOP,
     DishType.STARTER,
@@ -44,7 +45,11 @@ const MenuList = ({ data }: Props) => {
             <h3>{dishTypeDict.get(DishType[type])}</h3>
             <div className={styles.dishList}>
               {dishesWithType.map((dish, index) => (
-                <DishCard key={index} data={dish}></DishCard>
+                <DishCard
+                  key={index}
+                  data={dish}
+                  restaurantSlug={restaurantSlug}
+                ></DishCard>
               ))}
             </div>
           </div>

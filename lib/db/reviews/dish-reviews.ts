@@ -172,7 +172,7 @@ export async function createDishReview(data: DishReviewCreator) {
   if (currentUser == null) return unauthorized();
   if (!hasPermission(currentUser, "reviews", "create")) return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  return await prisma.baseReview.create({
+  const result = await prisma.baseReview.create({
     data: {
       authorId: currentUser.id,
       dishReview: {
@@ -185,6 +185,8 @@ export async function createDishReview(data: DishReviewCreator) {
       },
     },
   });
+  await updateDishStatsCacheById(data.subjectId);
+  return result;
 }
 
 export async function updateDishReview(data: DishReview) {
@@ -195,12 +197,33 @@ export async function updateDishReview(data: DishReview) {
   if (!hasPermission(currentUser, "reviews", "edit", baseReview))
     return forbidden();
   const censoredContent = getProfanityGuard().censor(data.content);
-  return await prisma.dishReview.update({
+  const result = await prisma.dishReview.update({
     where: { id: data.id },
     data: {
       content: data.content,
       censoredContent: censoredContent,
       stars: data.stars,
+    },
+  });
+  await updateDishStatsCacheById(data.subjectId);
+  return result;
+}
+
+export async function updateDishStatsCacheById(id: Dish["id"]) {
+  const avgStars = (
+    await prisma.dishReview.aggregate({
+      where: {
+        subjectId: id,
+      },
+      _avg: {
+        stars: true,
+      },
+    })
+  )._avg.stars;
+  return await prisma.dish.update({
+    where: { id: id },
+    data: {
+      averageStars: avgStars,
     },
   });
 }

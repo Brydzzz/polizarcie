@@ -111,10 +111,11 @@ model Restaurant {
 model Dish {
     id           String       @id @default(cuid())
     name         String
+    slug         String
     description  String
     priceZl      Int
     priceGr      Int
-    totalStars   Int          @default(0)
+    averageStars Float?
     restaurant   Restaurant   @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
     restaurantId String
     reviews      DishReview[]
@@ -123,7 +124,7 @@ model Dish {
     hidden       Boolean      @default(false)
     type         DishType     @default(OTHER)
 
-    @@unique([restaurantId, name])
+    @@unique([restaurantId, slug])
 }
 
 model Address {

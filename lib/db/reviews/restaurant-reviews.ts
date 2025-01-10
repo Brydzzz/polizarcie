@@ -189,7 +189,7 @@ export async function createRestaurantReview(data: RestaurantReviewCreator) {
       },
     },
   });
-  updateRestaurantStats(data.subjectId);
+  updateRestaurantStatsCacheById(data.subjectId);
   return review;
 }
 
@@ -210,57 +210,29 @@ export async function updateRestaurantReview(data: RestaurantReview) {
       stars: data.stars,
     },
   });
-  updateRestaurantStats(data.subjectId);
+  updateRestaurantStatsCacheById(data.subjectId);
   return review;
 }
 
-export async function getRestaurantAvgStarsById(id: Restaurant["id"]) {
-  return await prisma.restaurantReview.aggregate({
-    _avg: {
-      stars: true,
-    },
-    where: {
-      subjectId: id,
-    },
-  });
-}
-
-export async function getRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
-  return await prisma.restaurantReview.aggregate({
-    _avg: {
-      amountSpent: true,
-    },
-    where: {
-      subjectId: id,
-    },
-  });
-}
-
-export async function updateRestaurantAvgAmountSpentById(id: Restaurant["id"]) {
-  const updatedAvgAmountSpent = await getRestaurantAvgAmountSpentById(id);
-  const newAmountSpent = Number(
-    updatedAvgAmountSpent._avg.amountSpent?.toFixed(2)
-  );
+export async function updateRestaurantStatsCacheById(id: Restaurant["id"]) {
+  const stats = (
+    await prisma.restaurantReview.aggregate({
+      _avg: {
+        amountSpent: true,
+        stars: true,
+      },
+      where: {
+        subjectId: id,
+      },
+    })
+  )._avg;
   return await prisma.restaurant.update({
-    where: { id: id },
+    where: {
+      id: id,
+    },
     data: {
-      averageAmountSpent: newAmountSpent,
+      averageStars: stats.stars,
+      averageAmountSpent: stats.amountSpent,
     },
   });
-}
-
-export async function updateRestaurantAvgStarsById(id: Restaurant["id"]) {
-  const updatedAvgStars = await getRestaurantAvgStarsById(id);
-  const newAvgStars = Number(updatedAvgStars._avg.stars?.toFixed(2));
-  return await prisma.restaurant.update({
-    where: { id: id },
-    data: {
-      averageStars: newAvgStars,
-    },
-  });
-}
-
-export async function updateRestaurantStats(id: Restaurant["id"]) {
-  await updateRestaurantAvgAmountSpentById(id);
-  await updateRestaurantAvgStarsById(id);
 }
