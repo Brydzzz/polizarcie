@@ -1,9 +1,12 @@
 "use client";
 
+import defaultProfile from "@/assets/defaultProfile.svg";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 import { useState } from "react";
+import SupabaseImage from "../images/supabase-image.component";
 import styles from "./user-dropdown.module.scss";
 
 const UserDropdown = () => {
@@ -17,7 +20,26 @@ const UserDropdown = () => {
   return (
     <div className={styles.container}>
       <span className={styles.icon} onClick={() => toggleVisible()}>
-        <i className="fa-solid fa-user"></i>
+        {user ? (
+          user.localProfileImagePath ? (
+            <SupabaseImage
+              width={50}
+              height={50}
+              src={user.localProfileImagePath}
+              alt="Profilowe"
+              quality={75}
+            />
+          ) : (
+            <Image
+              width={50}
+              height={50}
+              alt="Profilowe"
+              src={user?.image || defaultProfile}
+            />
+          )
+        ) : (
+          <i className="fa-solid fa-user"></i>
+        )}
       </span>
       <div
         className={`${styles.dropdown} ${visible ? "" : styles.hidden}`}

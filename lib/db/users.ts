@@ -22,10 +22,13 @@ export type UserFull = User & {
   medias: UserMedia[];
 };
 
-export async function getUserById(id: User["id"]) {
+export async function getUserById(id: User["id"]): Promise<UserFull | null> {
   return await prisma.user.findFirst({
     where: {
       id: id,
+    },
+    include: {
+      medias: true,
     },
   });
 }

@@ -102,7 +102,9 @@ const REVIEW_PARTS: ReviewParts = {
       <>
         <span className={styles.subject}>
           <i className="fa-solid fa-l"></i>&nbsp;
-          <Link href={`#`}>
+          <Link
+            href={`/restaurant/${data.subject.restaurantId}/${data.subject.slug}`}
+          >
             <b>{data.subject.name}</b>
           </Link>
         </span>
