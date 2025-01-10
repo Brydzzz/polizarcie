@@ -28,7 +28,7 @@ const UserDropdown = () => {
             <h2>{user.name}</h2>
             <span
               className={styles.item}
-              onClick={() => (window.location.href = "/userprofile")}
+              onClick={() => (window.location.href = `/profile/${user.id}`)}
             >
               <i className="fa-solid fa-user"></i>
               &nbsp; &nbsp; Profil
