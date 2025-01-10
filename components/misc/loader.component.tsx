@@ -1,3 +1,5 @@
+"use client";
+
 import { LegacyRef, useEffect, useRef } from "react";
 import styles from "./loader.module.scss";
 
