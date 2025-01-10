@@ -2,9 +2,9 @@ import { Restaurant } from "@prisma/client";
 
 export function isRestaurantOpen(restaurant: Restaurant): boolean {
   const currentDateTime = new Date();
-  const day = currentDateTime.getDay();
+  const day = currentDateTime.getUTCDay();
   const time =
-    currentDateTime.getHours() * 60 + currentDateTime.getMinutes() + day * 3600;
+    currentDateTime.getUTCHours() * 60 + currentDateTime.getUTCMinutes() + day * 3600;
 
   let openingTime: Date | undefined;
   let closingTime: Date | undefined;
@@ -61,21 +61,21 @@ export function isRestaurantOpen(restaurant: Restaurant): boolean {
   }
 
   const openingTimeMin =
-    new Date(openingTime).getHours() * 60 +
+    new Date(openingTime).getUTCHours() * 60 +
     new Date(openingTime).getMinutes() +
     day * 3600;
   let closingTimeMin =
-    new Date(closingTime).getHours() * 60 +
-    new Date(closingTime).getMinutes() +
+    new Date(closingTime).getUTCHours() * 60 +
+    new Date(closingTime).getUTCMinutes() +
     day * 3600;
 
   // Get Previous Day Closing Hours
   const prevOpeningTimeMin =
-    new Date(prevOpeningTime).getHours() * 60 +
-    new Date(prevOpeningTime).getMinutes();
+    new Date(prevOpeningTime).getUTCHours() * 60 +
+    new Date(prevOpeningTime).getUTCMinutes();
   const prevClosingTimeMin =
-    new Date(prevClosingTime).getHours() * 60 +
-    new Date(prevClosingTime).getMinutes();
+    new Date(prevClosingTime).getUTCHours() * 60 +
+    new Date(prevClosingTime).getUTCMinutes();
 
   // closing time is the next day, add 3600 minutes to closing time
   if (closingTimeMin < openingTimeMin) {
