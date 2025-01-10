@@ -6,14 +6,17 @@ import SupabaseImage from "../images/supabase-image.component";
 import StarInput from "../inputs/star-input.component";
 import styles from "./restaurant-card.module.scss";
 
+export type CardsOrigin = "map" | "browse";
+
 type Props = {
   data: RestaurantFull;
   onClickAddress?: MouseEventHandler;
   mode?: "normal" | "compact";
   width?: number;
+  origin?: CardsOrigin;
 };
 
-const RestaurantCard = ({ data, onClickAddress, mode, width }: Props) => {
+const RestaurantCard = ({ data, onClickAddress, mode, width, origin }: Props) => {
   const {
     name,
     slug,
@@ -26,7 +29,7 @@ const RestaurantCard = ({ data, onClickAddress, mode, width }: Props) => {
   const isOpen = isRestaurantOpen(data);
 
   return (
-    <Link href={`/restaurant/${slug}`}>
+    <Link href={`/restaurant/${slug}${origin ? `?origin=${origin}` : ""}`}>
       <div
         className={`${styles.container} ${
           mode === "compact" ? styles.compact : ""

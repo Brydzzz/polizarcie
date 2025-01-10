@@ -30,6 +30,7 @@ const MapPage = () => {
             forceCompactRestaurantList={size < 1420 && size > ViewportSize.MD}
             forceSmallSearchBar
             forceSmallHeader
+            cardsOrigin="map"
           ></SearchSection>
         </div>
       </div>
