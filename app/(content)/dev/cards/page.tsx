@@ -1,10 +1,8 @@
-import DishCard from "@/components/cards/dish-card.component";
 import LinkCard from "@/components/cards/link-card.component";
 import MatchCard from "@/components/cards/match-card-component";
 import UserCard from "@/components/cards/user-desc-card-component";
 import {
   Address,
-  Dish,
   MediaType,
   Restaurant,
   User,
@@ -92,16 +90,6 @@ const TEST_USER2: Partial<
   },
 ];
 
-const TEST_DISH: Partial<Dish>[] = [
-  {
-    name: "Kebab średni",
-    description:
-      "Baranina/Kurczak, surówka, pita, sosy strasznie długo opis realnie nigdy nie widzialem dluzszego opisu niz ten ktory to jest mega dziwne ze one jest taki dlugo jakby mogl przestac to byloby super",
-    priceZl: 23,
-    priceGr: 0,
-  },
-];
-
 const CardPage = () => {
   return (
     <div
@@ -112,9 +100,6 @@ const CardPage = () => {
         {/* {TEST_REST.map((rest, i) => (
           <RestaurantCard key={i} data={rest}></RestaurantCard>
         ))} */}
-        {TEST_DISH.map((dish, i) => (
-          <DishCard key={i} data={dish}></DishCard>
-        ))}
         {TEST_USER.map((usr, i) => (
           <UserCard key={i} data={usr} socials={true}></UserCard>
         ))}
