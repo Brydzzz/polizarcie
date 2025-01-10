@@ -1,10 +1,10 @@
-import { User } from "@prisma/client";
+import { UserFull } from "@/lib/db/users";
 import { createSlice } from "@reduxjs/toolkit";
 import { DispatchAction } from "../store";
 
 type UserState = {
   loading: boolean;
-  currentUser: User | undefined;
+  currentUser: UserFull | undefined;
 };
 
 const INITIAL_STATE: UserState = {
@@ -16,7 +16,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState: INITIAL_STATE,
   reducers: {
-    setCurrentUser(state, action: DispatchAction<User | undefined>) {
+    setCurrentUser(state, action: DispatchAction<UserFull | undefined>) {
       state.currentUser = action.payload;
     },
     setCurrentUserLoading(state, action: DispatchAction<boolean>) {

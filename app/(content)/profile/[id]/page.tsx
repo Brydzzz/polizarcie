@@ -5,54 +5,40 @@ import { notFound } from "next/navigation";
 import styles from "./page.module.scss";
 //import { getUserMediaById } from '@/lib/db/users';
 import defaultProfile from "@/assets/defaultProfile.svg";
-import SupabaseImage from "@/components/images/supabase-image.component";
-import { getUserById, getUserMedias } from "@/lib/db/users";
-import { User, UserMedia } from "@prisma/client";
+import ModalableImage from "@/components/images/modalable-image.component";
+import { getUserById } from "@/lib/db/users";
 import Image from "next/image";
 
 type Props = {
   params: Promise<{
-    slug: string;
+    id: string;
   }>;
 };
 
 const ProfilePage = async ({ params }: Props) => {
-  const slug = (await params).slug;
-  const user = await getUserById(slug);
+  const id = (await params).id;
+  const user = await getUserById(id);
 
   if (!user) notFound();
-  const userMediaResult = await getUserMedias(user.id);
-  const data: Partial<User & { medias: Partial<UserMedia>[] }> = {
-    ...user,
-    medias: userMediaResult || [],
-  };
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.imageContainer}>
-          {user.image ? (
-            user.image.startsWith("http") ? (
-              <Image
-                width={100}
-                height={100}
-                alt="Profilowe"
-                src={user.image}
-              />
-            ) : (
-              <SupabaseImage
-                width={100}
-                height={100}
-                src={user.image}
-                alt="Profilowe"
-              />
-            )
+          {user.localProfileImagePath ? (
+            <ModalableImage
+              width={100}
+              height={100}
+              src={user.localProfileImagePath}
+              alt="Profilowe"
+              quality={75}
+            />
           ) : (
             <Image
               width={100}
               height={100}
               alt="Profilowe"
-              src={defaultProfile}
+              src={user.image || defaultProfile}
             />
           )}
         </div>
@@ -66,7 +52,5 @@ const ProfilePage = async ({ params }: Props) => {
     </div>
   );
 };
-
-// ...existing code...
 
 export default ProfilePage;

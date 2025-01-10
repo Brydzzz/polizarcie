@@ -1,14 +1,26 @@
 "use server";
 
 import { prisma } from "@/prisma";
-import { unauthorized } from "@/utils/misc";
-import { UserMedia } from "@prisma/client";
+import { forbidden, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
-import { MatchRequest, Restaurant, User, Gender } from "@prisma/client";
+import {
+  Gender,
+  Image,
+  MatchRequest,
+  Restaurant,
+  User,
+  UserMedia,
+} from "@prisma/client";
+import { hasPermission } from "../permissions";
+import { deleteImages, getImagesByPaths } from "./images";
 import {
   clearUserPasswordCache,
   updateUserPasswordFromCache,
 } from "./users.server-only";
+
+export type UserFull = User & {
+  medias: UserMedia[];
+};
 
 export async function getUserById(id: User["id"]) {
   return await prisma.user.findFirst({
@@ -438,10 +450,15 @@ export async function getSimilarRestsForUsers(
   );
 }
 
-export async function getUserByEmail(email: User["email"]) {
+export async function getUserByEmail(
+  email: User["email"]
+): Promise<UserFull | null> {
   return await prisma.user.findFirst({
     where: {
       email: email,
+    },
+    include: {
+      medias: true,
     },
   });
 }
@@ -471,14 +488,30 @@ export async function cancelPasswordChange() {
   return await clearUserPasswordCache(currentUser.id);
 }
 
-export async function saveUserSettings(id: User["id"], settings: { name: string | null, description: string | null, gender: Gender | null, preferredGender: Gender | null, meetingStatus: boolean | null}) {
-  const data: { name?: string, description?: string, gender?: Gender, preferredGender?: Gender, meetingStatus?: boolean } = {};
+export async function saveUserSettings(
+  id: User["id"],
+  settings: {
+    name: string | null;
+    description: string | null;
+    gender: Gender | null;
+    preferredGender: Gender | null;
+    meetingStatus: boolean | null;
+  }
+) {
+  const data: {
+    name?: string;
+    description?: string;
+    gender?: Gender;
+    preferredGender?: Gender;
+    meetingStatus?: boolean;
+  } = {};
   if (settings.name !== null) data.name = settings.name;
   if (settings.description !== null) data.description = settings.description;
   if (settings.gender !== null) data.gender = settings.gender;
-  if (settings.preferredGender !== null) data.preferredGender = settings.preferredGender;
-  if (settings.meetingStatus !== null) data.meetingStatus = settings.meetingStatus;
-
+  if (settings.preferredGender !== null)
+    data.preferredGender = settings.preferredGender;
+  if (settings.meetingStatus !== null)
+    data.meetingStatus = settings.meetingStatus;
 
   return await prisma.user.update({
     where: { id: id },
@@ -494,7 +527,11 @@ export async function getUserMedias(id: User["id"]) {
   });
 }
 
-async function saveMedia(id: User["id"], type: UserMedia["type"], link: string) {
+async function saveMedia(
+  id: User["id"],
+  type: UserMedia["type"],
+  link: string
+) {
   return await prisma.userMedia.upsert({
     where: {
       id: `${id}-${type}`,
@@ -511,38 +548,42 @@ async function saveMedia(id: User["id"], type: UserMedia["type"], link: string) 
   });
 }
 
-export async function saveUserMedias(id: User["id"], medias: { type: UserMedia["type"], link: string }[]) {
+export async function saveUserMedias(
+  id: User["id"],
+  medias: { type: UserMedia["type"]; link: string }[]
+) {
   return await Promise.all(
     medias
-      .filter(media => media.link.trim() !== "")
-      .map(media => saveMedia(id, media.type, media.link))
+      .filter((media) => media.link.trim() !== "")
+      .map((media) => saveMedia(id, media.type, media.link))
   );
 }
 
-export async function saveProfileImagePath(id: User["id"], paths: string[]) {
+export async function linkProfileImage(imagePath: Image["path"]) {
+  // permission check
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) return unauthorized();
+  const images = await getImagesByPaths([imagePath]);
+  if (
+    !images.every((image) => {
+      return hasPermission(currentUser, "images", "link", image);
+    })
+  )
+    return forbidden();
+
+  // remove previous if exists
+  if (currentUser.localProfileImagePath)
+    await deleteImages([currentUser.localProfileImagePath]);
+
+  // Try to connect
   return await prisma.user.update({
-    where: { id: id },
+    where: {
+      id: currentUser.id,
+    },
     data: {
-      image: paths[0],
+      localProfileImage: {
+        connect: { path: imagePath },
+      },
     },
   });
 }
-
-
-
-// export async function saveUserMedias(id: User["id"], medias: { link: string, type: string }[]) {
-//   const data = medias.map(media => {
-//     return {
-//       userId: id,
-//       link: media.link,
-//       type: media.type,
-//     };
-//   });
-//   return
-
-//   // return await prisma.userMedia.createMany({
-//   //   data: data,
-//   // });
-// }
-
-

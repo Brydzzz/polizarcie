@@ -184,7 +184,7 @@ export async function linkImagesToRestaurant(
   const images = await getImagesByPaths(imagePaths);
   if (
     !images.every((image) => {
-      return hasPermission(user, "images", "delete", image);
+      return hasPermission(user, "images", "link", image);
     })
   )
     return forbidden();

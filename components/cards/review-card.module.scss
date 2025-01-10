@@ -96,6 +96,10 @@
         text-decoration: underline;
         text-decoration-thickness: 0.1em;
       }
+
+      & > img {
+        border-radius: 50%;
+      }
     }
 
     .score {

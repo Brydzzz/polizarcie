@@ -1,5 +1,6 @@
 "use client";
 
+import defaultProfile from "@/assets/defaultProfile.svg";
 import useHasPermission from "@/hooks/use-has-permission";
 import useReviewStore from "@/hooks/use-review-store";
 import { deleteReview, hideReview } from "@/lib/db/reviews/base-reviews";
@@ -15,10 +16,12 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import { makeRequest } from "@/utils/misc";
+import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
 import AddReview from "../forms/add-review.component";
 import ModalableImage from "../images/modalable-image.component";
+import SupabaseImage from "../images/supabase-image.component";
 import TextArea from "../inputs/generic-textarea.component";
 import SliderInput from "../inputs/slider-input.component";
 import StarInput from "../inputs/star-input.component";
@@ -277,7 +280,23 @@ const ReviewCard = <Type extends keyof ReviewType>({
               user?.id === author.id ? styles.highlighted : ""
             }`}
           >
-            <i className="fa-solid fa-user"></i>
+            {author.localProfileImagePath ? (
+              <SupabaseImage
+                width={20}
+                height={20}
+                src={author.localProfileImagePath}
+                alt="Profilowe"
+                quality={50}
+              />
+            ) : (
+              <Image
+                width={20}
+                height={20}
+                alt="Profilowe"
+                src={author.image || defaultProfile}
+                quality={50}
+              />
+            )}
             {author.name}
           </Link>
           <div className={styles.authorPlaceholder} />

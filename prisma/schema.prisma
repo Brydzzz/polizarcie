@@ -9,35 +9,37 @@ datasource db {
 
 model User {
     // required by Next-Auth
-    id                   String                   @id @default(cuid())
-    name                 String?
-    email                String                   @unique
-    emailVerified        DateTime?
-    image                String?
-    accounts             Account[]
-    sessions             Session[]
-    Authenticator        Authenticator[]
-    createdAt            DateTime                 @default(now())
-    updatedAt            DateTime                 @updatedAt
-    description          String?
+    id                    String                   @id @default(cuid())
+    name                  String?
+    email                 String                   @unique
+    emailVerified         DateTime?
+    image                 String?
+    accounts              Account[]
+    sessions              Session[]
+    Authenticator         Authenticator[]
+    createdAt             DateTime                 @default(now())
+    updatedAt             DateTime                 @updatedAt
+    description           String?
     // Custom
-    passwordHash         UserPasswordHash?
-    passwordHashCache    UserPasswordHashCache?
-    lastVerificationMail DateTime?
-    roles                Role[]                   @default([USER])
-    gender               Gender                   @default(NOT_SET)
-    preferredGender      Gender                   @default(NOT_SET)
-    meetingStatus        Boolean                  @default(false)
-    points               Int                      @default(0)
-    medias               UserMedia[]
-    favoriteRestaurants  UserFavoriteRestaurant[]
-    follows              Follow[]                 @relation(name: "followUsersFrom")
-    followedBy           Follow[]                 @relation(name: "followUsersTo")
-    reviewLikes          ReviewLike[]
-    writtenReviews       BaseReview[]
-    uploadedImages       Image[]
-    userOneMatch         Match[]                  @relation(name: "matchUserOne")
-    userTwoMatch         Match[]                  @relation(name: "matchUserTwo")
+    localProfileImagePath String?                  @map("localImagePath")
+    localProfileImage     Image?                   @relation(name: "profile", fields: [localProfileImagePath], references: [path])
+    passwordHash          UserPasswordHash?
+    passwordHashCache     UserPasswordHashCache?
+    lastVerificationMail  DateTime?
+    roles                 Role[]                   @default([USER])
+    gender                Gender                   @default(NOT_SET)
+    preferredGender       Gender                   @default(NOT_SET)
+    meetingStatus         Boolean                  @default(false)
+    points                Int                      @default(0)
+    medias                UserMedia[]
+    favoriteRestaurants   UserFavoriteRestaurant[]
+    follows               Follow[]                 @relation(name: "followUsersFrom")
+    followedBy            Follow[]                 @relation(name: "followUsersTo")
+    reviewLikes           ReviewLike[]
+    writtenReviews        BaseReview[]
+    uploadedImages        Image[]
+    userOneMatch          Match[]                  @relation(name: "matchUserOne")
+    userTwoMatch          Match[]                  @relation(name: "matchUserTwo")
 }
 
 model UserPasswordHash {
@@ -138,14 +140,15 @@ model Address {
 }
 
 model Image {
-    path              String       @id
-    title             String?
-    uploadedById      String
-    uploadedBy        User         @relation(fields: [uploadedById], references: [id])
-    uploadedDate      DateTime     @default(now())
-    updatedDate       DateTime     @updatedAt
-    usedInRestaurants Restaurant[]
-    usedInReviews     BaseReview[]
+    path               String       @id
+    title              String?
+    uploadedById       String
+    uploadedBy         User         @relation(fields: [uploadedById], references: [id])
+    uploadedDate       DateTime     @default(now())
+    updatedDate        DateTime     @updatedAt
+    usedInRestaurants  Restaurant[]
+    usedInReviews      BaseReview[]
+    usedInUserProfiles User[]       @relation(name: "profile")
 }
 
 model BaseReview {
