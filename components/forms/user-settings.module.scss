@@ -1,8 +1,9 @@
 .container {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  --padding-left-value: max(20px, calc(calc(100% - 600px) / 2));
+  max-width: calc(600px + var(--padding-left-value));
   padding: 20px;
+  padding-left: var(--padding-left-value);
   border-radius: 0 8px 8px 0;
   border: 5px solid var(--background-light);
   border-left: none;
@@ -58,11 +59,16 @@
   }
 }
 
-@media (max-width: "500px") {
+@media (max-width: "900px") {
   .container {
     border-radius: 0;
     border-right: 0;
+    max-width: 100%;
+  }
+}
 
+@media (max-width: "500px") {
+  .container {
     .row {
       flex-wrap: wrap;
     }

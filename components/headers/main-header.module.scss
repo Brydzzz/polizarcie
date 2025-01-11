@@ -101,6 +101,7 @@
 
     h1 {
       padding: 40px 20px;
+      font-size: 30pt;
     }
 
     .option {
@@ -116,9 +117,22 @@
           transparent 100%
         );
       }
-      & > .subbox {
-        margin-top: 10pt;
-        text-shadow: 0px 3px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      & > h2 {
+        padding: 10px 20px;
+        width: 90%;
+        user-select: none;
+        color: var(--text-dark);
+      }
+
+      .option {
+        padding-left: 40px;
         font-size: 8pt;
       }
     }
@@ -129,14 +143,19 @@
 
     .title {
       top: 20px;
-      left: 50%;
+      left: calc(50% - 7.5px);
       position: absolute;
       transform: translate(-50%, 0);
       text-align: center;
 
       h1 {
-        font-size: 32pt;
+        font-size: 28pt;
       }
+    }
+
+    & > i {
+      font-size: 20pt;
+      transform: translate(0, -5px);
     }
   }
 }

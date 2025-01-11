@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  position: relative;
+  overflow-y: hidden;
+  max-height: calc(100vh - 110px);
+  height: 100%;
+
+  .scrollable {
+    width: 100%;
+    min-height: 100%;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: "768px") {
+  .container {
+    max-height: 100%;
+  }
+}

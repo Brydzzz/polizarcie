@@ -38,23 +38,31 @@ const MainHeader = () => {
   const linksMobile = () => (
     <>
       <Link className={styles.option} href={"/browse/"}>
-        <h2>Przeglądaj</h2>
+        <h2>Wyszukaj</h2>
       </Link>
       <Link className={styles.option} href={"/map/"}>
         <h2>Mapka</h2>
       </Link>
-      <div className={styles.option}>
+      <div className={styles.group}>
         <h2>Poznajmy się</h2>
-        <div className={styles.subbox}>
-          <Link className={styles.sub} href={"/match/"}>
-            <h2> - Matchowanie </h2>
-          </Link>
-        </div>
-        <div className={styles.subbox}>
-          <Link className={styles.sub} href={"/match-list/"}>
-            <h2> - Kontakty </h2>
-          </Link>
-        </div>
+        <Link className={styles.option} href={"/match/"}>
+          <h2> - Matchowanie </h2>
+        </Link>
+        <Link className={styles.option} href={"/match-list/"}>
+          <h2> - Kontakty </h2>
+        </Link>
+      </div>
+      <div className={styles.group}>
+        <h2>Twój panel</h2>
+        <Link className={styles.option} href={"/dashboard/my-profile"}>
+          <h2> - Profil </h2>
+        </Link>
+        <Link className={styles.option} href={"/dashboard/settings"}>
+          <h2> - Ustawienia </h2>
+        </Link>
+        <Link className={styles.option} href={"/dashboard/favorite"}>
+          <h2> - Ulubione </h2>
+        </Link>
       </div>
     </>
   );

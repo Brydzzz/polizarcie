@@ -1,15 +1,12 @@
-//'use client';
-
-import ReviewList from "@/components/lists/review-list.component";
-import { notFound } from "next/navigation";
-import styles from "./page.module.scss";
-//import { getUserMediaById } from '@/lib/db/users';
 import defaultProfile from "@/assets/defaultProfile.svg";
 import ModalableImage from "@/components/images/modalable-image.component";
+import ReviewList from "@/components/lists/review-list.component";
 import { getUserById } from "@/lib/db/users";
 import { Gender, Role } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import styles from "./page.module.scss";
 
 type Props = {
   params: Promise<{
