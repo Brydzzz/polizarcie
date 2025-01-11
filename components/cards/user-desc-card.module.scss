@@ -17,6 +17,9 @@
     padding-right: 15;
     // height: 100%;
     & > .name {
+      max-width: 20ch;
+      overflow: hidden;
+      text-overflow: ellipsis;
       padding: 15 15 0 0;
       font-size: 15pt;
       color: var(--text);

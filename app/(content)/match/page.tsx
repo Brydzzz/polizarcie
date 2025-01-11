@@ -27,7 +27,7 @@ import {
   selectUserLoading,
 } from "@/lib/store/user/user.selector";
 import { setCurrentUser } from "@/lib/store/user/user.slice";
-import { Restaurant, User } from "@prisma/client";
+import { Gender, Restaurant, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchPage = () => {
@@ -44,6 +44,15 @@ const MatchPage = () => {
   const loading = useAppSelector(selectUserLoading);
   const size = useAppSelector(selectViewportWidth);
   const dispatch = useAppDispatch();
+
+  const GENDER_MAP: {
+    [key in Gender]: string;
+  } = {
+    [Gender.NOT_SET]: "Nieznana",
+    [Gender.FEMALE]: "Kobieta",
+    [Gender.MALE]: "Mężczyzna",
+    [Gender.NON_BINARY]: "Nie binarna",
+  };
 
   const pushUnmatchedUser = async () => {
     if (!user) return;
@@ -146,6 +155,10 @@ const MatchPage = () => {
             <p className={styles.prompt}>Może mam z kimś coś wspólnego?</p>
           )}
           <Switch checked={algo} onChange={handleSwitch} />
+        </div>
+        <div className={styles.info}>
+          <p>Twoja płeć: {GENDER_MAP[user.gender]}</p>
+          <p>Twoja preferencja: {GENDER_MAP[user.preferredGender]}</p>
         </div>
         <div className={styles.container}>
           {users[0] ? (
