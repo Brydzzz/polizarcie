@@ -87,10 +87,10 @@ const RestaurantList = () => {
         }
         await makeRequest(updateUserFavoriteRestaurants, [user.id, data], dispatch);
       }
-      dispatch(addSnackbar({ message: "Zapisano ustawienia", type: "success" }));
-      console.log('Saving restaurant list:', restaurantList);
+      dispatch(addSnackbar({ message: "Zapisano zmiany", type: "success" }));
     } catch (error) {
       console.error('Error saving restaurant list:', error);
+      dispatch(addSnackbar({ message: "Błąd zapisywania", type: "error" }));
     }
   };
 

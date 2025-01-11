@@ -1,7 +1,7 @@
 .sidebar {
     margin-right: 10px;
     width: 200px;
-    height: 100vh;
+    height: calc(100vh - 110px); 
     background-color: var(--background-dark);
     border-radius: 0 0 0 10px;
     font-size: 16pt;
