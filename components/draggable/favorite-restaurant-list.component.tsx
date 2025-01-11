@@ -24,7 +24,7 @@ import { useAppSelector } from '@/lib/store/hooks';
 import { selectCurrentUser } from '@/lib/store/user/user.selector';
 
 import styles from './favorite-restaurant-list.module.scss';
-import { getRestaurantById } from '@/lib/db/restaurants';
+import { getRestaurantNameById } from '@/lib/db/restaurants';
 
 type Restaurant = {
   id: number;
@@ -42,11 +42,11 @@ const RestaurantList = () => {
       if (user) {
         const data = await getUserFavoritesRestaurants(user.id);
         const restaurantList = await Promise.all(data.map(async item => {
-          const restaurant = await getRestaurantById(item.restaurantId);
+          const restaurant_name = await getRestaurantNameById(item.restaurantId);
           return {
             id: item.rankingPosition,
             data_id: item.id,
-            name: restaurant ? restaurant.name : 'Error loading name', // or fetch the name if available
+            name: restaurant_name ? restaurant_name : 'Error loading name', // or fetch the name if available
             email: 'Unknown', // or fetch the email if available
           };
         }));
@@ -64,6 +64,16 @@ const RestaurantList = () => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const saveRestaurantList = async () => {
+    try {
+      // Implement the save logic here, e.g., sending the reordered list to the server
+      console.log('Saving restaurant list:', restaurantList);
+      // Example: await saveUserFavoritesRestaurants(user.id, restaurantList);
+    } catch (error) {
+      console.error('Error saving restaurant list:', error);
+    }
+  };
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
@@ -99,7 +109,7 @@ const RestaurantList = () => {
           ))}
         </SortableContext>
       </DndContext>
-      
+      <button className={styles.saveButton} onClick={saveRestaurantList}>Zapisz</button>
     </div>
   );
 };
