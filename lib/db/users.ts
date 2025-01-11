@@ -310,6 +310,30 @@ export async function removeRestaurantFromLiked(
 ) {
   const currentUser = await getCurrentUser();
   if (!currentUser) return unauthorized();
+
+  const restaurantToRemove = await prisma.userFavoriteRestaurant.findFirst({
+    where: {
+      userId: currentUser.id,
+      restaurantId: restaurantId,
+    },
+  });
+
+  if (!restaurantToRemove) return;
+
+  await prisma.userFavoriteRestaurant.updateMany({
+    where: {
+      userId: currentUser.id,
+      rankingPosition: {
+        gt: restaurantToRemove.rankingPosition,
+      },
+    },
+    data: {
+      rankingPosition: {
+        decrement: 1,
+      },
+    },
+  });
+
   return await prisma.userFavoriteRestaurant.delete({
     where: {
       userId_restaurantId: {
