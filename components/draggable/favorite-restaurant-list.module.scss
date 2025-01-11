@@ -1,0 +1,13 @@
+.container {
+    max-width: 400px; /* Tailwind's max-w-2xl */
+    margin: 2.5rem auto; /* Tailwind's mx-auto and my-10 */
+    display: grid;
+    gap: 0.5rem; /* Tailwind's gap-2 */
+  }
+  
+  .heading {
+    font-size: 1.5rem; /* Tailwind's text-2xl */
+    font-weight: 700; /* Tailwind's font-bold */
+    margin-bottom: 1rem; /* Tailwind's mb-4 */
+  }
+  
