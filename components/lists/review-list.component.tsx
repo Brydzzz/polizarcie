@@ -7,7 +7,7 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import { BaseReview, User } from "@prisma/client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonSize, ButtonStyle } from "../button/button.types";
 import ReviewCard from "../cards/review-card.component";
@@ -97,7 +97,7 @@ const ModeReviewList = <Type extends keyof ReviewType>({
         <p>
           {mode === "subject"
             ? "Nikt nie wystawił jeszcze opinii, bądź pierwszy!"
-            : "Brak opinii w tej kategorii,"}
+            : "Brak opinii w tej kategorii."}
         </p>
       )}
       {reviews?.map((review) => (
@@ -136,9 +136,16 @@ type AuthorsProps = { authorId: User["id"] };
 
 const AuthorsReviewList = ({ authorId }: AuthorsProps) => {
   const [view, setView] = useState<keyof ReviewType>("restaurant");
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const changeView = (value: keyof ReviewType) => {
     setView(value);
+    const headerHeight = 280;
+    const offset = (sectionRef.current?.offsetTop || 0) - headerHeight;
+    window.scrollTo({
+      top: offset,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -165,12 +172,14 @@ const AuthorsReviewList = ({ authorId }: AuthorsProps) => {
         .map((key) => {
           const keyHelper = key as keyof ReviewType;
           return (
-            <ModeReviewList
-              key={key}
-              mode="author"
-              type={keyHelper}
-              modeSpecificId={authorId}
-            />
+            <div ref={sectionRef} key={key}>
+              <ModeReviewList
+                key={key}
+                mode="author"
+                type={keyHelper}
+                modeSpecificId={authorId}
+              />
+            </div>
           );
         })}
     </div>

@@ -300,7 +300,7 @@ export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
     data: {
       userId: currentUser.id,
       restaurantId: restaurantId,
-      rankingPosition: pos + 1,
+      rankingPosition: pos,
     },
   });
 }
@@ -310,6 +310,30 @@ export async function removeRestaurantFromLiked(
 ) {
   const currentUser = await getCurrentUser();
   if (!currentUser) return unauthorized();
+
+  const restaurantToRemove = await prisma.userFavoriteRestaurant.findFirst({
+    where: {
+      userId: currentUser.id,
+      restaurantId: restaurantId,
+    },
+  });
+
+  if (!restaurantToRemove) return;
+
+  await prisma.userFavoriteRestaurant.updateMany({
+    where: {
+      userId: currentUser.id,
+      rankingPosition: {
+        gt: restaurantToRemove.rankingPosition,
+      },
+    },
+    data: {
+      rankingPosition: {
+        decrement: 1,
+      },
+    },
+  });
+
   return await prisma.userFavoriteRestaurant.delete({
     where: {
       userId_restaurantId: {
@@ -572,3 +596,38 @@ export async function linkProfileImage(imagePath: Image["path"]) {
     },
   });
 }
+
+export async function getUserFavoritesRestaurants(id: User["id"]) {
+  return await prisma.userFavoriteRestaurant.findMany({
+    where: {
+      userId: id,
+    },
+  });
+}
+
+export async function updateUserFavoriteRestaurants(userId: User["id"], data: {
+  restaurantId: Restaurant["id"];
+  rankingPosition: number;
+}[]) {
+  return await Promise.all(
+    data.map(async (favorite) => {
+      return await prisma.userFavoriteRestaurant.upsert({
+        where: {
+          userId_restaurantId: {
+            userId: userId,
+            restaurantId: favorite.restaurantId,
+          },
+        },
+        update: {
+          rankingPosition: favorite.rankingPosition,
+        },
+        create: {
+          userId: userId,
+          restaurantId: favorite.restaurantId,
+          rankingPosition: favorite.rankingPosition,
+        },
+      });
+    })
+  );
+}
+

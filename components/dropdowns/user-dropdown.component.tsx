@@ -57,7 +57,7 @@ const UserDropdown = () => {
             </span>
             <span
               className={styles.item}
-              onClick={() => (window.location.href = "/settings")}
+              onClick={() => (window.location.href = "/dashboard/settings")}
             >
               <i className="fa-solid fa-gear"></i>
               &nbsp; &nbsp; Ustawienia
