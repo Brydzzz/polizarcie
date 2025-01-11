@@ -6,7 +6,7 @@ import { forbidden, PoliError, unauthorized } from "@/utils/misc";
 import { getCurrentUser } from "@/utils/users";
 import { BaseReview, Image, User } from "@prisma/client";
 import { deleteImages, getImagesByPaths } from "../images";
-import { updateDishStatsCacheById } from "./dish-reviews";
+import { getDishReviewById, updateDishStatsCacheById } from "./dish-reviews";
 import { getResponseReviewById } from "./response-reviews";
 import {
   getRestaurantReviewById,
@@ -69,23 +69,25 @@ export async function deleteReview(id: BaseReview["id"]) {
   await deleteImages(baseReview.images.map((image) => image.path));
   // TODO: find a cleaner way to update restaurant stats
   const restaurantReview = await getRestaurantReviewById(id);
-  if (restaurantReview instanceof PoliError) return baseReview;
-  const dishReview = await getRestaurantReviewById(id);
-  if (dishReview instanceof PoliError) return baseReview;
+  if (restaurantReview instanceof PoliError) return restaurantReview;
+  const dishReview = await getDishReviewById(id);
+  if (dishReview instanceof PoliError) return dishReview;
   const responseReview = await getResponseReviewById(id);
-  if (responseReview instanceof PoliError) return baseReview;
+  if (responseReview instanceof PoliError) return responseReview;
   const review = await prisma.baseReview.delete({
     where: {
       id: id,
     },
   });
-  if (restaurantReview) {
+  console.log(restaurantReview, dishReview, responseReview);
+
+  if (restaurantReview != null) {
     await updateRestaurantStatsCacheById(restaurantReview.subjectId);
   }
-  if (dishReview) {
+  if (dishReview != null) {
     await updateDishStatsCacheById(dishReview.subjectId);
   }
-  if (responseReview) {
+  if (responseReview != null) {
     await prisma.baseReview.update({
       where: {
         id: responseReview.subjectId,
