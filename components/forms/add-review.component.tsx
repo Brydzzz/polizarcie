@@ -15,7 +15,8 @@ import {
   REVIEW_FUNCTIONS_FACTORY,
   ReviewType,
 } from "@/utils/factories/reviews";
-import { blobToDataURL, makeRequest } from "@/utils/misc";
+import { makeRequest } from "@/utils/misc";
+import { prepareImagesToUpload } from "@/utils/misc.client";
 import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
@@ -168,14 +169,10 @@ const AddReview = <Type extends keyof ReviewType>({
         imagesPaths = await makeRequest(
           createImages,
           [
-            await Promise.all(
-              files.map(async (file) => ({
-                info: {
-                  path: `reviews/${subjectId}.${file.name.split(".").pop()}`,
-                  title: `${subjectId}`,
-                },
-                imageDataUrl: await blobToDataURL(file),
-              }))
+            await prepareImagesToUpload(
+              files,
+              `reviews/${subjectId}-${currentUser?.id}`,
+              `Review image from ${currentUser?.name}`
             ),
           ],
           dispatch

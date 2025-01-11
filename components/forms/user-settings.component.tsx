@@ -16,7 +16,8 @@ import {
 } from "@/lib/db/users";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
-import { blobToDataURL, makeRequest } from "@/utils/misc";
+import { makeRequest } from "@/utils/misc";
+import { prepareImagesToUpload } from "@/utils/misc.client";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -138,15 +139,11 @@ const UserSettingsForm = ({ user }: Props) => {
     const paths = await makeRequest(
       createImages,
       [
-        [
-          {
-            info: {
-              path: `profile/${user.id}.${image.name.split(".").pop()}`,
-              title: `${user.name} profile image`,
-            },
-            imageDataUrl: await blobToDataURL(image),
-          },
-        ],
+        await prepareImagesToUpload(
+          [image],
+          `profile/${user.id}`,
+          `Profile picture of ${user.name}`
+        ),
       ],
       dispatch
     );

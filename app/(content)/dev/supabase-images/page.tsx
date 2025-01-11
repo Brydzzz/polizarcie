@@ -10,7 +10,8 @@ import {
   linkImagesToRestaurant,
 } from "@/lib/db/restaurants";
 import { useAppDispatch } from "@/lib/store/hooks";
-import { blobToDataURL, makeRequest } from "@/utils/misc";
+import { makeRequest } from "@/utils/misc";
+import { prepareImagesToUpload } from "@/utils/misc.client";
 import { useState } from "react";
 
 const SupabaseImages = () => {
@@ -30,21 +31,14 @@ const SupabaseImages = () => {
           );
         if (!files) return;
 
-        const paths = await makeRequest(
-          createImages,
-          [
-            await Promise.all(
-              files.map(async (file) => ({
-                info: {
-                  path: file.name,
-                  title: "Example image",
-                },
-                imageDataUrl: await blobToDataURL(file),
-              }))
-            ),
-          ],
-          dispatch
+        const filesData = await prepareImagesToUpload(
+          files,
+          "dev/example",
+          "Example image"
         );
+        console.log(filesData);
+
+        const paths = await makeRequest(createImages, [filesData], dispatch);
         await makeRequest(linkImagesToRestaurant, ["1", paths], dispatch);
 
         setPreviewPaths(paths);

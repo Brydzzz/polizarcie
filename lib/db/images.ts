@@ -31,28 +31,30 @@ export async function createImages(
   // upload all to supabase
   const paths = await uploadImages(
     await Promise.all(
-      files.map(async (file) => ({
-        path: file.info.path,
-        imageBody: new File(
-          [await (await fetch(file.imageDataUrl)).blob()],
-          ""
-        ),
-      }))
+      files.map(async (file) => {
+        const blob = await (await fetch(file.imageDataUrl)).blob();
+        return {
+          path: file.info.path,
+          imageBody: new File([blob], "name", { type: blob.type }),
+        };
+      })
     )
   );
   if (paths instanceof PoliError) return paths;
 
   // add entries to db
   try {
+    const data = files.map((file, i) => ({
+      path: paths[i],
+      title: file.info.title,
+      uploadedById: user.id,
+    }));
     await prisma.image.createMany({
-      data: files.map((file, i) => ({
-        path: paths[i],
-        title: file.info.path,
-        uploadedById: user.id,
-      })),
+      data: data,
     });
   } catch (error) {
     removeImages(paths); // remove all from supabase, operation failed
+
     return internalServerError();
   }
 
