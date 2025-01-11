@@ -30,7 +30,7 @@ const ModalableImage = (props: ComponentProps<typeof SupabaseImage>) => {
             <SupabaseImage
               {...{
                 ...props,
-                width: 2500,
+                width: 2048,
                 height: undefined,
                 quality: 100,
               }}

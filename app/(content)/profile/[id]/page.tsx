@@ -9,6 +9,7 @@ import ModalableImage from "@/components/images/modalable-image.component";
 import { getUserById } from "@/lib/db/users";
 import { Gender, Role } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{
@@ -87,7 +88,9 @@ const ProfilePage = async ({ params }: Props) => {
             {user.medias.map((media, i) => (
               <div key={i} className={styles.entry}>
                 <h4>{media.type}:</h4>
-                <a href={media.link}>{media.link}</a>
+                <Link href={media.link} target="_blank">
+                  {media.link}
+                </Link>
               </div>
             ))}
           </>

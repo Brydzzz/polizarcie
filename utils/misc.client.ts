@@ -39,7 +39,7 @@ export const prepareImagesToUpload = async (
     images.map(async (image) => {
       return {
         info: {
-          path: `${path}.${image.name.split(".").pop()}`,
+          path: `${path}.jpg`,
           title: title,
         },
         imageDataUrl: await imageToResizedDataURL(image),
