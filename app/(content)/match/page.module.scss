@@ -1,9 +1,6 @@
 /* TODO maybe implement animations? */
 
 .main {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
   & > .switch {
     display: flex;
     justify-content: flex-end;
@@ -26,16 +23,16 @@
     margin-right: 10%;
     & > .prompt {
       margin-top: 5pt;
-      margin-right: 10%;
+      margin-right: 20px;
       font-family: "Gluten", sans-serif;
       align-self: flex-start;
-      //text-align: start;
     }
   }
   & > .container {
     opacity: 1;
-    width: 100%;
+    max-width: 300px;
     min-height: 100vh;
+    margin: auto;
     display: flex;
     z-index: 0;
     align-items: center;
@@ -52,7 +49,7 @@
         color: var(--secondary-light);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         &:hover {
-          transform: scale(1.1); /* Hover effect to lift the card */
+          transform: scale(1.1);
         }
       }
       & > .no {
@@ -60,7 +57,7 @@
         color: var(--primary);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         &:hover {
-          transform: scale(1.1); /* Hover effect to lift the card */
+          transform: scale(1.1);
         }
       }
     }
@@ -108,8 +105,6 @@
     padding-right: 100px;
     padding-left: 100px;
   }
-
-
 }
 
 .main2 {
@@ -135,7 +130,7 @@
       flex: 1;
       align-items: center;
       box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
-      --bg-local: rgba(61, 41, 53, 0.7);
+      --bg-local: rgba(61, 41, 53, 0.702);
       background-color: var(--bg-local);
       border: 2px solid var(--primary-dark);
       border-radius: 8px;

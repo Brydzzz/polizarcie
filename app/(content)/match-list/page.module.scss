@@ -37,16 +37,13 @@
       flex-direction: column;
       width: 60%;
       & > .contactsList {
-        border: 2px solid var(--background-dark);
+        border: 10px solid var(--background-light);
         background-color: var(--background-medium);
         border-radius: 6px;
-        padding: 3pt;
-        padding-left: 5pt;
-        padding-right: 10pt;
+        padding: 10px;
         margin-top: 7pt;
         & > .contact {
-          padding-top: 5pt;
-          padding-bottom: 5pt;
+          padding: 5pt;
         }
         & > .info {
           text-align: center;
@@ -62,21 +59,20 @@
       flex-direction: column;
       width: 30%;
       & > .pendingList {
-        border: 2px solid var(--background-dark);
+        display: flex;
+        flex-direction: column;
+        border: 10px solid var(--background-light);
         background-color: var(--background-medium);
-        padding: 3pt;
-        padding-left: 10pt;
-        padding-right: 5pt;
-        padding-bottom: 10pt;
+        padding: 10px;
         border-radius: 6px;
         margin-top: 7pt;
+        row-gap: 10px;
         & > .pend {
-          padding-top: 5pt;
-          padding-top: 5pt;
+          // padding-top: 10px;
         }
         & > .info {
           text-align: center;
-          padding: 5pt;
+          padding: 5px;
           font-size: 13pt;
         }
       }
@@ -138,13 +134,10 @@
       margin-left: 10pt;
 
       & > .contactsList {
-        border: 2px solid var(--background-dark);
+        border: 10px solid var(--background-light);
         background-color: var(--background-medium);
         border-radius: 6px;
-        padding: 3pt;
-        padding-left: 5pt;
-        padding-right: 10pt;
-        margin-top: 7pt;
+        padding: 10px;
         & > .contact {
           padding-top: 5pt;
           padding-bottom: 5pt;
@@ -165,22 +158,22 @@
       margin-left: 10pt;
 
       & > .pendingList {
-        border: 2px solid var(--background-dark);
+        display: flex;
+        flex-direction: column;
+        border: 10px solid var(--background-light);
         background-color: var(--background-medium);
-        padding: 3pt;
-        padding-left: 10pt;
-        padding-right: 5pt;
-        padding-bottom: 10pt;
+        padding: 10px;
         border-radius: 6px;
         margin-top: 7pt;
+        row-gap: 10px;
         & > .info {
           text-align: center;
           padding: 5pt;
           font-size: 13pt;
         }
         & > .pend {
-          padding-top: 5pt;
-          padding-top: 5pt;
+          // padding-top: 5pt;
+          // padding-top: 5pt;
         }
       }
     }

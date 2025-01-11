@@ -71,11 +71,9 @@ const MatchPage = () => {
   useEffect(() => {
     const reloadUser = async () => {
       if (!user) return;
-      console.log(status);
       const copy = Object.assign({}, user);
       copy.meetingStatus = true;
       dispatch(setCurrentUser(copy));
-      console.log(user);
     };
     reloadUser();
   }, [status]);

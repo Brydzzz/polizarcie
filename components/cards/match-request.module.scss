@@ -1,45 +1,48 @@
 .container {
   display: flex;
   flex-direction: row;
-  // align-items: center;
+  align-items: center;
   justify-content: space-between;
-  --bg-local: rgba(61, 41, 53, 0.7);
+  --bg-local: rgba(61, 41, 53, 0.702);
   border: 1px solid var(--primary-background-fade-1);
   border-radius: 8px;
   background-color: var(--bg-local);
   min-width: 300px;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   & > .left {
     display: flex;
     flex-direction: row;
+    align-items: center;
     padding-left: 10pt;
-    min-width: 50%;
     & > .namebox {
-      display: flex;
-      align-items: center;
       & > .name {
-        display: flex;
-        align-items: center;
-        padding-top: 5px;
-        padding-bottom: 5pt;
-        padding-left: 10pt;
+        color: var(--text);
+        font-size: 15pt;
+        display: -webkit-box;
+        --lines-number: 1;
+        line-break: anywhere;
+        line-clamp: var(--lines-number);
+        -webkit-line-clamp: var(--lines-number);
+        -webkit-box-orient: vertical;
         font-size: 15pt;
         color: var(--text);
-        height: calc(10%);
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
     & > .photoBox {
-      padding-top: 10pt;
-      padding-bottom: 10pt;
-      max-width: 100px;
+      height: 50%;
+      margin-right: 10px;
+      border-radius: 50%;
       overflow: hidden;
-      & > .photo {
-        width: 80%;
-        aspect-ratio: 1 / 1;
-        border: 3px solid var(--background-dark);
-        border-radius: 50%;
-      }
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      min-width: 35px;
+      max-height: 50px;
     }
   }
   & > .buttons {

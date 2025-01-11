@@ -1,17 +1,18 @@
 "use client";
+import defaultProfile from "@/assets/defaultProfile.svg";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { User, UserMedia } from "@prisma/client";
+import Image from "next/image";
+import Link from "next/link";
 import { MouseEventHandler, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize } from "../button/button.types";
+import ModalableImage from "../images/modalable-image.component";
 import styles from "./contact-card.module.scss";
 import LinkCard from "./link-card.component";
-import ModalableImage from "../images/modalable-image.component";
-import Image from "next/image";
-import defaultProfile from "@/assets/defaultProfile.svg";
 type Props = {
   data: Partial<User>;
   medias: Partial<UserMedia>[];
@@ -44,7 +45,11 @@ const ContactCard = ({ data, medias, onClickDelete }: Props) => {
           )}
         </div>
         <div className={styles.namebox}>
-          {data ? <p className={styles.name}>{data.name}</p> : null}
+          {data ? (
+            <Link className={styles.name} href={`/profile/${data.id}`}>
+              <b>{data.name}</b>
+            </Link>
+          ) : null}
         </div>
         <ol className={styles.medias}>
           {medias?.map((link, type) => (
