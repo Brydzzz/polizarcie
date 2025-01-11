@@ -109,6 +109,20 @@
     padding-left: 100px;
   }
 
+
+}
+
+.main2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  & > .login {
+    margin-top: 100pt;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+  }
   & > .turnMeeting {
     margin-top: 100pt;
     width: 50%;
@@ -134,18 +148,5 @@
         padding: 50pt;
       }
     }
-  }
-}
-
-.main2 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  & > .login {
-    margin-top: 100pt;
-    width: 50%;
-    height: 50%;
-    display: flex;
-    justify-content: center;
   }
 }

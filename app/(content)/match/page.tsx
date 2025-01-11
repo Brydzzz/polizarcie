@@ -15,9 +15,7 @@ import {
   getSimilarRestsLike,
   getTopLikedRests,
   getTopLikedRestsForUsers,
-  getUnmatchedSimilarUser,
   getUnmatchedSimilarUsers,
-  getUnmatchedUser,
   getUnmatchedUsers,
   turnOnMeeting,
 } from "@/lib/db/users";
@@ -50,39 +48,45 @@ const MatchPage = () => {
   const pushUnmatchedUser = async () => {
     if (!user) return;
     const data = algo
-      ? await getUnmatchedSimilarUser(
+      ? await getUnmatchedSimilarUsers(
           user,
-          users.map((usr) => usr.id)
+          users.map((usr) => usr.id),
+          1
         )
-      : await getUnmatchedUser(
+      : await getUnmatchedUsers(
           user,
-          users.map((usr) => usr.id)
+          users.map((usr) => usr.id),
+          1
         );
-    console.log(data);
-    if (!data) return;
+    if (!data[0]) return;
     const rests = algo
-      ? await getSimilarRestsLike(user.id, data.id)
-      : await getTopLikedRests(data.id);
+      ? await getSimilarRestsLike(user.id, data[0].id)
+      : await getTopLikedRests(data[0].id);
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
     }
-    setUsers((users) => [...users, data]);
+    setUsers((users) => [...users, data[0]]);
   };
+
   useEffect(() => {
     const reloadUser = async () => {
       if (!user) return;
+      console.log(status);
       const copy = Object.assign({}, user);
       copy.meetingStatus = true;
       dispatch(setCurrentUser(copy));
+      console.log(user);
     };
     reloadUser();
   }, [status]);
+
   useEffect(() => {
     const reloadEnv = async () => {
       setDec(0);
     };
     reloadEnv();
   }, [algo]);
+
   useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
@@ -103,7 +107,6 @@ const MatchPage = () => {
       }
     };
     initUsers();
-    console.log(users);
   }, [user, loading, algo]);
   const handleSwitch = () => {
     setAlgo(!algo);
@@ -202,7 +205,7 @@ const MatchPage = () => {
         </div>
       </main>
     ) : (
-      <main className={styles.main}>
+      <main className={styles.main2}>
         <div className={styles.turnMeeting}>
           <div className={styles.box}>
             <div className={styles.message}>
@@ -218,8 +221,8 @@ const MatchPage = () => {
                   color={ButtonColor.PRIMARY}
                   size={ButtonSize.LARGE}
                   onClick={() => {
-                    turnOnMeeting(user.id);
                     setStatus(!status);
+                    turnOnMeeting(user.id);
                   }}
                 >
                   Poznajmy się!
