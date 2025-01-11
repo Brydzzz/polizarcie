@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RestaurantItem from './draggable-restaurant.component';
 import {
   DndContext,
@@ -18,40 +18,46 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { getUserFavoritesRestaurants } from '@/lib/db/users';
 
 import { useAppSelector } from '@/lib/store/hooks';
 import { selectCurrentUser } from '@/lib/store/user/user.selector';
 
 import styles from './favorite-restaurant-list.module.scss';
+import { getRestaurantById } from '@/lib/db/restaurants';
 
 type Restaurant = {
   id: number;
+  data_id: string;
   name: string;
   email: string;
 };
-const dummyData: Restaurant[] = [
-  {
-    id: 1,
-    name: 'Thien LY',
-    email: 'john@example.com',
-  },
-  {
-    id: 2,
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-  },
-  {
-    id: 3,
-    name: 'Alice Johnson',
-    email: 'alice@example.com',
-  },
-];
 
 const RestaurantList = () => {
 
   const user = useAppSelector(selectCurrentUser);
 
-  const [restaurantList, setRestaurantList] = useState<Restaurant[]>(dummyData);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const data = await getUserFavoritesRestaurants(user.id);
+        const restaurantList = await Promise.all(data.map(async item => {
+          const restaurant = await getRestaurantById(item.restaurantId);
+          return {
+            id: item.rankingPosition,
+            data_id: item.id,
+            name: restaurant ? restaurant.name : 'Error loading name', // or fetch the name if available
+            email: 'Unknown', // or fetch the email if available
+          };
+        }));
+        setRestaurantList(restaurantList);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -93,6 +99,7 @@ const RestaurantList = () => {
           ))}
         </SortableContext>
       </DndContext>
+      
     </div>
   );
 };

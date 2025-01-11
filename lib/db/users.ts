@@ -528,6 +528,14 @@ export async function saveProfileImagePath(id: User["id"], paths: string[]) {
   });
 }
 
+export async function getUserFavoritesRestaurants(id: User["id"]) {
+  return await prisma.userFavoriteRestaurant.findMany({
+    where: {
+      userId: id,
+    },
+  });
+}
+
 
 
 // export async function saveUserMedias(id: User["id"], medias: { link: string, type: string }[]) {

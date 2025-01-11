@@ -6,6 +6,7 @@ import styles from  './draggable-restaurant.module.scss';
 interface RestaurantItemProps {
   restaurant: {
     id: number;
+    data_id: string;
     name: string;
     email: string;
   };
@@ -27,15 +28,11 @@ const RestaurantItem: FC<RestaurantItemProps> = (props) => {
       style={style}
       {...attributes}
       {...listeners}
-      className={styles.container} // Apply SCSS class
+      className={styles.container}
     >
       <div>
-        <h3 className={styles.name}>{name}</h3> {/* Apply SCSS class */}
+        <h3 className={styles.name}>{name}</h3>
       </div>
-      {/* Optional: Drag button */}
-      {/* <button {...attributes} {...listeners} className={styles.dragButton}>
-        Drag
-      </button> */}
     </div>
   );
 };
