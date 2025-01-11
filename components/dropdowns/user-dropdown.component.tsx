@@ -7,6 +7,7 @@ import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import SupabaseImage from "../images/supabase-image.component";
 import styles from "./user-dropdown.module.scss";
@@ -56,20 +57,14 @@ const UserDropdown = () => {
         {user ? (
           <>
             <h2>{user.name}</h2>
-            <span
-              className={styles.item}
-              onClick={() => (window.location.href = `/dashboard/my-profile`)}
-            >
+            <Link className={styles.item} href="/dashboard/my-profile">
               <i className="fa-solid fa-user"></i>
               &nbsp; &nbsp; Profil
-            </span>
-            <span
-              className={styles.item}
-              onClick={() => (window.location.href = "/dashboard/settings")}
-            >
+            </Link>
+            <Link className={styles.item} href={"/dashboard/settings"}>
               <i className="fa-solid fa-gear"></i>
               &nbsp; &nbsp; Ustawienia
-            </span>
+            </Link>
             <span
               className={styles.item}
               onClick={() => signOut({ redirect: false })}

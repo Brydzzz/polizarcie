@@ -35,7 +35,7 @@ import styles from "./favorite-restaurant-manager.module.scss";
 const FavoriteRestaurantManager = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const user = useAppSelector(selectCurrentUser);
+  const currentUser = useAppSelector(selectCurrentUser);
   const [favoritesList, setFavoritesList] = useState<
     (UserFavoriteRestaurant & { restaurant: Restaurant })[]
   >([]);
@@ -49,31 +49,27 @@ const FavoriteRestaurantManager = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (user) {
+      if (currentUser) {
         setFavoritesList(
-          (await getUserFavoritesRestaurants(user.id)).sort(
+          (await getUserFavoritesRestaurants(currentUser.id)).sort(
             (a, b) => a.rankingPosition - b.rankingPosition
           )
         );
       }
     };
     fetchData();
-  }, [user]);
+  }, [currentUser]);
 
   const saveFavoritesRestaurants = async () => {
-    if (user) {
-      let i = 0;
-      const data: { restaurantId: string; rankingPosition: number }[] = [];
-      for (const item of favoritesList) {
-        i++;
-        data.push({
-          restaurantId: item.restaurantId,
-          rankingPosition: i,
-        });
-      }
+    if (currentUser) {
       await makeRequest(
         updateUserFavoriteRestaurants,
-        [user.id, data],
+        [
+          favoritesList.map((favorite, i) => ({
+            restaurantId: favorite.restaurantId,
+            rankingPosition: i + 1,
+          })),
+        ],
         dispatch
       );
     }

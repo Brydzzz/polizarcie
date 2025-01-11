@@ -2,16 +2,18 @@ import defaultProfile from "@/assets/defaultProfile.svg";
 import ModalableImage from "@/components/images/modalable-image.component";
 import ReviewList from "@/components/lists/review-list.component";
 import { getUserById } from "@/lib/db/users";
+import { getCurrentUser } from "@/utils/users";
 import { Gender, Role } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import styles from "./page.module.scss";
 
 type Props = {
   params: Promise<{
     id: string;
   }>;
+  onDashboard?: boolean;
 };
 
 const GENDER_MAP: {
@@ -31,10 +33,12 @@ const ROLE_MAP: {
   [Role.ADMIN]: "Bóg",
 };
 
-const ProfilePage = async ({ params }: Props) => {
+const ProfilePage = async ({ params, onDashboard }: Props) => {
   const id = (await params).id;
+  const currentUser = await getCurrentUser();
+  if (!onDashboard && currentUser && currentUser.id === id)
+    redirect("/dashboard/my-profile");
   const user = await getUserById(id);
-
   if (!user) notFound();
 
   return (
