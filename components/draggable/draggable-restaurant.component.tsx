@@ -1,20 +1,24 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { FC } from 'react';
-import styles from  './draggable-restaurant.module.scss';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Restaurant } from "@prisma/client";
+import Link from "next/link";
+import styles from "./draggable-restaurant.module.scss";
 
-interface RestaurantItemProps {
-  restaurant: {
-    id: number;
-    data_id: string;
-    name: string;
-  };
-}
+type Props = {
+  id: string;
+  restaurant: Restaurant;
+};
 
-const RestaurantItem: FC<RestaurantItemProps> = (props) => {
-  const { id, name } = props.restaurant;
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
+const DraggableRestaurant = ({ id, restaurant }: Props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    index,
+    activeIndex,
+  } = useSortable({ id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -25,15 +29,18 @@ const RestaurantItem: FC<RestaurantItemProps> = (props) => {
     <div
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
-      className={styles.container}
+      className={`${styles.container} ${
+        activeIndex === index ? styles.active : ""
+      }`}
     >
-      <div>
-        <h3 className={styles.name}>{name}</h3>
-      </div>
+      <h3 {...attributes} {...listeners}>
+        {index + 1}. {restaurant.name}
+      </h3>
+      <Link href={`/restaurant/${restaurant.slug}`}>
+        <i className="fa-solid fa-arrow-right"></i>
+      </Link>
     </div>
   );
 };
 
-export default RestaurantItem;
+export default DraggableRestaurant;

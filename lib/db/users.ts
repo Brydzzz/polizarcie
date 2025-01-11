@@ -602,13 +602,19 @@ export async function getUserFavoritesRestaurants(id: User["id"]) {
     where: {
       userId: id,
     },
+    include: {
+      restaurant: true,
+    },
   });
 }
 
-export async function updateUserFavoriteRestaurants(userId: User["id"], data: {
-  restaurantId: Restaurant["id"];
-  rankingPosition: number;
-}[]) {
+export async function updateUserFavoriteRestaurants(
+  userId: User["id"],
+  data: {
+    restaurantId: Restaurant["id"];
+    rankingPosition: number;
+  }[]
+) {
   return await Promise.all(
     data.map(async (favorite) => {
       return await prisma.userFavoriteRestaurant.upsert({
@@ -630,4 +636,3 @@ export async function updateUserFavoriteRestaurants(userId: User["id"], data: {
     })
   );
 }
-

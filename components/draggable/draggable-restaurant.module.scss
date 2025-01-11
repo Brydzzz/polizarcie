@@ -1,18 +1,52 @@
 .container {
+  background-color: var(--background-light);
+  border-radius: 8px;
+  border: 2px solid var(--background-light);
+  border-left-color: var(--primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  transition: background-color 0.5s ease;
+  height: 45px;
+  cursor: grab;
+
+  &:hover {
+    border-color: var(--primary);
+  }
+
+  &.active {
     background-color: var(--primary);
-    padding: 10px;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  & > h3 {
+    font-size: 12pt;
+    display: -webkit-box;
+    --lines-number: 1;
+    line-clamp: var(--lines-number);
+    -webkit-line-clamp: var(--lines-number);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    height: 100%;
+    line-height: 40px;
+    padding-left: 10px;
+    user-select: none;
+  }
+
+  & > a {
+    cursor: pointer;
+    height: 100%;
+    aspect-ratio: 1;
+    border-left: 2px solid var(--background);
     display: flex;
-    justify-content: space-between;
-    max-width: 400px;
-    cursor: grab;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: var(--primary);
+    }
   }
-  
-  .name {
-    font-size: 15px;
-  }
-  
-  .dragButton {
-    cursor: move;
-  }
+}

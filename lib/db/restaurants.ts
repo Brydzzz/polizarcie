@@ -164,18 +164,6 @@ export async function getRestaurantBySlug(
   return data;
 }
 
-export async function getRestaurantNameById(id: Restaurant["id"]) {
-  const data = await prisma.restaurant.findFirst({
-    where: {
-      id: id,
-    },
-    select: {
-      name: true,
-    },
-  });
-  return data?.name;
-}
-
 export async function getMenuByRestaurantId(id: Restaurant["id"]) {
   const data = await prisma.dish.findMany({
     where: {

@@ -1,11 +1,11 @@
 "use client";
 
-import RestaurantList from '@/components/draggable/favorite-restaurant-list.component';
+import FavoriteRestaurantManager from "@/components/draggable/favorite-restaurant-manager.component";
 
 function Favorite() {
   return (
     <div>
-      <RestaurantList />
+      <FavoriteRestaurantManager />
     </div>
   );
 }
