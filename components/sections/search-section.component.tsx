@@ -17,8 +17,8 @@ import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { transferWithJSON } from "@/utils/misc";
 import { useEffect, useState } from "react";
-import styles from "./search-section.module.scss";
 import { CardsOrigin } from "../cards/restaurant-card.component";
+import styles from "./search-section.module.scss";
 
 type Props = {
   forceCompactRestaurantList?: boolean;
@@ -35,7 +35,7 @@ const SearchSection = ({
   forceSmallSearchBar,
   forceSmallHeader,
   onUpdateRestaurants,
-  cardsOrigin
+  cardsOrigin,
 }: Props) => {
   const filters_default: Filters = {
     priceRange: { min: 0, max: 100 },
@@ -172,12 +172,18 @@ const SearchSection = ({
           ></FilterCard>
         )}
       </div>
-      <RestaurantList
-        data={restaurants}
-        forceOneRow={forceOneRowRestaurantList}
-        forceCompact={forceCompactRestaurantList}
-        cardsOrigin={cardsOrigin}
-      />
+      {restaurants.length !== 0 ? (
+        <RestaurantList
+          data={restaurants}
+          forceOneRow={forceOneRowRestaurantList}
+          forceCompact={forceCompactRestaurantList}
+          cardsOrigin={cardsOrigin}
+        />
+      ) : (
+        <div className={styles.noResults}>
+          <p>Nie znaleźliśmy żadnych restauracji pasujących do Twojego wyszukiwania.</p>
+        </div>
+      )}
     </main>
   );
 };
