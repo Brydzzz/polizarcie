@@ -30,7 +30,6 @@ type Restaurant = {
   id: number;
   data_id: string;
   name: string;
-  email: string;
 };
 
 const RestaurantList = () => {
@@ -47,7 +46,6 @@ const RestaurantList = () => {
             id: item.rankingPosition,
             data_id: item.id,
             name: restaurant_name ? restaurant_name : 'Error loading name', // or fetch the name if available
-            email: 'Unknown', // or fetch the email if available
           };
         }));
         setRestaurantList(restaurantList);
@@ -92,7 +90,10 @@ const RestaurantList = () => {
     <div className={styles.container}>
       <h2 className={styles.heading}>Ulubione restauracje</h2>
       <p className={styles.description}>
-        Przeciągnij i upuść, aby zmienić kolejność od najbardziej do najmniej ulubionej
+        Przeciągnij i upuść, aby zmienić kolejność.
+      </p>
+      <p className={styles.description}>
+        Kolejność zostanie użyta do matchowania z innymi użytkownikami.
       </p>
       <DndContext
         sensors={sensors}

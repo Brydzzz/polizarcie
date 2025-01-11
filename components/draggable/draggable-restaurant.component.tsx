@@ -8,12 +8,11 @@ interface RestaurantItemProps {
     id: number;
     data_id: string;
     name: string;
-    email: string;
   };
 }
 
 const RestaurantItem: FC<RestaurantItemProps> = (props) => {
-  const { id, name, email } = props.restaurant;
+  const { id, name } = props.restaurant;
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 

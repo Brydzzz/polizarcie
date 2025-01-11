@@ -285,7 +285,7 @@ export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
     data: {
       userId: currentUser.id,
       restaurantId: restaurantId,
-      rankingPosition: pos + 1,
+      rankingPosition: pos,
     },
   });
 }
