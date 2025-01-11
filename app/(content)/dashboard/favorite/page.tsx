@@ -1,11 +1,11 @@
 "use client";
 
-import UserList from '@/components/draggable/favorite-restaurant-list.component';
+import RestaurantList from '@/components/draggable/favorite-restaurant-list.component';
 
 function Favorite() {
   return (
     <div>
-      <UserList />
+      <RestaurantList />
     </div>
   );
 }
