@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
       },
+      {
+        hostname: "supabase.polizarcie.pl",
+      },
     ],
   },
 };

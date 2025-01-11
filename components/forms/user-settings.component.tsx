@@ -19,11 +19,50 @@ import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { blobToDataURL, makeRequest } from "@/utils/misc";
 import { useState } from "react";
 import Button from "../button/button.component";
+import { ButtonColor, ButtonSize } from "../button/button.types";
 import styles from "./user-settings.module.scss";
 
 type Props = {
   user: UserFull;
 };
+
+const GENDER_SELECTION_OPTIONS = [
+  {
+    name: "Nie chcę podawać",
+    value: Gender.NOT_SET,
+  },
+  {
+    name: "Kobieta",
+    value: Gender.FEMALE,
+  },
+  {
+    name: "Mężczyzna",
+    value: Gender.MALE,
+  },
+  {
+    name: "Niebinarny",
+    value: Gender.NON_BINARY,
+  },
+];
+
+const PREFERRED_GENDER_SELECTION_OPTIONS = [
+  {
+    name: "Nieokreślona",
+    value: Gender.NOT_SET,
+  },
+  {
+    name: "Kobieta",
+    value: Gender.FEMALE,
+  },
+  {
+    name: "Mężczyzna",
+    value: Gender.MALE,
+  },
+  {
+    name: "Niebinarna",
+    value: Gender.NON_BINARY,
+  },
+];
 
 const UserSettingsForm = ({ user }: Props) => {
   const dispatch = useAppDispatch();
@@ -31,8 +70,11 @@ const UserSettingsForm = ({ user }: Props) => {
   const [name, setUsername] = useState(user.name || "");
   const [isToggledMeeting, setIsToggledMeeting] = useState(user.meetingStatus);
   const [isToggledCensorship, setIsToggledCensorship] = useState(false);
+  const currentProfileImage = user.localProfileImagePath
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/render/image/public/${process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME}/images/${user.localProfileImagePath}`
+    : user.image || undefined;
   const [profileImage, setProfileImage] = useState<File | undefined>();
-  const [bio, setBio] = useState(user.description || "");
+  const [description, setDescription] = useState(user.description || "");
   const [gender, setGender] = useState<Gender>(user.gender);
   const [genderMeeting, setGenderMeeting] = useState<Gender>(
     user.preferredGender || Gender.NOT_SET
@@ -116,7 +158,7 @@ const UserSettingsForm = ({ user }: Props) => {
 
     const userSettings = {
       name: name,
-      description: bio,
+      description: description,
       gender: gender,
       meetingStatus: isToggledMeeting,
       preferredGender: genderMeeting,
@@ -138,112 +180,117 @@ const UserSettingsForm = ({ user }: Props) => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Ustawienia</h1>
-      <form
-        className={styles.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSave();
-        }}
-      >
-        <Input
-          label="Imię"
-          value={name}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          maxLength={50}
-        />
-        <TextArea
-          label="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
-        <SelectBox
-          label="Płeć"
-          value={gender}
-          onChange={(e) => setGender(e.target.value as Gender)}
-          options={[
-            {
-              name: "Nie chcę podawać",
-              value: Gender.NOT_SET,
-            },
-            {
-              name: "Kobieta",
-              value: Gender.FEMALE,
-            },
-            {
-              name: "Mężczyzna",
-              value: Gender.MALE,
-            },
-            {
-              name: "Niebinarny",
-              value: Gender.NON_BINARY,
-            },
-          ]}
-        />
+      <div className={styles.sectionTitle}>
+        <h2>Podstawowe</h2>
+      </div>
+      <div className={styles.row}>
         <ImageInput
-          label="Zdjęcie profilowe"
+          label="Profilowe"
           onChange={(v) => setProfileImage(v && Object.values(v).at(0))}
+          compact
+          width="100px"
+          initialPreview={currentProfileImage}
         />
-        <Switch
-          label="Filtr wiadomości niecenzuralnych"
-          checked={isToggledCensorship}
-          onChange={setIsToggledCensorship}
-        ></Switch>
-        <Input
-          label="Facebook"
-          value={facebook}
-          onChange={(e) => setUserFacebook(e.target.value)}
-        />
-        <Input
-          label="Instagram"
-          value={instagram}
-          onChange={(e) => setUserInstagram(e.target.value)}
-        />
-        <Input
-          label="Snapchat"
-          value={snapchat}
-          onChange={(e) => setUserSnapchat(e.target.value)}
-        />
-        <Input
-          label="Twitter/X"
-          value={twitter}
-          onChange={(e) => setUserTwitter(e.target.value)}
-        />
-        <Input
-          label="TikTok"
-          value={tiktok}
-          onChange={(e) => setUserTiktok(e.target.value)}
-        />
+        <div className={styles.column}>
+          <Input
+            label="Imię"
+            value={name}
+            onChange={(e) => setUsername(e.target.value)}
+            maxLength={50}
+          />
+          <SelectBox
+            label="Płeć"
+            value={gender}
+            onChange={(e) => setGender(e.target.value as Gender)}
+            options={GENDER_SELECTION_OPTIONS}
+          />
+        </div>
+      </div>
+      <TextArea
+        label="Opis"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <div className={styles.right}>
+        <Button
+          type="button"
+          onClick={() => handleSave()}
+          size={ButtonSize.SMALL}
+          color={ButtonColor.SECONDARY}
+        >
+          <i className="fa-solid fa-floppy-disk"></i>&nbsp;Zapisz
+        </Button>
+      </div>
+      <div className={styles.sectionTitle}>
+        <h2>Funkcjonalności</h2>
+      </div>
+      <Switch
+        label="Filtruj wiadomości niecenzuralne"
+        checked={isToggledCensorship}
+        onChange={setIsToggledCensorship}
+      ></Switch>
+      <div className={styles.row}>
         <Switch
           label="Randkowanie"
           checked={isToggledMeeting}
           onChange={setIsToggledMeeting}
         ></Switch>
         <SelectBox
-          label="Preferowana płeć"
+          label="Romantyczna preferencja"
           value={genderMeeting}
           onChange={(e) => setGenderMeeting(e.target.value as Gender)}
-          options={[
-            {
-              name: "Dowolna",
-              value: Gender.NOT_SET,
-            },
-            {
-              name: "Kobieta",
-              value: Gender.FEMALE,
-            },
-            {
-              name: "Mężczyzna",
-              value: Gender.MALE,
-            },
-            {
-              name: "Niebinarny",
-              value: Gender.NON_BINARY,
-            },
-          ]}
+          options={PREFERRED_GENDER_SELECTION_OPTIONS}
+          disabled={!isToggledMeeting}
         />
-        <Button type="submit">Zapisz zmiany</Button>
-      </form>
+      </div>
+      <div className={styles.right}>
+        <Button
+          type="button"
+          onClick={() => handleSave()}
+          size={ButtonSize.SMALL}
+          color={ButtonColor.SECONDARY}
+        >
+          <i className="fa-solid fa-floppy-disk"></i>&nbsp;Zapisz
+        </Button>
+      </div>
+      <div className={styles.sectionTitle}>
+        <h2>Podpięte media</h2>
+      </div>
+      <Input
+        label="Facebook"
+        value={facebook}
+        onChange={(e) => setUserFacebook(e.target.value)}
+      />
+      <Input
+        label="Instagram"
+        value={instagram}
+        onChange={(e) => setUserInstagram(e.target.value)}
+      />
+      <Input
+        label="Snapchat"
+        value={snapchat}
+        onChange={(e) => setUserSnapchat(e.target.value)}
+      />
+      <Input
+        label="Twitter/X"
+        value={twitter}
+        onChange={(e) => setUserTwitter(e.target.value)}
+      />
+      <Input
+        label="TikTok"
+        value={tiktok}
+        onChange={(e) => setUserTiktok(e.target.value)}
+      />
+      <div className={styles.right}>
+        <Button
+          type="button"
+          onClick={() => handleSave()}
+          size={ButtonSize.SMALL}
+          color={ButtonColor.SECONDARY}
+        >
+          <i className="fa-solid fa-floppy-disk"></i>&nbsp;Zapisz
+        </Button>
+      </div>
     </div>
   );
 };

@@ -8,6 +8,13 @@
   border: 1px solid var(--bg-local);
   border-radius: 5px;
 
+  &.compact {
+    min-width: 0;
+    max-width: 135px;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
   &:hover {
     border-color: var(--primary);
   }
@@ -41,6 +48,10 @@
     color: var(--disabled);
     position: relative;
 
+    &:hover {
+      cursor: pointer;
+    }
+
     & > p {
       position: absolute;
       top: 7px;
@@ -59,8 +70,8 @@
 
     & > div {
       position: absolute;
-      top: 10%;
-      height: 80%;
+      top: 0;
+      height: 100%;
       aspect-ratio: 1;
       border: 1px solid var(--primary);
       border-radius: 5px;
@@ -71,6 +82,11 @@
         border-radius: 5px 0 0 5px;
       }
     }
+  }
+
+  &.multiple .preview > div {
+    top: 10%;
+    height: 80%;
   }
 
   .invisible {

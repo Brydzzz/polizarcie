@@ -3,17 +3,65 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 0 8px 8px 0;
   border: 5px solid var(--background-light);
+  border-left: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 
   .title {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 28px;
   }
 
-  .form {
+  .sectionTitle {
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      bottom: 50%;
+      left: 0;
+      width: 100%;
+      height: 0;
+      border-bottom: 1px solid var(--disabled);
+      z-index: -1;
+    }
+
+    & > h2 {
+      font-weight: normal;
+      color: var(--text-dark);
+      font-size: 14pt;
+      background-color: var(--background);
+      padding: 0 10px;
+    }
+  }
+
+  .row {
+    display: flex;
+    gap: 15px;
+  }
+
+  .column {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 15px;
+  }
+
+  .right {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: "500px") {
+  .container {
+    .row {
+      flex-wrap: wrap;
+    }
   }
 }

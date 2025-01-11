@@ -17,6 +17,9 @@ type Props = {
   error?: boolean;
   multiple?: boolean;
   onChange?: (value: FileList | undefined) => void;
+  compact?: boolean;
+  width?: string;
+  initialPreview?: string;
 };
 
 const ImageInput = ({
@@ -28,9 +31,14 @@ const ImageInput = ({
   error,
   multiple,
   onChange,
+  compact,
+  width,
+  initialPreview,
 }: Props) => {
   const [names, setNames] = useState<string[]>([]);
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>(
+    initialPreview ? [initialPreview] : []
+  );
   const imageInputRef = useRef<HTMLInputElement>();
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -70,11 +78,16 @@ const ImageInput = ({
   };
 
   return (
-    <div className={`${styles.container} ${error ? styles.error : ""}`}>
-      <div className={styles.preview}>
+    <div
+      className={`${styles.container} ${error ? styles.error : ""} ${
+        compact ? styles.compact : ""
+      } ${multiple ? styles.multiple : ""}`}
+      style={{ minWidth: width, width: width }}
+    >
+      <div className={styles.preview} onClick={handlePickClick}>
         {previewImages.length > 0 ? (
           <>
-            <p>{previewImages.length}</p>
+            {multiple && <p>{previewImages.length}</p>}
             {previewImages.map((image, i) => {
               const factor =
                 (previewImages.length - i - 1) / previewImages.length;
@@ -107,14 +120,16 @@ const ImageInput = ({
         disabled={disabled}
         multiple={multiple}
       />
-      <button type="button" onClick={handlePickClick} disabled={loading}>
-        <div>
-          {previewImages.length > 0
-            ? imageInputRef.current &&
-              names.map((name, i) => <p key={i}>{name}</p>)
-            : `Wybierz plik${multiple ? "(i)" : ""}`}
-        </div>
-      </button>
+      {!compact && (
+        <button type="button" onClick={handlePickClick} disabled={loading}>
+          <div>
+            {previewImages.length > 0
+              ? imageInputRef.current &&
+                names.map((name, i) => <p key={i}>{name}</p>)
+              : `Wybierz plik${multiple ? "(i)" : ""}`}
+          </div>
+        </button>
+      )}
       <label>{label}</label>
       {loading && <LoaderBlur />}
     </div>
