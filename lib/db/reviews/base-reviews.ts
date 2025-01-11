@@ -79,7 +79,6 @@ export async function deleteReview(id: BaseReview["id"]) {
       id: id,
     },
   });
-  console.log(restaurantReview, dishReview, responseReview);
 
   if (restaurantReview != null) {
     await updateRestaurantStatsCacheById(restaurantReview.subjectId);

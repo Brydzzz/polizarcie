@@ -60,6 +60,9 @@
 
 @media (max-width: "500px") {
   .container {
+    border-radius: 0;
+    border-right: 0;
+
     .row {
       flex-wrap: wrap;
     }
