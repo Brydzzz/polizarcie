@@ -7,6 +7,7 @@ import {
   DragEndEvent,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   closestCenter,
   useSensor,
   useSensors,
@@ -26,15 +27,30 @@ import { selectCurrentUser } from '@/lib/store/user/user.selector';
 import styles from './favorite-restaurant-list.module.scss';
 import { getRestaurantNameById } from '@/lib/db/restaurants';
 
+import { useAppDispatch } from "@/lib/store/hooks";
+import { addSnackbar } from "@/lib/store/ui/ui.slice";
+import { makeRequest } from "@/utils/misc";
+import { updateUserFavoriteRestaurants } from "@/lib/db/users";
+
 type Restaurant = {
   id: number;
   data_id: string;
+  restaurantId: string;
   name: string;
 };
 
 const RestaurantList = () => {
+  const dispatch = useAppDispatch();
 
   const user = useAppSelector(selectCurrentUser);
+  const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+    useSensor(TouchSensor)
+  ); 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,9 +61,11 @@ const RestaurantList = () => {
           return {
             id: item.rankingPosition,
             data_id: item.id,
-            name: restaurant_name ? restaurant_name : 'Error loading name', // or fetch the name if available
+            restaurantId: item.restaurantId,
+            name: restaurant_name ? restaurant_name : 'Error loading name',
           };
         }));
+        restaurantList.sort((a, b) => a.id - b.id);
         setRestaurantList(restaurantList);
       }
     };
@@ -55,19 +73,22 @@ const RestaurantList = () => {
     fetchData();
   }, [user]);
 
-  const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
   const saveRestaurantList = async () => {
     try {
-      // Implement the save logic here, e.g., sending the reordered list to the server
+      if (user) {
+        let i = 0;
+        const data: { restaurantId: string; rankingPosition: number }[] = [];
+        for (const item of restaurantList) {
+          i++;
+          data.push({
+            restaurantId: item.restaurantId,
+            rankingPosition: i,
+          });
+        }
+        await makeRequest(updateUserFavoriteRestaurants, [user.id, data], dispatch);
+      }
+      dispatch(addSnackbar({ message: "Zapisano ustawienia", type: "success" }));
       console.log('Saving restaurant list:', restaurantList);
-      // Example: await saveUserFavoritesRestaurants(user.id, restaurantList);
     } catch (error) {
       console.error('Error saving restaurant list:', error);
     }

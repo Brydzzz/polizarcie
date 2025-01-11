@@ -1,5 +1,5 @@
 .container {
-    background-color: var(--primary); /* Tailwind's blue-200 */
+    background-color: var(--primary);
     padding: 10px;
     border-radius: 0.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -10,10 +10,6 @@
   
   .name {
     font-size: 15px;
-  }
-  
-  .email {
-    color: #4b5563; /* Tailwind's text-gray-600 */
   }
   
   .dragButton {

@@ -581,3 +581,29 @@ export async function getUserFavoritesRestaurants(id: User["id"]) {
   });
 }
 
+export async function updateUserFavoriteRestaurants(userId: User["id"], data: {
+  restaurantId: Restaurant["id"];
+  rankingPosition: number;
+}[]) {
+  return await Promise.all(
+    data.map(async (favorite) => {
+      return await prisma.userFavoriteRestaurant.upsert({
+        where: {
+          userId_restaurantId: {
+            userId: userId,
+            restaurantId: favorite.restaurantId,
+          },
+        },
+        update: {
+          rankingPosition: favorite.rankingPosition,
+        },
+        create: {
+          userId: userId,
+          restaurantId: favorite.restaurantId,
+          rankingPosition: favorite.rankingPosition,
+        },
+      });
+    })
+  );
+}
+
