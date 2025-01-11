@@ -38,9 +38,9 @@ export function badDataFromZodError(error: ZodError) {
 
 export function throwParsedZodError(error: ZodError, dispatch?: AppDispatch) {
   const poliError = badDataFromZodError(error);
-  if (dispatch)
-    dispatch(addSnackbar({ message: poliError.message, type: "error" }));
-  throw new Error(poliError.message);
+  const message = `POLI_ERROR;${poliError.code};${poliError.message}`;
+  if (dispatch) dispatch(addSnackbar({ message: message, type: "error" }));
+  throw new Error(message);
 }
 
 export function parseBigNumber(value: number) {
