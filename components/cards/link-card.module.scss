@@ -1,21 +1,8 @@
 .container {
-  display: flex;
-  flex-direction: row;
-  align-content: space-between;
-  background-color: var(--bg-local);
-  min-width: 40px;
-  align-items: center;
-  padding-right: 15;
-  & > .box {
-    display: flex;
-    flex-direction: row;
-    & > .type {
+  padding-right: 15px;
+    .type {
       font-size: 20pt;
       color: var(--primary-light);
-      padding: 0 10 0 0;
+      aspect-ratio: 1;
     }
-    & > .link {
-      font-size: 15pt;
-    }
-  }
 }
