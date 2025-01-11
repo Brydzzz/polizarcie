@@ -300,7 +300,7 @@ export async function addRestaurantToLiked(restaurantId: Restaurant["id"]) {
     data: {
       userId: currentUser.id,
       restaurantId: restaurantId,
-      rankingPosition: pos + 1,
+      rankingPosition: pos,
     },
   });
 }
@@ -572,3 +572,12 @@ export async function linkProfileImage(imagePath: Image["path"]) {
     },
   });
 }
+
+export async function getUserFavoritesRestaurants(id: User["id"]) {
+  return await prisma.userFavoriteRestaurant.findMany({
+    where: {
+      userId: id,
+    },
+  });
+}
+

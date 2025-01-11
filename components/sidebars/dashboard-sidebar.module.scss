@@ -1,0 +1,35 @@
+.sidebar {
+    margin-right: 10px;
+    width: 200px;
+    height: 100vh;
+    background-color: var(--background-dark);
+    border-radius: 0 0 0 10px;
+    font-size: 16pt;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    & > h2 {
+    font-size: 16pt;
+    white-space: nowrap;
+    color: var(--primary);
+    padding: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--primary);
+    min-width: 100%;
+    }
+
+    .item {
+    width: 100%;
+    padding: 10px 20px;
+        
+    &.active {
+        background-color: var(--primary);
+    }
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--primary);
+    }
+    }
+}
