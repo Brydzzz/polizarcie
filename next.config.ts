@@ -20,8 +20,11 @@ const nextConfig: NextConfig = {
         hostname: "avatars.githubusercontent.com",
       },
       {
-        hostname: "supabase.polizarcie.pl",
+        hostname: "supabase.polizarcie.pl"
       },
+      {
+        hostname: "localhost",
+      }
     ],
   },
 };
