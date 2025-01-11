@@ -491,34 +491,18 @@ export async function cancelPasswordChange() {
   return await clearUserPasswordCache(currentUser.id);
 }
 
-export async function saveUserSettings(
-  id: User["id"],
-  settings: {
-    name: string | null;
-    description: string | null;
-    gender: Gender | null;
-    preferredGender: Gender | null;
-    meetingStatus: boolean | null;
-  }
-) {
-  const data: {
-    name?: string;
-    description?: string;
-    gender?: Gender;
-    preferredGender?: Gender;
-    meetingStatus?: boolean;
-  } = {};
-  if (settings.name !== null) data.name = settings.name;
-  if (settings.description !== null) data.description = settings.description;
-  if (settings.gender !== null) data.gender = settings.gender;
-  if (settings.preferredGender !== null)
-    data.preferredGender = settings.preferredGender;
-  if (settings.meetingStatus !== null)
-    data.meetingStatus = settings.meetingStatus;
-
+export async function updateUserSettings(settings: {
+  name?: string;
+  description?: string;
+  gender?: Gender;
+  preferredGender?: Gender;
+  meetingStatus?: boolean;
+}) {
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) return unauthorized();
   return await prisma.user.update({
-    where: { id: id },
-    data: data,
+    where: { id: currentUser.id },
+    data: settings,
   });
 }
 
@@ -530,35 +514,33 @@ export async function getUserMedias(id: User["id"]) {
   });
 }
 
-async function saveMedia(
-  id: User["id"],
-  type: UserMedia["type"],
-  link: string
-) {
-  return await prisma.userMedia.upsert({
-    where: {
-      id: `${id}-${type}`,
-    },
-    update: {
-      link: link,
-    },
-    create: {
-      id: `${id}-${type}`,
-      userId: id,
-      type: type,
-      link: link,
-    },
-  });
-}
-
-export async function saveUserMedias(
-  id: User["id"],
+export async function updateUserMedias(
   medias: { type: UserMedia["type"]; link: string }[]
 ) {
+  const currentUser = await getCurrentUser();
+  if (currentUser == null) return unauthorized();
   return await Promise.all(
     medias
       .filter((media) => media.link.trim() !== "")
-      .map((media) => saveMedia(id, media.type, media.link))
+      .map(
+        async (media) =>
+          await prisma.userMedia.upsert({
+            where: {
+              userId_type: {
+                userId: currentUser.id,
+                type: media.type,
+              },
+            },
+            update: {
+              link: media.link,
+            },
+            create: {
+              userId: currentUser.id,
+              type: media.type,
+              link: media.link,
+            },
+          })
+      )
   );
 }
 
