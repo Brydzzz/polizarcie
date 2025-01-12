@@ -5,7 +5,7 @@ import FavoriteRestaurantManager from "@/components/draggable/favorite-restauran
 function Favorite() {
   return (
     <div>
-      <FavoriteRestaurantManager />
+      <FavoriteRestaurantManager cardsOrigin="favorite"/>
     </div>
   );
 }

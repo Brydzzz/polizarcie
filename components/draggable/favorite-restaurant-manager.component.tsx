@@ -31,8 +31,13 @@ import Button from "../button/button.component";
 import { ButtonColor, ButtonSize } from "../button/button.types";
 import DraggableRestaurant from "./draggable-restaurant.component";
 import styles from "./favorite-restaurant-manager.module.scss";
+import { CardsOrigin } from "../cards/restaurant-card.component";
 
-const FavoriteRestaurantManager = () => {
+type Props = {
+    cardsOrigin?: CardsOrigin;
+}
+
+const FavoriteRestaurantManager = ({cardsOrigin} : Props) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const currentUser = useAppSelector(selectCurrentUser);
@@ -138,6 +143,7 @@ const FavoriteRestaurantManager = () => {
               key={favorite.id}
               id={favorite.id}
               restaurant={favorite.restaurant}
+              origin={cardsOrigin}
             />
           ))}
         </SortableContext>

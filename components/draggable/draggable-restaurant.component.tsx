@@ -3,13 +3,15 @@ import { CSS } from "@dnd-kit/utilities";
 import { Restaurant } from "@prisma/client";
 import Link from "next/link";
 import styles from "./draggable-restaurant.module.scss";
+import { CardsOrigin } from "../cards/restaurant-card.component";
 
 type Props = {
   id: string;
   restaurant: Restaurant;
+  origin?: CardsOrigin;
 };
 
-const DraggableRestaurant = ({ id, restaurant }: Props) => {
+const DraggableRestaurant = ({ id, restaurant, origin }: Props) => {
   const {
     attributes,
     listeners,
@@ -36,7 +38,7 @@ const DraggableRestaurant = ({ id, restaurant }: Props) => {
       <h3 {...attributes} {...listeners}>
         {index + 1}. {restaurant.name}
       </h3>
-      <Link href={`/restaurant/${restaurant.slug}`}>
+      <Link href={`/restaurant/${restaurant.slug}${origin ? `?origin=${origin}` : ""}`}>
         <i className="fa-solid fa-arrow-right"></i>
       </Link>
     </div>

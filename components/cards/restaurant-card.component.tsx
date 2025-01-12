@@ -6,7 +6,7 @@ import SupabaseImage from "../images/supabase-image.component";
 import StarInput from "../inputs/star-input.component";
 import styles from "./restaurant-card.module.scss";
 
-export type CardsOrigin = "map" | "browse";
+export type CardsOrigin = "map" | "browse" | "favorite";
 
 type Props = {
   data: RestaurantFull;
