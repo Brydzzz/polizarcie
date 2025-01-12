@@ -19,14 +19,14 @@
     align-items: center;
 
     & > .photoBox {
-        margin-right: 10px;
-        border-radius: 50%;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        aspect-ratio: 1;
-        min-width: 35px;
+      margin-right: 10px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1;
+      min-width: 35px;
     }
 
     & > .namebox {

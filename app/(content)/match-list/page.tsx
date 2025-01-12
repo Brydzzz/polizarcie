@@ -60,7 +60,6 @@ const MatchRequestPage = () => {
     const fetchMatches = async () => {
       if (!user) return;
       const data = await getUsersMatchedWith(user.id);
-      console.log(data);
       setContacts(data);
     };
     fetchMatches();
