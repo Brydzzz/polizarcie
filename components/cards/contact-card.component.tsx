@@ -1,15 +1,18 @@
 "use client";
+import defaultProfile from "@/assets/defaultProfile.svg";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { ViewportSize } from "@/lib/store/ui/ui.slice";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { User, UserMedia } from "@prisma/client";
+import Image from "next/image";
+import Link from "next/link";
 import { MouseEventHandler, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize } from "../button/button.types";
-import SupabaseImage from "../images/supabase-image.component";
+import ModalableImage from "../images/modalable-image.component";
 import styles from "./contact-card.module.scss";
 import LinkCard from "./link-card.component";
-import { ViewportSize } from "@/lib/store/ui/ui.slice";
 type Props = {
   data: Partial<User>;
   medias: Partial<UserMedia>[];
@@ -24,22 +27,29 @@ const ContactCard = ({ data, medias, onClickDelete }: Props) => {
     <div className={styles.container}>
       <div className={styles.left}>
         <div className={styles.photoBox}>
-          {data.image ? (
-            data.image.includes("https") ? (
-              <img src={data.image} width={30} height={30} alt="Zdjęcie" />
-            ) : (
-              <SupabaseImage
-                src={data.image}
-                width={30}
-                height={30}
-                quality={50}
-                alt="Zdjęcie"
-              />
-            )
-          ) : null}
+          {data.localProfileImagePath ? (
+            <ModalableImage
+              width={35}
+              height={35}
+              src={data.localProfileImagePath}
+              alt="Profilowe"
+              quality={100}
+            />
+          ) : (
+            <Image
+              width={35}
+              height={35}
+              alt="Profilowe"
+              src={data.image || defaultProfile}
+            />
+          )}
         </div>
         <div className={styles.namebox}>
-          {data ? <p className={styles.name}>{data.name}</p> : null}
+          {data ? (
+            <Link className={styles.name} href={`/profile/${data.id}`}>
+              <b>{data.name}</b>
+            </Link>
+          ) : null}
         </div>
         <ol className={styles.medias}>
           {medias?.map((link, type) => (
@@ -48,7 +58,9 @@ const ContactCard = ({ data, medias, onClickDelete }: Props) => {
         </ol>
       </div>
 
-      <div className={size > ViewportSize.MD ? styles.right : styles.rightMobile}>
+      <div
+        className={size > ViewportSize.MD ? styles.right : styles.rightMobile}
+      >
         {more ? (
           <div className={styles.delete}>
             <Button

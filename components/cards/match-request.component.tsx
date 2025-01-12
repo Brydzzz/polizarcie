@@ -1,10 +1,12 @@
 "use client";
+import defaultProfile from "@/assets/defaultProfile.svg";
 import { AcceptMatchRequest, DenyMatchRequest } from "@/lib/db/matches";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { Match, User } from "@prisma/client";
+import Image from "next/image";
 import { MouseEventHandler, useEffect, useState } from "react";
-import SupabaseImage from "../images/supabase-image.component";
+import ModalableImage from "../images/modalable-image.component";
 import styles from "./match-request.module.scss";
 type Props = {
   data: Partial<Match>;
@@ -33,19 +35,22 @@ const MatchRequestCard = ({ data, UserOne, onClickDecision }: Props) => {
     <div className={styles.container}>
       <div className={styles.left}>
         <div className={styles.photoBox}>
-          {UserOne.image ? (
-            UserOne.image.includes("https") ? (
-              <img src={UserOne.image} width={50} height={50} alt="Zdjęcie" />
-            ) : (
-              <SupabaseImage
-                src={UserOne.image}
-                width={50}
-                height={50}
-                quality={100}
-                alt="Zdjęcie"
-              />
-            )
-          ) : null}
+          {UserOne.localProfileImagePath ? (
+            <ModalableImage
+              width={40}
+              height={40}
+              src={UserOne.localProfileImagePath}
+              alt="Profilowe"
+              quality={100}
+            />
+          ) : (
+            <Image
+              width={40}
+              height={40}
+              alt="Profilowe"
+              src={UserOne.image || defaultProfile}
+            />
+          )}
         </div>
         <div className={styles.namebox}>
           {UserOne ? <p className={styles.name}>{UserOne.name}</p> : null}

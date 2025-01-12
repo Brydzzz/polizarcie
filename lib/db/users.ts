@@ -7,6 +7,7 @@ import {
   Gender,
   Image,
   MatchRequest,
+  Prisma,
   Restaurant,
   User,
   UserMedia,
@@ -29,96 +30,6 @@ export async function getUserById(id: User["id"]): Promise<UserFull | null> {
     },
     include: {
       medias: true,
-    },
-  });
-}
-
-export async function getUnmatchedUser(user: User, excludeIds: User["id"][]) {
-  return await prisma.user.findFirst({
-    where: {
-      id: { not: user.id },
-      preferredGender: user.gender,
-      gender: user.preferredGender,
-      meetingStatus: true,
-      AND: [
-        {
-          userOneMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
-          },
-        },
-        {
-          userTwoMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
-          },
-        },
-        {
-          id: { notIn: excludeIds },
-        },
-      ],
-    },
-  });
-}
-
-export async function getUnmatchedSimilarUser(
-  user: User,
-  excludeIds: User["id"][]
-) {
-  return await prisma.user.findFirst({
-    where: {
-      id: { not: user.id },
-      preferredGender: user.gender,
-      gender: user.preferredGender,
-      meetingStatus: true,
-      AND: [
-        {
-          favoriteRestaurants: {
-            some: {
-              userId: user.id,
-            },
-          },
-        },
-        {
-          userOneMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
-          },
-        },
-        {
-          userTwoMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
-          },
-        },
-        {
-          id: { notIn: excludeIds },
-        },
-      ],
     },
   });
 }
@@ -186,56 +97,71 @@ export async function getUnmatchedSimilarUsers(
   excludeIds: User["id"][],
   howMany: number
 ) {
-  return await prisma.user.findMany({
-    take: howMany,
-    where: {
-      id: { not: user.id },
-      preferredGender: user.gender,
-      gender: user.preferredGender,
-      meetingStatus: true,
-      AND: [
-        {
-          favoriteRestaurants: {
-            some: {
-              restaurant: {
-                favoriteAmong: {
-                  some: {
-                    userId: user.id,
-                  },
+  const conds: Prisma.UserWhereInput = {
+    AND: [
+      { id: { not: user.id } },
+      { meetingStatus: true },
+      { id: { notIn: excludeIds } },
+      {
+        favoriteRestaurants: {
+          some: {
+            restaurant: {
+              favoriteAmong: {
+                some: {
+                  userId: user.id,
                 },
               },
             },
           },
         },
-        {
-          userOneMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
+      },
+      {
+        userOneMatch: {
+          none: {
+            OR: [
+              { userOneId: user.id },
+              { userTwoId: user.id },
+              { userOneId: { in: excludeIds } },
+              { userTwoId: { in: excludeIds } },
+            ],
           },
         },
-        {
-          userTwoMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
+      },
+      {
+        userTwoMatch: {
+          none: {
+            OR: [
+              { userOneId: user.id },
+              { userTwoId: user.id },
+              { userOneId: { in: excludeIds } },
+              { userTwoId: { in: excludeIds } },
+            ],
           },
         },
+      },
+    ],
+  };
+  if (user.preferredGender === Gender.NOT_SET && Array.isArray(conds.AND)) {
+    // our pref gend is not set
+    conds.AND.push({
+      OR: [
+        { preferredGender: user.gender },
         {
-          id: { notIn: excludeIds },
+          preferredGender: Gender.NOT_SET,
         },
       ],
-    },
+    });
+  } else if (Array.isArray(conds.AND)) {
+    conds.AND.push({
+      OR: [
+        { preferredGender: user.gender, gender: user.preferredGender },
+        { preferredGender: Gender.NOT_SET, gender: user.preferredGender },
+      ],
+    });
+  }
+  return await prisma.user.findMany({
+    take: howMany,
+    where: conds,
   });
 }
 
@@ -244,43 +170,58 @@ export async function getUnmatchedUsers(
   excludeIds: User["id"][],
   howMany: number
 ) {
-  return await prisma.user.findMany({
-    take: howMany,
-    where: {
-      id: { not: user.id },
-      preferredGender: user.gender,
-      gender: user.preferredGender,
-      meetingStatus: true,
-      AND: [
-        {
-          userOneMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
+  const conds: Prisma.UserWhereInput = {
+    AND: [
+      { id: { not: user.id } },
+      { meetingStatus: true },
+      { id: { notIn: excludeIds } },
+      {
+        userOneMatch: {
+          none: {
+            OR: [
+              { userOneId: user.id },
+              { userTwoId: user.id },
+              { userOneId: { in: excludeIds } },
+              { userTwoId: { in: excludeIds } },
+            ],
           },
         },
-        {
-          userTwoMatch: {
-            none: {
-              OR: [
-                { userOneId: user.id },
-                { userTwoId: user.id },
-                { userOneId: { in: excludeIds } },
-                { userTwoId: { in: excludeIds } },
-              ],
-            },
+      },
+      {
+        userTwoMatch: {
+          none: {
+            OR: [
+              { userOneId: user.id },
+              { userTwoId: user.id },
+              { userOneId: { in: excludeIds } },
+              { userTwoId: { in: excludeIds } },
+            ],
           },
         },
+      },
+    ],
+  };
+  if (user.preferredGender === Gender.NOT_SET && Array.isArray(conds.AND)) {
+    // our pref gend is not set
+    conds.AND.push({
+      OR: [
+        { preferredGender: user.gender },
         {
-          id: { notIn: excludeIds },
+          preferredGender: Gender.NOT_SET,
         },
       ],
-    },
+    });
+  } else if (Array.isArray(conds.AND)) {
+    conds.AND.push({
+      OR: [
+        { preferredGender: user.gender, gender: user.preferredGender },
+        { preferredGender: Gender.NOT_SET, gender: user.preferredGender },
+      ],
+    });
+  }
+  return await prisma.user.findMany({
+    take: howMany,
+    where: conds,
   });
 }
 

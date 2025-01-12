@@ -15,9 +15,7 @@ import {
   getSimilarRestsLike,
   getTopLikedRests,
   getTopLikedRestsForUsers,
-  getUnmatchedSimilarUser,
   getUnmatchedSimilarUsers,
-  getUnmatchedUser,
   getUnmatchedUsers,
   turnOnMeeting,
 } from "@/lib/db/users";
@@ -29,7 +27,7 @@ import {
   selectUserLoading,
 } from "@/lib/store/user/user.selector";
 import { setCurrentUser } from "@/lib/store/user/user.slice";
-import { Restaurant, User } from "@prisma/client";
+import { Gender, Restaurant, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.scss";
 const MatchPage = () => {
@@ -47,27 +45,38 @@ const MatchPage = () => {
   const size = useAppSelector(selectViewportWidth);
   const dispatch = useAppDispatch();
 
+  const GENDER_MAP: {
+    [key in Gender]: string;
+  } = {
+    [Gender.NOT_SET]: "Nieznana",
+    [Gender.FEMALE]: "Kobieta",
+    [Gender.MALE]: "Mężczyzna",
+    [Gender.NON_BINARY]: "Nie binarna",
+  };
+
   const pushUnmatchedUser = async () => {
     if (!user) return;
     const data = algo
-      ? await getUnmatchedSimilarUser(
+      ? await getUnmatchedSimilarUsers(
           user,
-          users.map((usr) => usr.id)
+          users.map((usr) => usr.id),
+          1
         )
-      : await getUnmatchedUser(
+      : await getUnmatchedUsers(
           user,
-          users.map((usr) => usr.id)
+          users.map((usr) => usr.id),
+          1
         );
-    console.log(data);
-    if (!data) return;
+    if (!data[0]) return;
     const rests = algo
-      ? await getSimilarRestsLike(user.id, data.id)
-      : await getTopLikedRests(data.id);
+      ? await getSimilarRestsLike(user.id, data[0].id)
+      : await getTopLikedRests(data[0].id);
     if (rests) {
       setLikedRests((likedRests) => [...likedRests, rests]);
     }
-    setUsers((users) => [...users, data]);
+    setUsers((users) => [...users, data[0]]);
   };
+
   useEffect(() => {
     const reloadUser = async () => {
       if (!user) return;
@@ -77,12 +86,14 @@ const MatchPage = () => {
     };
     reloadUser();
   }, [status]);
+
   useEffect(() => {
     const reloadEnv = async () => {
       setDec(0);
     };
     reloadEnv();
   }, [algo]);
+
   useEffect(() => {
     const initUsers = async () => {
       if (!user) return;
@@ -103,7 +114,6 @@ const MatchPage = () => {
       }
     };
     initUsers();
-    console.log(users);
   }, [user, loading, algo]);
   const handleSwitch = () => {
     setAlgo(!algo);
@@ -145,6 +155,10 @@ const MatchPage = () => {
             <p className={styles.prompt}>Może mam z kimś coś wspólnego?</p>
           )}
           <Switch checked={algo} onChange={handleSwitch} />
+        </div>
+        <div className={styles.info}>
+          <p>Twoja płeć: {GENDER_MAP[user.gender]}</p>
+          <p>Twoja preferencja: {GENDER_MAP[user.preferredGender]}</p>
         </div>
         <div className={styles.container}>
           {users[0] ? (
@@ -202,7 +216,7 @@ const MatchPage = () => {
         </div>
       </main>
     ) : (
-      <main className={styles.main}>
+      <main className={styles.main2}>
         <div className={styles.turnMeeting}>
           <div className={styles.box}>
             <div className={styles.message}>
@@ -218,8 +232,8 @@ const MatchPage = () => {
                   color={ButtonColor.PRIMARY}
                   size={ButtonSize.LARGE}
                   onClick={() => {
-                    turnOnMeeting(user.id);
                     setStatus(!status);
+                    turnOnMeeting(user.id);
                   }}
                 >
                   Poznajmy się!
