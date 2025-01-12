@@ -47,7 +47,7 @@ const BigMapView = ({ data }: Props) => {
   };
 
   const redirectToRestaurant = (slug: Restaurant["slug"]) => {
-    window.location.href = `/restaurant/${slug}`;
+    window.location.href = `/restaurant/${slug}?origin=map`;
   };
 
   const displayPopup = (
@@ -248,7 +248,7 @@ const BigMapView = ({ data }: Props) => {
       <div className={styles.map} ref={mapRef} />
       <div ref={popupRef} className={styles.popup} style={{ display: "none" }}>
         {popupContent && (
-          <Link href={`/restaurant/${popupContent.slug}`}>
+          <Link href={`/restaurant/${popupContent.slug}?origin=map`}>
             <div className={`${styles.container}`}>
               <h3 className={styles.name}>{popupContent.name}</h3>
               {popupContent.averageStars && (
