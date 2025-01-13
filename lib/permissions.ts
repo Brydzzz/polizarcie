@@ -1,4 +1,4 @@
-import { BaseReview, Image, Role, User } from "@prisma/client";
+import { BaseReview, Image, Restaurant, Role, User } from "@prisma/client";
 
 type PermissionCheck<Key extends keyof Permissions> =
   | boolean
@@ -13,6 +13,10 @@ type RolesWithPermissions = {
 };
 
 export type Permissions = {
+  ui: {
+    dataType: undefined;
+    action: "adminDashboard";
+  };
   reviews: {
     dataType: Partial<BaseReview>;
     action:
@@ -28,6 +32,10 @@ export type Permissions = {
     dataType: Partial<Image>;
     action: "create" | "link" | "delete";
   };
+  restaurants: {
+    dataType: Partial<Restaurant>;
+    action: "create" | "editInfo" | "editMenu" | "hide" | "delete";
+  };
 };
 
 const ifOwnReview = (user: User, review: Partial<BaseReview>) =>
@@ -41,6 +49,9 @@ const ifOwnImage = (user: User, image: Partial<Image>) =>
 
 const ROLES = {
   ADMIN: {
+    ui: {
+      adminDashboard: true,
+    },
     reviews: {
       view: true,
       viewHidden: true,
@@ -55,8 +66,18 @@ const ROLES = {
       link: true,
       delete: true,
     },
+    restaurants: {
+      create: true,
+      editInfo: true,
+      editMenu: true,
+      hide: true,
+      delete: true,
+    },
   },
   MODERATOR: {
+    ui: {
+      adminDashboard: true,
+    },
     reviews: {
       view: true,
       viewHidden: true,
@@ -70,6 +91,11 @@ const ROLES = {
       create: true,
       link: true,
       delete: true,
+    },
+    restaurants: {
+      editInfo: true,
+      editMenu: true,
+      hide: true,
     },
   },
   USER: {

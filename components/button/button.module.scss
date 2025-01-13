@@ -39,6 +39,10 @@
       --bg-color: var(--text);
       --fg-color: var(--text);
     }
+    &.negative {
+      --bg-color: var(--negative);
+      --fg-color: var(--text);
+    }
 
     &.solid {
       background-color: var(--bg-color);

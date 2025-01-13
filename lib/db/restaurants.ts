@@ -7,12 +7,27 @@ import { forbidden, unauthorized } from "@/utils/misc";
 import { isRestaurantOpen } from "@/utils/restaurants";
 import { getCurrentUser } from "@/utils/users";
 import { Address, Image, Restaurant } from "@prisma/client";
+import slugify from "slugify";
 import { hasPermission } from "../permissions";
-import { getImagesByPaths } from "./images";
+import { deleteImages, getImagesByPaths } from "./images";
 
 const FULL_INCLUDE_PRESET = {
   address: true,
   images: true,
+};
+
+export type RestaurantCreator = Omit<
+  Restaurant,
+  | "id"
+  | "slug"
+  | "addressId"
+  | "createdDate"
+  | "updatedDate"
+  | "hidden"
+  | "averageAmountSpent"
+  | "averageStars"
+> & {
+  address: Pick<Address, "name" | "xCoords" | "yCoords"> | null;
 };
 
 export type RestaurantFull = Restaurant & {
@@ -25,6 +40,20 @@ export async function getAllRestaurants(): Promise<RestaurantFull[]> {
     include: FULL_INCLUDE_PRESET,
   });
   return restaurants;
+}
+
+export async function getRestaurantsByQuery(
+  query: string
+): Promise<RestaurantFull[]> {
+  return await prisma.restaurant.findMany({
+    where: {
+      name: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    include: FULL_INCLUDE_PRESET,
+  });
 }
 
 export async function getRestaurantsLike(
@@ -198,6 +227,106 @@ export async function linkImagesToRestaurant(
       images: {
         connect: imagePaths.map((path) => ({ path: path })),
       },
+    },
+  });
+}
+
+export async function createRestaurant(data: RestaurantCreator) {
+  // permission check
+  const user = await getCurrentUser();
+  if (user == null) return unauthorized();
+  if (!hasPermission(user, "restaurants", "create")) return forbidden();
+
+  // Try to create
+  const slug = slugify(data.name, { lower: true });
+  return await prisma.restaurant.create({
+    data: {
+      name: data.name,
+      slug: slug,
+      description: data.description,
+      openingTimeMon: data.openingTimeMon,
+      openingTimeTue: data.openingTimeTue,
+      openingTimeWen: data.openingTimeWen,
+      openingTimeThu: data.openingTimeThu,
+      openingTimeFri: data.openingTimeFri,
+      openingTimeSat: data.openingTimeSat,
+      openingTimeSun: data.openingTimeSun,
+      closingTimeMon: data.closingTimeMon,
+      closingTimeTue: data.closingTimeTue,
+      closingTimeWen: data.closingTimeWen,
+      closingTimeThu: data.closingTimeThu,
+      closingTimeFri: data.closingTimeFri,
+      closingTimeSat: data.closingTimeSat,
+      closingTimeSun: data.closingTimeSun,
+      address: data.address
+        ? {
+            create: {
+              name: data.address.name,
+              xCoords: data.address.xCoords,
+              yCoords: data.address.yCoords,
+            },
+          }
+        : undefined,
+    },
+  });
+}
+
+export async function updateRestaurant(
+  data: RestaurantCreator & { id: Restaurant["id"] }
+) {
+  // permission check
+  const user = await getCurrentUser();
+  if (user == null) return unauthorized();
+  if (!hasPermission(user, "restaurants", "editInfo")) return forbidden();
+
+  // Try to create
+  const slug = slugify(data.name, { lower: true });
+  return await prisma.restaurant.update({
+    where: { id: data.id },
+    data: {
+      name: data.name,
+      slug: slug,
+      description: data.description,
+      openingTimeMon: data.openingTimeMon,
+      openingTimeTue: data.openingTimeTue,
+      openingTimeWen: data.openingTimeWen,
+      openingTimeThu: data.openingTimeThu,
+      openingTimeFri: data.openingTimeFri,
+      openingTimeSat: data.openingTimeSat,
+      openingTimeSun: data.openingTimeSun,
+      closingTimeMon: data.closingTimeMon,
+      closingTimeTue: data.closingTimeTue,
+      closingTimeWen: data.closingTimeWen,
+      closingTimeThu: data.closingTimeThu,
+      closingTimeFri: data.closingTimeFri,
+      closingTimeSat: data.closingTimeSat,
+      closingTimeSun: data.closingTimeSun,
+      address: data.address
+        ? {
+            create: {
+              name: data.address.name,
+              xCoords: data.address.xCoords,
+              yCoords: data.address.yCoords,
+            },
+          }
+        : undefined,
+    },
+  });
+}
+
+export async function deleteRestaurant(id: Restaurant["id"]) {
+  // permission check
+  const user = await getCurrentUser();
+  if (user == null) return unauthorized();
+  if (!hasPermission(user, "restaurants", "delete")) return forbidden();
+  const restaurant = await getRestaurantById(id);
+  if (!restaurant) return null;
+
+  await deleteImages(restaurant.images.map((image) => image.path));
+
+  return await prisma.restaurant.delete({
+    where: {
+      id: id,
     },
   });
 }

@@ -4,7 +4,7 @@ import { useAppDispatch } from "@/lib/store/hooks";
 import { addSnackbar } from "@/lib/store/ui/ui.slice";
 import { blobToDataURL } from "@/utils/misc";
 import Image from "next/image";
-import { ChangeEvent, LegacyRef, useRef, useState } from "react";
+import { ChangeEvent, LegacyRef, useEffect, useRef, useState } from "react";
 import LoaderBlur from "../misc/loader-blur.component";
 import styles from "./image-input.module.scss";
 
@@ -19,7 +19,7 @@ type Props = {
   onChange?: (value: FileList | undefined) => void;
   compact?: boolean;
   width?: string;
-  initialPreview?: string;
+  initialPreview?: string[];
 };
 
 const ImageInput = ({
@@ -36,12 +36,16 @@ const ImageInput = ({
   initialPreview,
 }: Props) => {
   const [names, setNames] = useState<string[]>([]);
-  const [previewImages, setPreviewImages] = useState<string[]>(
-    initialPreview ? [initialPreview] : []
-  );
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
   const imageInputRef = useRef<HTMLInputElement>();
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (names.length === 0) {
+      setPreviewImages(initialPreview ? initialPreview : []);
+    }
+  }, [initialPreview, names]);
 
   const handlePickClick = () => {
     if (imageInputRef.current) imageInputRef.current.click();
@@ -123,7 +127,7 @@ const ImageInput = ({
       {!compact && (
         <button type="button" onClick={handlePickClick} disabled={loading}>
           <div>
-            {previewImages.length > 0
+            {names.length > 0
               ? imageInputRef.current &&
                 names.map((name, i) => <p key={i}>{name}</p>)
               : `Wybierz plik${multiple ? "(i)" : ""}`}

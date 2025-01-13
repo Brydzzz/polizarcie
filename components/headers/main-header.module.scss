@@ -109,6 +109,10 @@
       transition: all 0.2s;
       width: 90%;
 
+      &.admin {
+        color: var(--negative);
+      }
+
       &:hover {
         background: linear-gradient(
           90deg,

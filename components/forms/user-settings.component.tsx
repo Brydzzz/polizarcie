@@ -23,7 +23,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize } from "../button/button.types";
-import styles from "./user-settings.module.scss";
+import styles from "./dashboard-forms.module.scss";
 
 type Props = {
   user: UserFull;
@@ -199,7 +199,9 @@ const UserSettingsForm = ({ user }: Props) => {
           }
           compact
           width="100px"
-          initialPreview={currentProfileImage}
+          initialPreview={
+            currentProfileImage ? [currentProfileImage] : undefined
+          }
         />
         <div className={styles.column}>
           <Input

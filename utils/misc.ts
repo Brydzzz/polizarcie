@@ -43,6 +43,18 @@ export function throwParsedZodError(error: ZodError, dispatch?: AppDispatch) {
   throw new Error(message);
 }
 
+export function parseMinutesToString(
+  totalMinutes: number,
+  full: boolean = false
+) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes - hours * 60;
+  const time = `${full && hours < 10 ? "0" : ""}${hours}:${
+    minutes < 10 ? "0" : ""
+  }${minutes}`;
+  return full ? `2137-01-01T${time}:00.000Z` : time;
+}
+
 export function parseBigNumber(value: number) {
   return value >= 10000000
     ? `${Math.round(value / 1000000)}M`
@@ -52,7 +64,7 @@ export function parseBigNumber(value: number) {
     ? `${Math.round(value / 1000)}k`
     : value >= 1000
     ? `${Math.round(value / 100) / 10}k`
-    : value;
+    : `${value}`;
 }
 
 export async function makeRequest<

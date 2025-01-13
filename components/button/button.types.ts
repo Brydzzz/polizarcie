@@ -8,6 +8,7 @@ export enum ButtonColor {
   PRIMARY = "primary",
   SECONDARY = "secondary",
   TEXT = "text",
+  NEGATIVE = "negative",
 }
 
 export enum ButtonSize {

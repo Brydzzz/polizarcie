@@ -1,6 +1,6 @@
 "use client";
 
-import { parseBigNumber } from "@/utils/misc";
+import { parseBigNumber, parseMinutesToString } from "@/utils/misc";
 import { LegacyRef, MouseEvent, TouchEvent, useRef, useState } from "react";
 import styles from "./sliders.module.scss";
 
@@ -19,6 +19,7 @@ type Props = {
   suffix?: string;
   label?: string;
   disabled?: boolean;
+  time?: boolean;
 };
 
 const RangeInput = ({
@@ -31,6 +32,7 @@ const RangeInput = ({
   suffix,
   label,
   disabled,
+  time,
 }: Props) => {
   const axisRef = useRef<HTMLDivElement>();
   const [selectedDot, setSelectedDot] = useState(false); // false for min, true for max
@@ -119,9 +121,11 @@ const RangeInput = ({
         onTouchMove={handleOnTouchMove}
         onTouchStart={handleOnTouchStart}
       >
-        <span className={styles.limit}>{parseBigNumber(limit.min)}</span>
+        <span className={styles.limit}>
+          {time ? parseMinutesToString(limit.min) : parseBigNumber(limit.min)}
+        </span>
         <span className={styles.value}>
-          {parseBigNumber(value.min)}
+          {time ? parseMinutesToString(value.min) : parseBigNumber(value.min)}
           {suffix}
         </span>
         <div className={styles.axis} ref={axisRef as LegacyRef<HTMLDivElement>}>
@@ -147,10 +151,12 @@ const RangeInput = ({
           </div>
         </div>
         <span className={styles.value}>
-          {parseBigNumber(value.max)}
+          {time ? parseMinutesToString(value.max) : parseBigNumber(value.max)}
           {suffix}
         </span>
-        <span className={styles.limit}>{parseBigNumber(limit.max)}</span>
+        <span className={styles.limit}>
+          {time ? parseMinutesToString(limit.max) : parseBigNumber(limit.max)}
+        </span>
       </div>
       <input
         className={styles.invisible}

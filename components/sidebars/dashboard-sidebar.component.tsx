@@ -1,6 +1,7 @@
 "use client";
 
 import defaultProfile from "@/assets/defaultProfile.svg";
+import { hasPermission } from "@/lib/permissions";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import { useSession } from "next-auth/react";
@@ -68,6 +69,19 @@ const DashboardSidebar = () => {
         <i className="fa-solid fa-heart"></i>
         &nbsp; &nbsp; Twoje ulubione
       </Link>
+      {hasPermission(currentUser, "ui", "adminDashboard") && (
+        <>
+          <Link
+            className={`${styles.item} ${
+              pathname.includes("/favorite") ? styles.active : ""
+            } ${styles.admin}`}
+            href="/dashboard/admin/restaurants"
+          >
+            <i className="fa-solid fa-wrench"></i>
+            &nbsp; &nbsp; Menadżer restauracji
+          </Link>
+        </>
+      )}
     </div>
   );
 };

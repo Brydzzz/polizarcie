@@ -35,6 +35,14 @@
       cursor: pointer;
       background-color: var(--primary);
     }
+
+    &.admin {
+      background: linear-gradient(90deg, #f003 0%, transparent 100%);
+
+      &:hover {
+        background-color: var(--primary);
+      }
+    }
   }
 }
 

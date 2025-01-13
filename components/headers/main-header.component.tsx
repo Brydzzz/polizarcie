@@ -1,8 +1,10 @@
 "use client";
 
+import { hasPermission } from "@/lib/permissions";
 import { useAppSelector } from "@/lib/store/hooks";
 import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
 import { ViewportSize } from "@/lib/store/ui/ui.slice";
+import { selectCurrentUser } from "@/lib/store/user/user.selector";
 import Link from "next/link";
 import { LegacyRef, useRef, useState } from "react";
 import MatchDropdown from "../dropdowns/match-dropdown.component";
@@ -13,6 +15,7 @@ const MainHeader = () => {
   const menuRef = useRef<HTMLDivElement>();
   const size = useAppSelector(selectViewportWidth);
   const [menuVisible, setMenuVisible] = useState(false);
+  const currentUser = useAppSelector(selectCurrentUser);
 
   const toggleMenuVisible = (toggle?: boolean) => {
     if (toggle === undefined) {
@@ -52,18 +55,28 @@ const MainHeader = () => {
           <h2> - Kontakty </h2>
         </Link>
       </div>
-      <div className={styles.group}>
-        <h2>Twój panel</h2>
-        <Link className={styles.option} href={"/dashboard/my-profile"}>
-          <h2> - Profil </h2>
-        </Link>
-        <Link className={styles.option} href={"/dashboard/settings"}>
-          <h2> - Ustawienia </h2>
-        </Link>
-        <Link className={styles.option} href={"/dashboard/favorite"}>
-          <h2> - Ulubione </h2>
-        </Link>
-      </div>
+      {currentUser && (
+        <div className={styles.group}>
+          <h2>Twój panel</h2>
+          <Link className={styles.option} href={"/dashboard/my-profile"}>
+            <h2> - Profil </h2>
+          </Link>
+          <Link className={styles.option} href={"/dashboard/settings"}>
+            <h2> - Ustawienia </h2>
+          </Link>
+          <Link className={styles.option} href={"/dashboard/favorite"}>
+            <h2> - Ulubione </h2>
+          </Link>
+          {hasPermission(currentUser, "ui", "adminDashboard") && (
+            <Link
+              className={`${styles.option} ${styles.admin}`}
+              href="/dashboard/admin/restaurants"
+            >
+              <h2> - Restauracje </h2>
+            </Link>
+          )}
+        </div>
+      )}
     </>
   );
 
