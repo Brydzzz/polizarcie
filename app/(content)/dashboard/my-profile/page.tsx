@@ -8,7 +8,9 @@ const MyProfilePage = async () => {
   if (!user) {
     return <div>User not found</div>;
   }
-  return <ProfilePage params={Promise.resolve({ id: user.id })} onDashboard />;
+  return (
+    <ProfilePage params={Promise.resolve({ id: user.id, onDashboard: true })} />
+  );
 };
 
 export default MyProfilePage;

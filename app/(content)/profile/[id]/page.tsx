@@ -12,8 +12,8 @@ import styles from "./page.module.scss";
 type Props = {
   params: Promise<{
     id: string;
+    onDashboard?: boolean;
   }>;
-  onDashboard?: boolean;
 };
 
 const GENDER_MAP: {
@@ -33,8 +33,9 @@ const ROLE_MAP: {
   [Role.ADMIN]: "Bóg",
 };
 
-const ProfilePage = async ({ params, onDashboard }: Props) => {
+const ProfilePage = async ({ params }: Props) => {
   const id = (await params).id;
+  const onDashboard = (await params).onDashboard;
   const currentUser = await getCurrentUser();
   if (!onDashboard && currentUser && currentUser.id === id)
     redirect("/dashboard/my-profile");

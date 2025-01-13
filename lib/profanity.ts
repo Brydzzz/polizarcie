@@ -6,10 +6,10 @@ declare global {
 
 const genBadWordsList = () => {
   console.log("regenerating bad words list");
-  const plData = readFileSync("assets/BadWords/pl.txt", "utf-8")
+  const plData = readFileSync("public/BadWords/pl.txt", "utf-8")
     .toString()
     .split("\r\n");
-  const enData = readFileSync("assets/BadWords/en.txt", "utf-8")
+  const enData = readFileSync("public/BadWords/en.txt", "utf-8")
     .toString()
     .split("\r\n");
   return [...plData, ...enData];
