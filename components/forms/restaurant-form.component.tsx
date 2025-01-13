@@ -238,6 +238,7 @@ const RestaurantForm = () => {
         <div className={styles.right}>
           <Button
             type="button"
+            onClick={saveAndUpdate(remove)}
             size={ButtonSize.SMALL}
             color={ButtonColor.NEGATIVE}
             disabled={loading}
