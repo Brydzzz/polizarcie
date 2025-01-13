@@ -10,10 +10,10 @@ import {
 import { parseTime } from "@/utils/date-time";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackButton from "./back-button";
 import styles from "./page.module.scss";
 import RestaurantLiked from "./restaurant-liked";
 import WriteReviewButton from "./write-review-button";
-import BackButton from "./back-button";
 type Props = {
   params: Promise<{
     slug: string;
@@ -67,7 +67,7 @@ const RestaurantPage = async ({ params }: Props) => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <BackButton/>
+        <BackButton />
         <div>
           <h1>{restaurant.name}</h1>
           <span>
@@ -93,7 +93,7 @@ const RestaurantPage = async ({ params }: Props) => {
                 starSize="24pt"
                 disabled
               ></StarInput>
-              <p>{restaurant.averageStars || 0}</p>
+              <p>{Math.round(restaurant.averageStars || 0 * 100) / 100}</p>
             </div>
             <div className={styles.data}>
               <h2>Adres:</h2>

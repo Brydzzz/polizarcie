@@ -38,6 +38,7 @@ const RestaurantSelector = ({ onSelected }: Props) => {
       <h2>Wybierz restaurację</h2>
       <Searchbar
         size={InputSize.SMALL}
+        placeholder="Wyszukaj restaurację"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onCancelButtonClick={() => {

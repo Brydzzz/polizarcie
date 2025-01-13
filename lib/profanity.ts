@@ -6,18 +6,25 @@ declare global {
 
 const genBadWordsList = () => {
   console.log("regenerating bad words list");
-  const plData = readFileSync("public/BadWords/pl.txt", "utf-8")
+  const plData = readFileSync(
+    process.cwd() + "/public/badWords/pl.txt",
+    "utf-8"
+  )
     .toString()
-    .split("\r\n");
-  const enData = readFileSync("public/BadWords/en.txt", "utf-8")
+    .split("\n");
+  const enData = readFileSync(
+    process.cwd() + "/public/badWords/en.txt",
+    "utf-8"
+  )
     .toString()
-    .split("\r\n");
+    .split("\n");
   return [...plData, ...enData];
 };
 
 export const getProfanityGuard = () => {
   try {
     if (!globalThis.badWordsList) globalThis.badWordsList = genBadWordsList();
+
     const censor = (input: string) => {
       if (!input) {
         return input;
