@@ -38,7 +38,7 @@ const DishPage = async ({ params }: Props) => {
             starSize="20pt"
             disabled
           />
-          <p>({dish.averageStars || 0})</p>
+          <p>({dish.averageStars?.toFixed(2) || 0})</p>
         </span>
       </header>
       <div className={styles.data}>

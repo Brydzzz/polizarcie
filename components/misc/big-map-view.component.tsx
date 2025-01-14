@@ -268,7 +268,7 @@ const BigMapView = ({ data }: Props) => {
                 <span className={styles.price}>
                   Średnia cena:{" "}
                   <b>
-                    {popupContent.averageAmountSpent.toFixed(2)}
+                    {Math.round(popupContent.averageAmountSpent)}
                     &nbsp;zł
                   </b>
                 </span>

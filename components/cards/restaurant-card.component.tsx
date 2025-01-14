@@ -66,7 +66,7 @@ const RestaurantCard = ({ data, onClickAddress, mode, width, origin }: Props) =>
           <p className={styles.description}>{description}</p>
           {averageAmountSpent && (
             <span className={styles.price}>
-              Średnia cena na osobę: <b>{averageAmountSpent}&nbsp;zł</b>
+              Średnia cena na osobę: <b>{Math.round(averageAmountSpent)}&nbsp;zł</b>
             </span>
           )}
           {isOpen && <span className={styles.open}>Otwarte teraz!</span>}
