@@ -18,7 +18,10 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
 import {
   SortableContext,
   arrayMove,
@@ -26,18 +29,19 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Restaurant, UserFavoriteRestaurant } from "@prisma/client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Button from "../button/button.component";
 import { ButtonColor, ButtonSize } from "../button/button.types";
+import { CardsOrigin } from "../cards/restaurant-card.component";
 import DraggableRestaurant from "./draggable-restaurant.component";
 import styles from "./favorite-restaurant-manager.module.scss";
-import { CardsOrigin } from "../cards/restaurant-card.component";
 
 type Props = {
-    cardsOrigin?: CardsOrigin;
-}
+  cardsOrigin?: CardsOrigin;
+};
 
-const FavoriteRestaurantManager = ({cardsOrigin} : Props) => {
+const FavoriteRestaurantManager = ({ cardsOrigin }: Props) => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const currentUser = useAppSelector(selectCurrentUser);
@@ -118,48 +122,68 @@ const FavoriteRestaurantManager = ({cardsOrigin} : Props) => {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Ulubione restauracje</h2>
+      <h1 className={styles.title}>Ulubione restauracje</h1>
       <p className={styles.description}>
-        Przeciągnij i upuść, aby zmienić kolejność. <br />
         Kolejność zostanie użyta do matchowania z innymi użytkownikami.
       </p>
-      {favoritesList.length === 0 && (
-        <p className={styles.empty}>
-          Nie posiadasz obecnie żadnych ulubionych restauracji
-        </p>
-      )}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis]}
-      >
-        <SortableContext
-          items={favoritesList}
-          strategy={verticalListSortingStrategy}
-        >
-          {favoritesList.map((favorite, i) => (
-            <DraggableRestaurant
-              key={favorite.id}
-              id={favorite.id}
-              restaurant={favorite.restaurant}
-              origin={cardsOrigin}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
-      <div className={styles.right}>
-        <Button
-          type="button"
-          onClick={saveAndUpdate(saveFavoritesRestaurants, [])}
-          size={ButtonSize.SMALL}
-          color={ButtonColor.SECONDARY}
-          disabled={loading}
-        >
-          <i className="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;
-          {loading ? "Zapisywanie..." : "Zapisz"}
-        </Button>
+      <div className={styles.sectionTitle}>
+        <h2>Przeciągnij i uporządkuj</h2>
       </div>
+      {favoritesList.length === 0 && (
+        <>
+          <p className={styles.empty}>
+            Nie posiadasz obecnie żadnych ulubionych restauracji
+          </p>
+          <div className={styles.sectionTitle}>
+            <h2>Co zrobić?</h2>
+          </div>
+        </>
+      )}
+
+      {favoritesList.length > 0 ? (
+        <>
+          <div className={styles.sortableContainer}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+            >
+              <SortableContext
+                items={favoritesList}
+                strategy={verticalListSortingStrategy}
+              >
+                {favoritesList.map((favorite, i) => (
+                  <DraggableRestaurant
+                    key={favorite.id}
+                    id={favorite.id}
+                    restaurant={favorite.restaurant}
+                    origin={cardsOrigin}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+          <div className={styles.right}>
+            <Button
+              type="button"
+              onClick={saveAndUpdate(saveFavoritesRestaurants, [])}
+              size={ButtonSize.SMALL}
+              color={ButtonColor.SECONDARY}
+              disabled={loading}
+            >
+              <i className="fa-solid fa-floppy-disk"></i>&nbsp;&nbsp;
+              {loading ? "Zapisywanie..." : "Zapisz"}
+            </Button>
+          </div>
+        </>
+      ) : (
+        <div className={styles.center}>
+          <Link href="/browse">
+            <Button>Poszukaj ich</Button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

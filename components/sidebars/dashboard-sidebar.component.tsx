@@ -73,7 +73,7 @@ const DashboardSidebar = () => {
         <>
           <Link
             className={`${styles.item} ${
-              pathname.includes("/favorite") ? styles.active : ""
+              pathname.includes("/admin/restaurants") ? styles.active : ""
             } ${styles.admin}`}
             href="/dashboard/admin/restaurants"
           >

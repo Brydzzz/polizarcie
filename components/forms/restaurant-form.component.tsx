@@ -9,8 +9,9 @@ import {
   RestaurantFull,
   updateRestaurant,
 } from "@/lib/db/restaurants";
-import { useAppDispatch } from "@/lib/store/hooks";
-import { addSnackbar } from "@/lib/store/ui/ui.slice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { selectViewportWidth } from "@/lib/store/ui/ui.selector";
+import { addSnackbar, ViewportSize } from "@/lib/store/ui/ui.slice";
 import { makeRequest } from "@/utils/misc";
 import { prepareImagesToUpload } from "@/utils/misc.client";
 import { useEffect, useState } from "react";
@@ -40,6 +41,7 @@ const RestaurantForm = () => {
   const [loading, setLoading] = useState(false);
   const store = useRestaurantStore();
   const [selected, setSelected] = useState<RestaurantFull | undefined>();
+  const size = useAppSelector(selectViewportWidth);
 
   useEffect(() => {
     store.loadData(selected);
@@ -144,14 +146,13 @@ const RestaurantForm = () => {
 
   return (
     <div className={styles.container}>
-      <RestaurantSelector onSelected={setSelected} />
-      <h2 style={{ textAlign: "center" }}>
-        {selected
-          ? `Aktualizuj dane ${selected.name}`
-          : "Dodaj nową restaurację"}
-      </h2>
+      <h1 className={styles.title}>Zarządzaj restauracjami</h1>
       <div className={styles.sectionTitle}>
-        <h2>Ogólne</h2>
+        <h2>Wybierz restaurację</h2>
+      </div>
+      <RestaurantSelector onSelected={setSelected} />
+      <div className={styles.sectionTitle}>
+        <h2>{selected ? `Aktualizuj dane` : "Dodaj nową restaurację"}</h2>
       </div>
       <Input
         label="Nazwa restauracji"
@@ -191,9 +192,15 @@ const RestaurantForm = () => {
       {Object.keys(WEEKDAYS).map((key) => {
         const weekday = key as keyof typeof WEEKDAYS;
         return (
-          <div key={weekday} className={styles.row}>
+          <div
+            key={weekday}
+            className={styles.row}
+            style={{
+              flexDirection: size < ViewportSize.SM ? "column-reverse" : "row",
+            }}
+          >
             <RangeInput
-              label={WEEKDAYS[weekday]}
+              label={size < ViewportSize.SM ? "" : WEEKDAYS[weekday]}
               value={{
                 min: store.getState(`openingTime${weekday}`),
                 max: store.getState(`closingTime${weekday}`),
@@ -211,7 +218,7 @@ const RestaurantForm = () => {
               disabled={!store.getState(`enabled${weekday}`)}
             />
             <Switch
-              label=""
+              label={size < ViewportSize.SM ? WEEKDAYS[weekday] : ""}
               checked={store.getState(`enabled${weekday}`)}
               onChange={(v) => store.setState(`enabled${weekday}`, v)}
             />

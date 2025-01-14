@@ -3,7 +3,7 @@ import { useAppDispatch } from "@/lib/store/hooks";
 import { makeRequest } from "@/utils/misc";
 import { Restaurant } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { InputSize } from "../inputs/input.types";
+import { InputSize, InputStyle } from "../inputs/input.types";
 import Searchbar from "../inputs/searchbar.component";
 import styles from "./restaurant-selector.module.scss";
 
@@ -35,9 +35,9 @@ const RestaurantSelector = ({ onSelected }: Props) => {
 
   return (
     <div className={styles.container}>
-      <h2>Wybierz restaurację</h2>
       <Searchbar
         size={InputSize.SMALL}
+        style={InputStyle.INPUT_LIKE}
         placeholder="Wyszukaj restaurację"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
