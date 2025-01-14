@@ -93,7 +93,7 @@ const RestaurantPage = async ({ params }: Props) => {
                 starSize="24pt"
                 disabled
               ></StarInput>
-              <p>{Math.round(restaurant.averageStars || 0 * 100) / 100}</p>
+              <p>{restaurant.averageStars?.toFixed(2) || 0}</p>
             </div>
             <div className={styles.data}>
               <h2>Adres:</h2>
