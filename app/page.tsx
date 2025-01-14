@@ -6,7 +6,7 @@ export default async function Home() {
   return (
     <main className={styles.container}>
       <LandingHeader />
-      <CenterSection width="800px" offsetX="-200px">
+      <div className={styles.leftAlign}>
         <h1>Co to jest?</h1>
         <p>
           Poliżarcie to portal dla prawdziwych politechnicznych żarłoków. Jesteś
@@ -17,9 +17,9 @@ export default async function Home() {
           znajduje, zerknąć na menu i ceny przeczytać recenzje albo nawet dodać
           własne. Wszystko jest możliwe dzięki Poliżarciu!
         </p>
-      </CenterSection>
+      </div>
       <section className={styles.light}>
-        <CenterSection width="800px" offsetX="200px">
+        <div className={styles.rightAlign}>
           <h1>Chcesz kogoś poznać?</h1>
           <p>
             Nie martw się! Poliżarcie wprowadza innowacyjny system łączenia
@@ -27,7 +27,7 @@ export default async function Home() {
             możesz miło spędzić przerwę z kimś nowym. A kto wie? Może wyniknie z
             tego coś więcej...
           </p>
-        </CenterSection>
+        </div>
       </section>
     </main>
   );

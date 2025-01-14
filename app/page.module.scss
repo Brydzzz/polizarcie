@@ -6,19 +6,52 @@
   flex-direction: column;
   gap: 20px;
   color: var(--text);
-  padding-bottom: 300px;
+//   margin-bottom: 200px;
 
   .light {
-    padding: 100px 0;
-    margin: 100px 0;
+    padding: 80px 0;
+    margin: 90px 0 0 0;
     width: 100%;
     background-color: var(--background-light);
+
+    @media (max-width: "992px") {
+        margin-top: 50px;
+        padding: 40px 0;
+    }
   }
 
   h1 {
     font-size: 32pt;
+    margin-bottom: 10px;
   }
   p {
     font-size: 16pt;
   }
+
+  .leftAlign {
+    padding: 20px;
+    margin-left: 150px;
+    width: 55%;
+
+    @media (max-width: "992px") {
+        width: 100%;
+        margin-left: 0;
+        padding: 30px;
+    }
+  }
+
+  .rightAlign {
+    padding: 20px;
+    margin-right: 150px;
+    margin-left: auto;
+    width: 50%;
+    right: 0;
+
+    @media (max-width: "992px") {
+        width: 100%;
+        margin-right: 0;
+        padding: 30px;
+    }
+  }
+
 }

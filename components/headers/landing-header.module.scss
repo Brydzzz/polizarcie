@@ -7,18 +7,26 @@
   display: flex;
   justify-content: center;
   user-select: none;
-  margin-bottom: 300px;
+  margin-bottom: 250px;
+
+  @media (max-width: "992px") {
+    margin-bottom: 200px;
+  }
 
   .content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 75px;
+    gap: 65px;
 
     h1 {
       font-family: "Gluten";
       font-size: 100pt;
       text-shadow: 10px 10px #0005;
+    }
+
+    .buttons {
+        padding: 0 20px;
     }
   }
 
