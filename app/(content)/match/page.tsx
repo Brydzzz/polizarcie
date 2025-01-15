@@ -33,7 +33,6 @@ import styles from "./page.module.scss";
 const MatchPage = () => {
   const [next, goNext] = useState<boolean>(false);
   const [decision, setDec] = useState<Number>(0);
-  //const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
   const [algo, setAlgo] = useState<boolean>(false);
