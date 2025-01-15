@@ -16,6 +16,7 @@ import {
   ReviewType,
 } from "@/utils/factories/reviews";
 import { makeRequest } from "@/utils/misc";
+import { User } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useState } from "react";
@@ -42,7 +43,8 @@ type ReviewParts = {
     content: (
       data: ReviewType[Key]["fullData"],
       mode: Mode,
-      store: ReturnType<typeof useReviewStore<Key>>
+      store: ReturnType<typeof useReviewStore<Key>>,
+      currentUser: User
     ) => ReactNode;
   };
 };
@@ -67,10 +69,14 @@ const REVIEW_PARTS: ReviewParts = {
         )}
       </>
     ),
-    content: (data, mode, store) => (
+    content: (data, mode, store, currentUser) => (
       <>
         {mode === "view" ? (
-          <p>{data.censoredContent}</p>
+          <p>
+            {currentUser.censorshipEnabled
+              ? data.censoredContent
+              : data.content}
+          </p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -115,10 +121,14 @@ const REVIEW_PARTS: ReviewParts = {
         )}
       </>
     ),
-    content: (data, mode, store) => (
+    content: (data, mode, store, currentUser) => (
       <>
         {mode === "view" ? (
-          <p>{data.censoredContent}</p>
+          <p>
+            {currentUser.censorshipEnabled
+              ? data.censoredContent
+              : data.content}
+          </p>
         ) : (
           <form className={styles.form}>
             <div className={styles.left}>
@@ -141,10 +151,14 @@ const REVIEW_PARTS: ReviewParts = {
   },
   response: {
     header: (data, mode) => undefined,
-    content: (data, mode, store) => (
+    content: (data, mode, store, currentUser) => (
       <>
         {mode === "view" ? (
-          <p>{data.censoredContent}</p>
+          <p>
+            {currentUser.censorshipEnabled
+              ? data.censoredContent
+              : data.content}
+          </p>
         ) : (
           <form className={styles.form}>
             <TextArea
@@ -319,7 +333,8 @@ const ReviewCard = <Type extends keyof ReviewType>({
           </span>
         </div>
         <div className={styles.content}>
-          {REVIEW_PARTS[type].content(data, mode, store)}
+          {currentUser &&
+            REVIEW_PARTS[type].content(data, mode, store, currentUser)}
         </div>
         {mode === "view" && data.baseData.images.length > 0 && (
           <div className={styles.images}>

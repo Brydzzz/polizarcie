@@ -30,6 +30,7 @@ model User {
     gender                Gender                   @default(NOT_SET)
     preferredGender       Gender                   @default(NOT_SET)
     meetingStatus         Boolean                  @default(false)
+    censorshipEnabled     Boolean                  @default(true)
     points                Int                      @default(0)
     medias                UserMedia[]
     favoriteRestaurants   UserFavoriteRestaurant[]

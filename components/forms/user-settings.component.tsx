@@ -73,7 +73,9 @@ const UserSettingsForm = ({ user }: Props) => {
   const [loading, setLoading] = useState(false);
   const [name, setUsername] = useState(user.name || "");
   const [isToggledMeeting, setIsToggledMeeting] = useState(user.meetingStatus);
-  const [isToggledCensorship, setIsToggledCensorship] = useState(false);
+  const [censorshipEnabled, setCensorshipEnabled] = useState(
+    user.censorshipEnabled
+  );
   const currentProfileImage = user.localProfileImagePath
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/render/image/public/${process.env.NEXT_PUBLIC_SUPABASE_BUCKET_NAME}/images/${user.localProfileImagePath}`
     : user.image || undefined;
@@ -158,6 +160,7 @@ const UserSettingsForm = ({ user }: Props) => {
       gender: gender,
       meetingStatus: isToggledMeeting,
       preferredGender: genderMeeting,
+      censorshipEnabled: censorshipEnabled,
     };
     await makeRequest(updateUserSettings, [userSettings], dispatch);
     dispatch(addSnackbar({ message: "Zapisano ustawienia", type: "success" }));
@@ -240,8 +243,8 @@ const UserSettingsForm = ({ user }: Props) => {
       </div>
       <Switch
         label="Filtruj wiadomości niecenzuralne"
-        checked={isToggledCensorship}
-        onChange={setIsToggledCensorship}
+        checked={censorshipEnabled}
+        onChange={setCensorshipEnabled}
       ></Switch>
       <div className={styles.row}>
         <Switch

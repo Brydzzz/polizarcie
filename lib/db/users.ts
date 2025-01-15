@@ -462,12 +462,20 @@ export async function updateUserSettings(settings: {
   gender?: Gender;
   preferredGender?: Gender;
   meetingStatus?: boolean;
+  censorshipEnabled?: boolean;
 }) {
   const currentUser = await getCurrentUser();
   if (currentUser == null) return unauthorized();
   return await prisma.user.update({
     where: { id: currentUser.id },
-    data: settings,
+    data: {
+      name: settings.name,
+      description: settings.description,
+      gender: settings.gender,
+      preferredGender: settings.preferredGender,
+      meetingStatus: settings.meetingStatus,
+      censorshipEnabled: settings.censorshipEnabled,
+    },
   });
 }
 
