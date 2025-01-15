@@ -46,7 +46,7 @@ const MatchPage = () => {
   const GENDER_MAP: {
     [key in Gender]: string;
   } = {
-    [Gender.NOT_SET]: "Nieznana",
+    [Gender.NOT_SET]: "Dowolna",
     [Gender.FEMALE]: "Kobieta",
     [Gender.MALE]: "Mężczyzna",
     [Gender.NON_BINARY]: "Nie binarna",
