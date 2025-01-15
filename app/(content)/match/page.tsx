@@ -101,7 +101,6 @@ const MatchPage = () => {
         }
       }
     };
-    console.log(user);
     initUsers();
   }, [user, loading, algo]);
   const handleSwitch = () => {
