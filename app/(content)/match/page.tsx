@@ -36,7 +36,6 @@ const MatchPage = () => {
   //const [first, setFirst] = useState<Boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [likedRests, setLikedRests] = useState<Restaurant[][]>([[]]);
-  const [status, setStatus] = useState<Boolean>(false);
   const [algo, setAlgo] = useState<boolean>(false);
   const [prevUser, setPrevUser] = useState<User>();
   const [prevRests, setPrevRests] = useState<Restaurant[]>([]);
@@ -78,16 +77,6 @@ const MatchPage = () => {
   };
 
   useEffect(() => {
-    const reloadUser = async () => {
-      if (!user) return;
-      const copy = Object.assign({}, user);
-      copy.meetingStatus = true;
-      dispatch(setCurrentUser(copy));
-    };
-    reloadUser();
-  }, [status]);
-
-  useEffect(() => {
     const reloadEnv = async () => {
       setDec(0);
     };
@@ -113,6 +102,7 @@ const MatchPage = () => {
         }
       }
     };
+    console.log(user);
     initUsers();
   }, [user, loading, algo]);
   const handleSwitch = () => {
@@ -142,7 +132,7 @@ const MatchPage = () => {
   return loading ? (
     <LoaderBlur />
   ) : user ? (
-    user.meetingStatus ? (
+    user.meetingStatus == true ? (
       <main className={styles.main}>
         <div
           className={
@@ -232,7 +222,9 @@ const MatchPage = () => {
                   color={ButtonColor.PRIMARY}
                   size={ButtonSize.LARGE}
                   onClick={() => {
-                    setStatus(!status);
+                    const copy = Object.assign({}, user);
+                    copy.meetingStatus = true;
+                    dispatch(setCurrentUser(copy));
                     turnOnMeeting(user.id);
                   }}
                 >
