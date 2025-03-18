@@ -1,5 +1,9 @@
 # Poliżarcie
 
+Poliżarcie is a platform that lets students from WUT find new and intereseting places to eat.
+It allows for browsing through a search bar or using an interactive map.
+You can write reviews, respond to others and match with different users based on your tastes, all in Poliżarcie.
+
 ## Integrated and used technologies:
 
 <div style="display: flex; gap: 50px; max-width: 500px; flex-wrap: wrap; justify-content: center;">
@@ -24,18 +28,24 @@
 
 ### Landing Page
 
+![](./docs/images/landing_page.png)
+
 ### Restaurant Browsing
+
 ![](./docs/images/browse_view.png)
 
 ### Restaurant Map
+
 ![](./docs/images/map_view.png)
 
 ### Matching With Other students
 
 #### Based On Favorite Restaurants
+
 ![](./docs/images/match2.png)
 
 #### Free Mode
+
 ![](./docs/images/match1.png)
 
 ### Profile Page
